@@ -2,99 +2,89 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=yes">
-  <meta name="theme-color" content="#12283a">
-  <meta name="description" content="HM3 Karteikarten mit freier Apple Pencil Notizfläche und eigener Selbsteinschätzung.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8fa">
+  <meta name="description" content="HM3-Karteikarten: mit Apple Pencil arbeiten, selbst bewerten und Lerndurchgänge mit Skizzen exportieren.">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="HM3 Karten">
+  <meta name="apple-mobile-web-app-title" content="HM3 Stiftkarten">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icon-180.png">
-  <link rel="icon" href="assets/icon-192.png">
   <link rel="stylesheet" href="style.css">
-  <title>HM3 · Stiftkarten</title>
-  <script>
-    window.MathJax = {
-      tex: {inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[','\\]']], processEscapes: true},
-      svg: {fontCache:'local'},
-      options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},
-      startup:{ready:()=>{MathJax.startup.defaultReady();window.dispatchEvent(new Event('hm3-math-ready'));}}
-    };
-  </script>
+  <title>HM3 Stiftkarten</title>
+  <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
   <script defer src="assets/mathjax-tex-svg.js"></script>
-  <script defer src="data.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
-  <div class="shell">
-    <header class="header">
-      <div class="brand"><div class="logo" aria-hidden="true">∫</div><div><strong>HM3 <span>Stiftkarten</span></strong><small>Höhere Mathematik III · TU Dortmund</small></div></div>
-      <div class="head-actions"><span id="savedPill" class="saved-pill" aria-live="polite">● Lokal gespeichert</span><button id="settingsBtn" class="icon-btn" title="Einstellungen und Datensicherung" aria-label="Einstellungen">⚙</button></div>
-    </header>
+<div class="layout">
+  <header class="topbar">
+    <div class="brand"><div class="brandmark" aria-hidden="true">∫</div><div><strong>HM3 Stiftkarten</strong><span>Höhere Mathematik III · TU Dortmund</span></div></div>
+    <div class="top-actions"><span class="save-status" id="saveStatus" role="status">Speicher wird geprüft …</span><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
+  </header>
 
-    <div class="overview" aria-label="Lernfortschritt">
-      <div><small>Gesamt</small><strong id="statTotal">95</strong></div>
-      <div><small>Heute fällig</small><strong id="statDue">95</strong></div>
-      <div><small>Heute gelernt</small><strong id="statToday">0</strong></div>
-      <div class="overview-bar"><div class="progress-track"><div id="progressFill"></div></div><small id="progressLabel">0 von 95 Karten bearbeitet</small></div>
-    </div>
-
-    <section class="filters" aria-label="Kartenauswahl">
-      <div class="segments"><button data-mode="due" class="segment active">Fällige Karten</button><button data-mode="all" class="segment">Alle Karten</button></div>
-      <label class="field">Thema <select id="topicFilter"><option value="all">Alle Vorlesungen & Übungen</option></select></label>
-      <label class="field kind-select">Kartentyp <select id="kindFilter"><option value="all">Alle Typen</option></select></label>
-      <button id="shuffleBtn" class="quiet-btn" title="Karten zufällig sortieren">⤨ Mischen</button>
-    </section>
-
-    <main id="study" class="study" aria-live="off">
-      <div class="study-left">
-        <section class="question-panel">
-          <div class="question-head"><span class="eyebrow" id="cardTag">V01 · Begriff</span><span class="counter" id="counter">Karte 1/95</span></div>
-          <h1 class="question" id="question">Deine nächste Karte wird geladen …</h1>
-          <div class="source" id="source">Quelle: V01</div>
-        </section>
-        <section class="answer-panel" id="answerPanel">
-          <button id="revealBtn" class="reveal-btn">Musterlösung anzeigen <span>↓</span></button>
-          <div id="answerContent" class="answer-content hidden">
-            <div class="answer-eyebrow">Musterlösung</div>
-            <div class="answer-text" id="answer"></div>
-            <div class="selfgrade"><p>Wie gut konntest du es <strong>selbst</strong> beantworten?</p><div class="grading">
-              <button id="againBtn" class="rating rating-again"><span>↻</span> Nicht gewusst</button>
-              <button id="hardBtn" class="rating rating-hard"><span>◐</span> Teilweise</button>
-              <button id="goodBtn" class="rating rating-good"><span>✓</span> Gewusst</button>
-            </div><small>Keine KI-Bewertung. Nur deine eigene Einschätzung bestimmt die Wiederholung.</small></div>
-          </div>
-        </section>
-        <div class="skip-row"><button id="prevBtn" class="quiet-btn">← Zurück</button><button id="skipBtn" class="quiet-btn">Überspringen →</button></div>
-      </div>
-
-      <section class="notes-panel" aria-label="Handschriftlicher Notizbereich">
-        <div class="notes-head"><div><div class="note-title">Dein Lösungsblatt</div><p>Frei schreiben, skizzieren, rechnen – ohne Handschrifterkennung.</p></div><span class="pencil-tag">✎ Pencil & Touch</span></div>
-        <div class="toolbar" role="toolbar" aria-label="Zeichenwerkzeuge">
-          <div class="toolgroup"><button id="penTool" class="tool selected" title="Stift">✎ <span>Stift</span></button><button id="eraserTool" class="tool" title="Strichradierer">⌫ <span>Radierer</span></button></div>
-          <div class="toolgroup colors" aria-label="Stiftfarbe"><button class="color-dot selected" data-color="#172a41" style="--dot:#172a41" title="Dunkelblau"></button><button class="color-dot" data-color="#2563eb" style="--dot:#2563eb" title="Blau"></button><button class="color-dot" data-color="#c94b51" style="--dot:#c94b51" title="Rot"></button></div>
-          <label class="width-picker">Stärke <select id="penWidth"><option value="1.7">Fein</option><option value="2.7" selected>Normal</option><option value="4.5">Dick</option></select></label>
-          <div class="toolgroup actions"><button id="undoBtn" class="tool" title="Rückgängig" aria-label="Rückgängig">↶</button><button id="redoBtn" class="tool" title="Wiederholen" aria-label="Wiederholen">↷</button><button id="clearBtn" class="tool clear" title="Blatt löschen" aria-label="Blatt löschen">🗑</button></div>
-        </div>
-        <div id="paper" class="paper paper-grid"><canvas id="drawingCanvas" aria-label="Zeichenfläche" role="img"></canvas><div class="page-mark">HM3 · Dein Rechenweg</div></div>
-        <div class="paper-footer"><div class="paper-options"><label>Blatt <select id="paperStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="plain">Blanko</option></select></label><label>Höhe <select id="paperHeight"><option value="440">Kompakt</option><option value="650" selected>Normal</option><option value="900">Lang</option><option value="1400">Sehr lang</option></select></label></div><small id="noteState">Notizen werden pro Karte gespeichert</small></div>
-      </section>
-    </main>
-    <section id="empty" class="empty hidden"><div class="empty-illustration">✓</div><h2>Für diese Auswahl ist alles erledigt.</h2><p id="emptyText">Aktuell sind keine Karten fällig.</p><button id="showAllBtn" class="primary-btn">Alle Karten ansehen</button></section>
-    <footer class="footer">Lernkarten aus V01–V06 und Ü00–03 · Nur lokale Speicherung · Keine Handschriftanalyse · <button id="backupFooter">Backup</button></footer>
+  <div class="sessionbar">
+    <div class="sessioninfo"><span class="overline">AKTUELLER DURCHGANG</span><strong id="sessionTitle">Laden …</strong><span class="meta" id="sessionMeta"></span></div>
+    <div class="sessionactions"><button class="button" id="newSessionBtn">Neuer Durchgang</button><button class="button button-primary" id="exportSessionBtn">Durchgang exportieren</button></div>
   </div>
 
-  <dialog id="settingsDialog" class="settings-dialog">
-    <div class="dialog-head"><h2>Einstellungen & Datensicherung</h2><button id="closeSettings" class="icon-btn" aria-label="Schließen">✕</button></div>
-    <p>Deine Zeichnungen bleiben auf diesem Gerät im Browser gespeichert. Es gibt keinen Account und keine Datenübertragung. Erstelle gelegentlich ein Backup – insbesondere vor dem Löschen von Browserdaten.</p>
-    <div class="settings-row"><label><input id="penOnly" type="checkbox"> Nur Apple Pencil zeichnen (Finger ignorieren)</label></div>
-    <div class="settings-row"><label><input id="keepNotes" type="checkbox" checked> Notizen beim Wiederholen behalten</label></div>
-    <div class="settings-row"><button class="primary-btn" id="exportBtn">↓ Backup als JSON speichern</button></div>
-    <div class="settings-row"><label for="restoreInput" class="upload-btn">↑ Backup aus JSON wiederherstellen</label><input id="restoreInput" type="file" accept="application/json,.json" hidden></div>
-    <div class="settings-row danger-zone"><button id="resetProgressBtn" class="danger-link">Alle Lernbewertungen zurücksetzen</button><small>Handschriftliche Notizen bleiben erhalten.</small></div>
-    <p class="small-print">Offline funktioniert die App nach der Installation über eine HTTPS-Webadresse. Für die dauerhafte Nutzung auf dem iPad: In Safari „Teilen → Zum Home-Bildschirm“. Speicher ist nur lokal auf deinem Gerät und kann durch Browserbereinigung verloren gehen.</p>
-  </dialog>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script>if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});</script>
+  <section class="metrics" aria-label="Lernübersicht">
+    <div><span>Karten insgesamt</span><strong id="statAll">–</strong></div>
+    <div><span>Aktuell fällig</span><strong id="statDue">–</strong></div>
+    <div><span>In diesem Durchgang</span><strong id="statSession">–</strong></div>
+    <div><span>Davon nicht gewusst</span><strong id="statWrong">–</strong></div>
+  </section>
+
+  <nav class="study-filters" aria-label="Kartenauswahl">
+    <div class="toggle-group" role="group" aria-label="Lernmodus"><button class="toggle is-active" data-mode="due">Fällige</button><button class="toggle" data-mode="all">Alle Karten</button></div>
+    <label>Thema <select id="topicFilter"><option value="all">Alle Themen</option></select></label>
+    <label>Typ <select id="typeFilter"><option value="all">Alle Typen</option></select></label>
+    <span class="list-caption" id="positionLabel">–</span>
+  </nav>
+
+  <div class="workspace" id="workspace">
+    <section class="flashcard" aria-label="Karteikarte">
+      <div class="card-eyebrow"><span id="cardTopic">V01</span><span id="cardSource">Quelle</span></div>
+      <h1 class="card-question" id="cardQuestion">Die Karten werden geladen …</h1>
+      <div class="card-buttons"><button class="button" id="prevBtn">Zurück</button><button class="button" id="skipBtn">Überspringen</button></div>
+      <div class="solution-section">
+        <button class="button button-solution" id="showSolutionBtn" aria-expanded="false">Musterlösung anzeigen</button>
+        <div class="solution-content is-hidden" id="solutionContent">
+          <h2>Musterlösung</h2><div id="cardAnswer" class="answer-text"></div>
+          <div class="rating-wrap"><p>Eigene Einschätzung – keine automatische Korrektur</p><div class="rating-buttons">
+            <button class="button rate rate-wrong" data-rating="wrong">Nicht gewusst</button>
+            <button class="button rate" data-rating="partial">Teilweise</button>
+            <button class="button rate rate-good" data-rating="good">Gewusst</button>
+          </div></div>
+        </div>
+      </div>
+      <div class="card-footer" id="cardFooter">Freie handschriftliche Antwort auf dem Notizblatt.</div>
+    </section>
+
+    <section class="notes" aria-label="Notizblatt">
+      <div class="notes-heading"><div><h2>Dein Lösungsblatt</h2><p>Nur du bewertest deine Lösung. Keine Handschrifterkennung.</p></div><span class="paper-save" id="noteStatus">–</span></div>
+      <div class="pen-toolbar" role="toolbar" aria-label="Stiftwerkzeuge">
+        <div class="toolset"><button class="tool is-active" id="penBtn" aria-pressed="true">Stift</button><button class="tool" id="eraserBtn" aria-pressed="false">Radierer</button></div>
+        <div class="toolset" aria-label="Farben"><button class="color is-active" data-color="#182231" style="--ink:#182231" aria-label="Schwarz" title="Schwarz"></button><button class="color" data-color="#245b9c" style="--ink:#245b9c" aria-label="Blau" title="Blau"></button><button class="color" data-color="#aa3d3d" style="--ink:#aa3d3d" aria-label="Rot" title="Rot"></button></div>
+        <label class="compact-label">Stärke <select id="strokeWidth"><option value="1.6">Fein</option><option value="2.7" selected>Normal</option><option value="4.3">Breit</option></select></label>
+        <div class="toolset toolbar-end"><button class="tool" id="undoBtn" aria-label="Rückgängig">Rückgängig</button><button class="tool" id="redoBtn" aria-label="Wiederholen">Wiederholen</button><button class="tool" id="clearBtn">Löschen</button></div>
+      </div>
+      <div class="sheet sheet-grid" id="sheet"><canvas id="inkCanvas" aria-label="Freie Schreibfläche für Apple Pencil"></canvas></div>
+      <div class="sheet-foot"><label>Vorlage <select id="sheetStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="blank">Blanko</option></select></label><label>Blattlänge <select id="sheetHeight"><option value="520">Kurz</option><option value="800">Normal</option><option value="1250">Lang</option><option value="1850">Sehr lang</option></select></label><span>Notizen je Karte gespeichert</span></div>
+    </section>
+  </div>
+  <section id="emptyState" class="empty is-hidden"><h2>Keine Karte in dieser Auswahl</h2><p>Du kannst zu „Alle Karten“ wechseln oder deine Filter ändern.</p><button class="button button-primary" id="showAllBtn">Alle Karten anzeigen</button></section>
+  <footer>Stand: V01–V06 · Ü00–03 &nbsp;·&nbsp; Persönliche Daten bleiben lokal auf dem iPad &nbsp;·&nbsp; <button class="text-button" id="footerExport">Durchgang exportieren</button></footer>
+</div>
+
+<dialog id="settingsDialog" class="settings">
+  <div class="dialog-title"><h2>Einstellungen und Sicherung</h2><button class="button button-quiet" id="closeSettingsBtn">Schließen</button></div>
+  <p>Die Zeichnungen werden als Stiftstriche gespeichert. Du kannst den aktuellen Durchgang inklusive einzelner PNG-Bilder exportieren, damit ich anschließend deine Lösungen prüfen kann.</p>
+  <label class="checkrow"><input type="checkbox" id="pencilOnly" checked> Nur mit Apple Pencil zeichnen (Finger zum Scrollen)</label>
+  <div class="dialog-actions"><button class="button button-primary" id="exportSessionBtn2">Durchgang mit Skizzen als ZIP</button><button class="button" id="exportBackupBtn">Gesamtes Backup (JSON)</button><label class="button file-label">Backup wiederherstellen <input type="file" id="importBackup" accept=".json,application/json" hidden></label></div>
+  <h3>Gespeicherte Durchgänge</h3><div id="sessionList" class="session-list"><p>Wird geladen …</p></div>
+  <p class="small-note">Sicherung ist wichtig: Safari kann lokale Websitedaten löschen. Ein Export lädt keine Daten automatisch hoch. Erst wenn du die ZIP hier im Chat hochlädst, kann ich deine Skizzen ansehen.</p>
+</dialog>
+<div class="notice" id="notice" role="status" aria-live="polite"></div>
+<script>if('serviceWorker' in navigator && location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(console.warn);</script>
 </body>
 </html>
