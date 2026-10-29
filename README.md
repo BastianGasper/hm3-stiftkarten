@@ -1,39 +1,55 @@
 # HM3 Stiftkarten
 
-Kleine, kostenlose iPad-Web-App zum Lernen von **Höhere Mathematik III** mit dem Apple Pencil. Enthält 95 Karteikarten zu V01–V06 und Ü00–Ü03.
+Kostenlose, schlichte, offlinefähige iPad-Web-App für Höhere Mathematik III (TU Dortmund). **Keine Animationen, keine Handschrifterkennung, keine automatische Bewertung.** Handgezeichnete Lösungen werden je Karte gespeichert und bei jeder Bewertung als separater Versuch archiviert.
 
-Die App erkennt **keine Handschrift**. Du skizzierst deine Lösung frei auf dem Notizblatt, zeigst anschließend die Musterantwort an und bewertest selbst, wie gut du die Aufgabe konntest.
+## Start
 
-## Funktionen
+- Website: https://bastiangasper.github.io/hm3-stiftkarten/
+- Auf dem iPad in Safari öffnen und über **Teilen → Zum Home-Bildschirm** installieren.
+- Bei Apple-Pencil-Nutzung in *Einstellungen* **Nur mit Apple Pencil zeichnen** aktiv lassen. Finger können dann über die Schreibfläche scrollen. Falls das Schreiben auf einem konkreten iPad Probleme macht, diese Option testweise ausschalten.
 
-- 95 Karten mit Formeln, Beweisideen und Theoriefragen
-- Freies Schreiben mit Apple Pencil oder Finger, Stiftfarben, Radierer, Undo/Redo
-- Papier wahlweise kariert, liniert oder blanko und in mehreren Höhen
-- Ein Notizblatt pro Karte, automatisch lokal gespeichert
-- Selbstbewertung: Nicht gewusst / Teilweise / Gewusst
-- Wiederholung je nach Bewertung
-- JSON-Backup und -Wiederherstellung
-- Offline-Nutzung nach erstmaligem Laden der Webseite, wenn der Service Worker erfolgreich installiert wurde
+## Lernablauf und Auswertung
 
-## Nutzung auf dem iPad
+1. Frage öffnen, mit Apple Pencil auf das Lösungsblatt schreiben (ohne Texterkennung).
+2. Musterantwort aufdecken und **Nicht gewusst / Teilweise / Gewusst** wählen.
+3. Jede Bewertung speichert den *damaligen* handschriftlichen Stand als separaten **Versuch** im **Durchgang**. Späteres Überschreiben des Notizblatts entfernt keine bereits archivierten Versuche.
+4. **Durchgang exportieren** lädt eine ZIP-Datei herunter. Enthalten sind:
+   - `LERNDURCHGANG.html`: geordneter Bericht mit Fragen, Selbsteinschätzung, Skizzen, Musterantworten;
+   - `lerndurchgang.json`: strukturierte Daten inkl. Stiftstrichen und Karteikartentexten;
+   - `skizzen/*.png`: pro Versuch eine sichtbare PNG der Handschrift.
+5. **ZIP hier im Chat hochladen** und um Prüfung bitten. Erst dadurch gelangen Daten an ChatGPT; die App selbst führt keinen Upload durch.
 
-1. Nach Aktivierung von GitHub Pages die veröffentlichte Webadresse in **Safari** öffnen.
-2. Über **Teilen → Zum Home-Bildschirm** hinzufügen.
-3. Die App vom Home-Bildschirm starten und loslernen.
+Unter *Einstellungen → Gesamtes Backup (JSON)* lassen sich außerdem alle Durchgänge, aktuellen Notizen und Bewertungen sichern bzw. wiederherstellen. **Vor dem Löschen von Safari-Websitedaten unbedingt ein Backup exportieren.** Daten liegen lokal im Safari-Profil dieses Geräts, ohne Cloud-Synchronisierung.
 
-Die Notizen und Lernbewertungen bleiben **lokal auf dem jeweiligen Gerät**. Sie werden nicht zu GitHub oder einem Server übertragen und nicht zwischen Geräten synchronisiert. Bei Browserdatenlöschung oder Webadresswechsel sind sie möglicherweise weg – deshalb regelmäßig unter ⚙ ein **JSON-Backup** erstellen.
+## Neue Karteikarten hinzufügen (ohne Programmcode zu ändern)
 
-## Kostenlos mit GitHub Pages veröffentlichen
+Nur die Datei [`cards.json`](cards.json) erweitern. Beispiel:
 
-1. Neues **öffentliches** Repository `hm3-stiftkarten` auf GitHub erstellen.
-2. Die Dateien dieses Verzeichnisses ins **Stammverzeichnis** des `main`-Branches hochladen (also `index.html` direkt im Repository-Hauptordner).
-3. Unter **Settings → Pages → Build and deployment** die Option **Deploy from a branch** auswählen, dann **main** und **/(root)** und auf **Save** klicken.
-4. Die Seite ist anschließend unter `https://BastianGasper.github.io/hm3-stiftkarten/` erreichbar, sofern der Repositoryname unverändert bleibt.
+```json
+{
+  "id": "hm3-096",
+  "Bereich": "V06",
+  "Typ": "Beweisidee",
+  "Frage": "Unter welchen Voraussetzungen funktioniert die Variation der Konstanten?",
+  "Antwort": "Bei einer linearen DGL und bekanntem Fundamentalsystem ...",
+  "Quelle": "V05 S. 2-3"
+}
+```
 
-Quellcode und Kartentexte liegen in einem öffentlichen Repository, persönliche Notizen dagegen nur auf deinem Gerät. Die ursprünglichen Vorlesungs-PDFs werden nicht veröffentlicht.
+Die äußere Datei enthält ein Array dieser Kartenobjekte. **ID dauerhaft eindeutig und stabil halten**: Nachträgliches Ändern einer ID trennt alte Notizen und Bewertungen von der Karte. Bestehende Karten nicht umsortieren oder löschen, wenn sie noch verwendet werden. LaTeX in `Frage`/`Antwort` in `\\(...\\)` schreiben und korrekt für JSON escapen. Beim nächsten Onlineaufruf lädt die App die aktualisierte `cards.json` neu (offline wird die zuletzt gespeicherte Version angezeigt). Die lokale Lerndatenbank bleibt erhalten.
 
-## Technik
+Die App hat keinen serverseitigen Schreibzugriff, sodass lokal hinzugefügte Fragen nicht automatisch auf GitHub landen. Für regelmäßige Erweiterungen können die Karten über den GitHub-Connector direkt ergänzt werden.
 
-Statisches HTML, CSS, JavaScript, MathJax für Matheformeln, IndexedDB für Zeichnungen, LocalStorage für Lernfortschritt, Service Worker fürs Offline-Caching. Kein Backend, keine Anmeldung, kein Tracking.
+## Technische Architektur
 
-Die `index.html`, `app.js`, `data.js`, `style.css`, `manifest.webmanifest`, `sw.js` und der Ordner `assets/` müssen zusammen hochgeladen werden.
+- `index.html` – semantische Oberfläche, unveränderliche Steuerelement-IDs
+- `style.css` – responsives schlichtes Layout ohne Transitionen/Animationen
+- `app.js` – Kartenauswahl, Canvas, Versuchsspeicher, Exporte
+- `cards.json` – eigenständig pflegbarer Kartensatz (95 Startkarten)
+- `assets/mathjax-tex-svg.js` – lokale Formelsetzung, keine externen CDN-Abhängigkeiten
+- `sw.js` – Offline-Cache, Online-first für `cards.json`
+- `manifest.webmanifest`, `assets/icon-*.png` – Homescreen-Unterstützung
+
+Lokale Daten: `IndexedDB`-Datenbank `hm3-stiftkarten-notes` (Version 2) mit Stores `sketches`, `attempts`, `sessions`. Lernstatus und Einstellungen liegen in `localStorage` (`hm3-stiftkarten-v2`). Bestehende Zeichenblätter aus Version 1 werden weitergelesen und nicht gelöscht. JSON-Backup der Version 1 kann ebenfalls importiert werden. Bei fehlendem IndexedDB wird auf eine eingeschränkte localStorage-Sicherung zurückgegriffen; in diesem Fall unbedingt frühzeitig ein Backup erstellen.
+
+Keine Telemetrie, keine Konten. ZIP wird im Browser erstellt; kein Netztransfer der Notizen.
