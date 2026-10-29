@@ -3,3 +3,36 @@
 @media(max-width:1000px){.workspace{grid-template-columns:1fr}.flashcard{min-height:auto}.card-question{min-height:auto}.sheet{height:700px}.layout{padding:0 16px}.notes-heading{padding:14px 17px}.flashcard{padding:22px}}
 @media(max-width:640px){.topbar{min-height:72px}.brand strong{font-size:15px}.brand span{font-size:10px}.brandmark{width:34px;height:34px}.save-status{display:none}.sessionbar{align-items:flex-start;flex-direction:column;padding:17px 0}.sessionactions{width:100%}.sessionactions .button{flex:1}.metrics{grid-template-columns:repeat(2,1fr)}.metrics strong{font-size:20px}.study-filters{gap:8px}.study-filters label{flex:1}.study-filters label select{width:100%}.list-caption{width:100%;margin:0;text-align:right}.flashcard{padding:18px}.rating-buttons{grid-template-columns:1fr}.toolbar-end{margin-left:0}.sheet-foot>span{margin-left:0;width:100%}.pen-toolbar{gap:9px}.tool{padding:6px 9px}.layout{padding:0 12px}.top-actions .button{padding:8px}}
 @media(prefers-reduced-motion:no-preference){html{scroll-behavior:auto}}*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+
+/* Kartenverwaltung: bewusst ohne Animationen, klare klickbare Elemente. */
+.card-context{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap;justify-content:flex-end}
+.card-context #cardSource{overflow-wrap:anywhere;text-align:right}
+.card-small-button{border:1px solid #d3dce5;background:#fff;color:#344a60;padding:4px 9px;min-height:31px;border-radius:7px;font-weight:600;font-size:12px;white-space:nowrap}
+#cardFavoriteBtn{font-size:23px;line-height:1;color:#526779;min-width:38px;padding:3px 7px}
+#cardFavoriteBtn.is-favorite{color:#a66b13;border-color:#dac8a9;background:#fffcf6}
+#cardDisableBtn.is-disabled{color:#8e3d3d;border-color:#dcbfbd;background:#fcf8f7}
+.card-library{max-width:1060px;min-height:min(580px,86vh);width:calc(100vw - 24px)}
+.library-controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:24px 0 12px}
+.library-controls label,.editor-field{display:flex;flex-direction:column;gap:6px;color:#415466;font-size:13px;font-weight:600}
+.library-search{flex:1 1 320px}.library-controls input,.library-controls select,.editor-field textarea{border:1px solid #cbd5de;border-radius:8px;padding:10px 12px;background:#fff;color:#202d3b;outline-offset:2px;min-height:43px}
+.library-summary{font-size:12px;color:#627285;margin:12px 0}
+.library-list{border:1px solid var(--line);border-radius:9px;overflow:auto;max-height:min(61vh,720px)}
+.library-item{padding:14px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line);justify-content:space-between}
+.library-item:last-child{border-bottom:0}
+.library-item.is-disabled{background:#f7f8f9}
+.library-item-main{min-width:0;flex:1}
+.library-item-meta{font-size:11px;color:#627387;margin-bottom:5px}
+.library-item-question{font-size:14px;font-weight:580;overflow-wrap:anywhere;max-height:4.5em;overflow:hidden;white-space:pre-wrap}
+.library-item.is-disabled .library-item-question{color:#6c7884}
+.library-item-actions{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:6px;flex:0 0 auto}
+.library-item-actions button{padding:6px 10px;min-height:36px}
+.library-star{font-size:22px!important;min-width:38px}
+.library-star.is-favorite{color:#9c6716;background:#fffcf5;border-color:#dac8a9}
+.library-item-status{font-size:11px;color:#63758a}
+.card-editor{max-width:760px}
+.editor-field{margin:18px 0}
+.editor-field textarea{width:100%;min-height:112px;resize:vertical;line-height:1.55;font-size:15px;font-weight:400}
+#editAnswer{min-height:230px}
+.editor-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+@media(max-width:750px){.library-item{align-items:stretch;flex-direction:column;gap:9px}.library-item-actions{justify-content:flex-start}.library-list{max-height:58vh}.card-context{gap:6px}.card-eyebrow{align-items:flex-start}}
+@media(max-width:480px){.top-actions{gap:2px}.top-actions .button{font-size:11px;padding:7px}.card-context #cardSource{width:100%}.library-controls{margin:12px 0}}

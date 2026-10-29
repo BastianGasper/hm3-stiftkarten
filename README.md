@@ -21,6 +21,16 @@ Kostenlose, schlichte, offlinefähige iPad-Web-App für Höhere Mathematik III (
 
 Unter *Einstellungen → Gesamtes Backup (JSON)* lassen sich außerdem alle Durchgänge, aktuellen Notizen und Bewertungen sichern bzw. wiederherstellen. **Vor dem Löschen von Safari-Websitedaten unbedingt ein Backup exportieren.** Daten liegen lokal im Safari-Profil dieses Geräts, ohne Cloud-Synchronisierung.
 
+## Karten verwalten und selbst bearbeiten
+
+- Direkt an einer Karte: **☆ / ★** speichert einen Favoriten; **Deaktivieren / Aktivieren** blendet eine Karte aus normalen Lerndurchgängen aus, ohne Notizen oder Bewertungen zu löschen. **Bearbeiten** öffnet den Texteditor für Frage und Musterlösung.
+- **Karten verwalten** in der Kopfzeile zeigt alle Karten, durchsucht Frage, Lösung, Thema und Quelle und filtert nach aktiv, deaktiviert und Favorit. Über **Öffnen** kann man auch eine deaktivierte Karte einzeln ansehen.
+- **Favoriten** als Lernmodus zeigt nur aktive markierte Karten.
+- Bearbeitete Texte, Favoriten und Deaktivierungen werden **lokal auf dem verwendeten Gerät** gespeichert. Sie überleben Aktualisierungen der App und von `cards.json`, solange die stabilen Karten-IDs unverändert bleiben. Historische Versuche behalten die zum Zeitpunkt des Versuchs gespeicherten Texte.
+- **Original wiederherstellen** setzt nur Frage und Musterlösung dieser Karte zurück; vorhandene Handschriften und Lernfortschritte bleiben erhalten.
+- **Gesamtes Backup (JSON)** enthält auch diese persönlichen Änderungen. Wiederherstellen funktioniert mit alten V1/V2-Backups und neuen V2-Backups mit `cardPrefs`.
+- Wichtiger Unterschied: Änderungen im Karteneditor **ändern nicht** die GitHub-Datei `cards.json` und synchronisieren nicht zwischen Geräten. Für allgemeine Kartenaktualisierungen muss weiterhin die JSON-Datei im Repository bearbeitet werden. Deine lokalen Textänderungen haben auf diesem Gerät Vorrang vor der GitHub-Version, bis du sie zurücksetzt.
+
 ## Neue Karteikarten hinzufügen (ohne Programmcode zu ändern)
 
 Nur die Datei [`cards.json`](cards.json) erweitern. Beispiel:

@@ -19,7 +19,7 @@
 <div class="layout">
   <header class="topbar">
     <div class="brand"><div class="brandmark" aria-hidden="true">∫</div><div><strong>HM3 Stiftkarten</strong><span>Höhere Mathematik III · TU Dortmund</span></div></div>
-    <div class="top-actions"><span class="save-status" id="saveStatus" role="status">Speicher wird geprüft …</span><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
+    <div class="top-actions"><span class="save-status" id="saveStatus" role="status">Speicher wird geprüft …</span><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
   </header>
 
   <div class="sessionbar">
@@ -28,14 +28,14 @@
   </div>
 
   <section class="metrics" aria-label="Lernübersicht">
-    <div><span>Karten insgesamt</span><strong id="statAll">–</strong></div>
+    <div><span>Aktive Karten</span><strong id="statAll">–</strong></div>
     <div><span>Aktuell fällig</span><strong id="statDue">–</strong></div>
     <div><span>In diesem Durchgang</span><strong id="statSession">–</strong></div>
     <div><span>Davon nicht gewusst</span><strong id="statWrong">–</strong></div>
   </section>
 
   <nav class="study-filters" aria-label="Kartenauswahl">
-    <div class="toggle-group" role="group" aria-label="Lernmodus"><button class="toggle is-active" data-mode="due">Fällige</button><button class="toggle" data-mode="all">Alle Karten</button></div>
+    <div class="toggle-group" role="group" aria-label="Lernmodus"><button class="toggle is-active" data-mode="due">Fällige</button><button class="toggle" data-mode="all">Alle Karten</button><button class="toggle" data-mode="favorites">Favoriten</button></div>
     <label>Thema <select id="topicFilter"><option value="all">Alle Themen</option></select></label>
     <label>Typ <select id="typeFilter"><option value="all">Alle Typen</option></select></label>
     <span class="list-caption" id="positionLabel">–</span>
@@ -43,9 +43,9 @@
 
   <div class="workspace" id="workspace">
     <section class="flashcard" aria-label="Karteikarte">
-      <div class="card-eyebrow"><span id="cardTopic">V01</span><span id="cardSource">Quelle</span></div>
+      <div class="card-eyebrow"><span id="cardTopic">V01</span><div class="card-context"><span id="cardSource">Quelle</span><button class="card-small-button" id="cardFavoriteBtn" aria-label="Als Favorit markieren" aria-pressed="false" title="Favorit">☆</button><button class="card-small-button" id="cardDisableBtn" title="Karte aus dem Lernen nehmen">Deaktivieren</button></div></div>
       <h1 class="card-question" id="cardQuestion">Die Karten werden geladen …</h1>
-      <div class="card-buttons"><button class="button" id="prevBtn">Zurück</button><button class="button" id="skipBtn">Überspringen</button></div>
+      <div class="card-buttons"><button class="button" id="prevBtn">Zurück</button><button class="button" id="skipBtn">Überspringen</button><button class="button button-quiet" id="cardEditBtn">Bearbeiten</button></div>
       <div class="solution-section">
         <button class="button button-solution" id="showSolutionBtn" aria-expanded="false">Musterlösung anzeigen</button>
         <div class="solution-content is-hidden" id="solutionContent">
@@ -76,6 +76,16 @@
   <footer>Stand: V01–V06 · Ü00–03 &nbsp;·&nbsp; Persönliche Daten bleiben lokal auf dem iPad &nbsp;·&nbsp; <button class="text-button" id="footerExport">Durchgang exportieren</button></footer>
 </div>
 
+<dialog id="libraryDialog" class="settings card-library" aria-labelledby="libraryTitle">
+  <div class="dialog-title"><div><h2 id="libraryTitle">Alle Karteikarten</h2><p>Durchsuchen, favorisieren, deaktivieren oder bearbeiten.</p></div><button class="button button-quiet" id="closeLibraryBtn">Schließen</button></div>
+  <div class="library-controls"><label class="library-search">Suche <input id="librarySearch" type="search" placeholder="Frage, Antwort, Thema oder Quelle …" autocomplete="off"></label><label>Status <select id="libraryFilter"><option value="all">Alle Karten</option><option value="active">Aktiv</option><option value="favorite">Favoriten</option><option value="disabled">Deaktiviert</option></select></label></div>
+  <div class="library-summary" id="libraryCount" aria-live="polite">–</div><div id="libraryList" class="library-list"></div>
+  <p class="small-note">Änderungen an Fragen und Musterlösungen sind persönlich und bleiben auf diesem Gerät gespeichert. Die ursprüngliche Karte in <code>cards.json</code> bleibt erhalten. Mit dem Gesamtbackup kannst du auch deine Bearbeitungen sichern.</p>
+</dialog>
+<dialog id="editorDialog" class="settings card-editor" aria-labelledby="editorTitle">
+  <div class="dialog-title"><div><h2 id="editorTitle">Karte bearbeiten</h2><p id="editorHint">Frage und Musterlösung</p></div><button class="button button-quiet" id="closeEditorBtn">Schließen</button></div>
+  <form id="editCardForm"><label class="editor-field">Frage <textarea id="editQuestion" rows="4" required spellcheck="false"></textarea></label><label class="editor-field">Musterlösung <textarea id="editAnswer" rows="8" required spellcheck="false"></textarea></label><p class="small-note">Formeln kannst du wie bisher mit <code>\( ... \)</code> oder <code>\[ ... \]</code> eingeben. Keine automatische Auswertung.</p><div class="editor-actions"><button type="submit" class="button button-primary">Änderungen speichern</button><button type="button" class="button" id="resetCardBtn">Original wiederherstellen</button></div></form>
+</dialog>
 <dialog id="settingsDialog" class="settings">
   <div class="dialog-title"><h2>Einstellungen und Sicherung</h2><button class="button button-quiet" id="closeSettingsBtn">Schließen</button></div>
   <p>Die Zeichnungen werden als Stiftstriche gespeichert. Du kannst den aktuellen Durchgang inklusive einzelner PNG-Bilder exportieren, damit ich anschließend deine Lösungen prüfen kann.</p>
