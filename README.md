@@ -24,7 +24,7 @@ Unter *Einstellungen → Gesamtes Backup (JSON)* lassen sich außerdem alle Durc
 ## Karten verwalten und selbst bearbeiten
 
 - Direkt an einer Karte: **☆ / ★** speichert einen Favoriten; **Deaktivieren / Aktivieren** blendet eine Karte aus normalen Lerndurchgängen aus, ohne Notizen oder Bewertungen zu löschen. **Bearbeiten** öffnet den Texteditor für Frage und Musterlösung.
-- **Karten verwalten** in der Kopfzeile zeigt alle Karten, durchsucht Frage, Lösung, Thema und Quelle und filtert nach aktiv, deaktiviert und Favorit. Über **Öffnen** kann man auch eine deaktivierte Karte einzeln ansehen.
+- **Karten verwalten** in der Kopfzeile zeigt alle Karten, durchsucht Frage, Lösung, Thema und Quelle, klappt Musterlösungen direkt in der Liste auf und filtert nach aktiv, deaktiviert und Favorit. Über **Öffnen** kann man auch eine deaktivierte Karte einzeln ansehen.
 - **Favoriten** als Lernmodus zeigt nur aktive markierte Karten.
 - Bearbeitete Texte, Favoriten und Deaktivierungen werden **lokal auf dem verwendeten Gerät** gespeichert. Sie überleben Aktualisierungen der App und von `cards.json`, solange die stabilen Karten-IDs unverändert bleiben. Historische Versuche behalten die zum Zeitpunkt des Versuchs gespeicherten Texte.
 - **Original wiederherstellen** setzt nur Frage und Musterlösung dieser Karte zurück; vorhandene Handschriften und Lernfortschritte bleiben erhalten.

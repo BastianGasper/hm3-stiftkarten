@@ -36,3 +36,8 @@
 .editor-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
 @media(max-width:750px){.library-item{align-items:stretch;flex-direction:column;gap:9px}.library-item-actions{justify-content:flex-start}.library-list{max-height:58vh}.card-context{gap:6px}.card-eyebrow{align-items:flex-start}}
 @media(max-width:480px){.top-actions{gap:2px}.top-actions .button{font-size:11px;padding:7px}.card-context #cardSource{width:100%}.library-controls{margin:12px 0}}
+
+.library-preview{margin-top:9px;font-size:12px;color:#49657c}
+.library-preview summary{width:max-content;max-width:100%;cursor:pointer;list-style:revert;user-select:none}
+.library-preview-answer{margin-top:9px;color:var(--text);font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:7px;background:#fafbfd}
+.library-preview-answer mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
