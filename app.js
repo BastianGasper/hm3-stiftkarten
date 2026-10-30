@@ -380,7 +380,21 @@
     memory.sessions=[];for(const s of sessions){await writeRecord('sessions',s.id,s);memory.sessions.push(s);}
     if(!data.recordingActive){data.sessionId=null;data.recordingTouchedCards=[];}recordingTouchedCards=new Set(data.recordingTouchedCards||[]);storeData();rebuildCards();renderLibraryIfOpen();selected.seen.clear();selected.history=[];configureSheet();await advance();await updateSessionInfo();$('settingsDialog').close();notice('Backup wiederhergestellt.');
   }catch(e){console.error(e);notice('Import fehlgeschlagen: '+e.message);}}
-  async function sessionList(){const list=(await listRecords('sessions')).sort((a,b)=>b.startedAt.localeCompare(a.startedAt));$('sessionList').replaceChildren();for(const s of list){const entries=memory.attempts.filter(a=>a.sessionId===s.id);const el=document.createElement('div'),info=document.createElement('div'),button=document.createElement('button');info.innerHTML=`<strong>${safeText(dateString(s.startedAt))}${s.id===data.sessionId?' · aktuell':''}</strong><small>${entries.length} bewertete/übersprungene Karten</small>`;button.className='button';button.textContent='ZIP exportieren';button.addEventListener('click',()=>exportSession(s.id));el.append(info,button);$('sessionList').appendChild(el);}if(!list.length)$('sessionList').textContent='Noch keine Durchgänge.';}
+  async function sessionList(){
+    const list=(await listRecords('sessions')).sort((a,b)=>b.startedAt.localeCompare(a.startedAt));
+    $('sessionList').replaceChildren();
+    for(const ses of list){
+      const entries=memory.attempts.filter(a=>a.sessionId===ses.id);
+      const row=document.createElement('div'),info=document.createElement('div'),buttons=document.createElement('div');
+      info.className='recording-row-info';buttons.className='recording-row-actions';
+      const title=document.createElement('strong');title.textContent=ses.name||(ses.recording?'Unbenannte Aufnahme':'Früherer Lerndurchgang');
+      const meta=document.createElement('small');meta.textContent=dateString(ses.startedAt)+' · '+entries.length+' Versuche'+(ses.endedAt?'':' · läuft');
+      info.append(title,meta);
+      const exportBtn=document.createElement('button');exportBtn.className='button';exportBtn.textContent='ZIP exportieren';exportBtn.disabled=!entries.length;exportBtn.onclick=()=>exportSession(ses.id);
+      buttons.append(exportBtn);row.append(info,buttons);$('sessionList').append(row);
+    }
+    if(!list.length)$('sessionList').textContent='Noch keine Aufnahmen vorhanden.';
+  }
   // Offline-Paket ist die vollständige App-Shell; Lernstände bleiben ausschließlich
   // in IndexedDB/localStorage und werden NIE in den App-Cache geschrieben.
   let offlinePrepared=false;
