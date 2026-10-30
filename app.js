@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.8';
-  const OFFLINE_CACHE='hm3-stiftkarten-v8-20261030';
+  const APP_VERSION='2026-10-30.9';
+  const OFFLINE_CACHE='hm3-stiftkarten-v9-20261030';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
@@ -141,65 +141,49 @@
   function finishInk(){if(!ink.active&&!ink.erasing)return Promise.resolve();let changed=false;if(ink.active){ink.strokes.push(ink.active);ink.active=null;changed=true;}
     if(ink.erasing){ink.erasing=false;changed=changed||ink.strokes.length!==(ink.erasedBefore?.length||0);ink.erasedBefore=null;}
     if(changed){renderInk();return saveInk();}return Promise.resolve();}
-  // Zuverlässiger iPad-Schreibmodus: die Seite bleibt zwischen ALLEN Stiftkontakten
-  // fest an derselben Stelle. Erst der ausdrückliche Button "Scrollen" entsperrt sie.
+  // V9: Pencil = zeichnen, Finger = navigieren. Keine Sperre zwischen Pencil-Strichen.
+  let pageLocked=false,fingerScroll=null;
   function refreshInkModeUI(){
-    const writing=inkMode==='write';
-    const btn=$('inkModeBtn');
-    btn.textContent=writing?'Scrollen':'Schreiben';
-    btn.setAttribute('aria-pressed',String(writing));
-    btn.classList.toggle('is-writing',writing);
+    for(const [id,mode] of [['inkAutoBtn','auto'],['inkModeBtn','write'],['inkScrollBtn','scroll']]){
+      const b=$(id),active=inkMode===mode;
+      b.classList.toggle('is-selected',active);b.setAttribute('aria-pressed',String(active));
+    }
     document.body.classList.toggle('ink-scroll',inkMode==='scroll');
-    $('inkModeHint').textContent=writing?'Seite gesperrt · Pencil zeichnet':inkMode==='auto'?'Pencil berühren → Schreibsperre':'Scrollmodus · Tippe Schreiben';
-    pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';
-    $('sheet').style.touchAction=inkMode==='scroll'?'pan-y':'none';
+    $('inkModeHint').textContent=inkMode==='auto'?'Pencil zeichnet · Finger bedient':inkMode==='write'?'Schreiben · Scrollen gesperrt':'Scrollen · Stift pausiert';
+    const action=inkMode==='scroll'?'pan-y':'none';
+    pen.style.touchAction=action;$('sheet').style.touchAction=action;
   }
   function lockPage(){
-    if(inkMode==='write')return;
+    if(pageLocked)return;
     savedScrollY=window.scrollY||document.documentElement.scrollTop||0;
     document.body.style.position='fixed';
     document.body.style.top='-'+savedScrollY+'px';
-    document.body.style.left='0';
-    document.body.style.right='0';
-    document.body.style.width='100%';
-    document.body.classList.add('ink-locked');
-    document.documentElement.classList.add('ink-locked');
-    inkMode='write';
-    refreshInkModeUI();
+    document.body.style.left='0';document.body.style.right='0';document.body.style.width='100%';
+    document.body.classList.add('ink-locked');document.documentElement.classList.add('ink-locked');
+    pageLocked=true;
   }
   function unlockPage(){
-    if(inkMode!=='write')return;
-    document.body.style.position='';
-    document.body.style.top='';
-    document.body.style.left='';
-    document.body.style.right='';
-    document.body.style.width='';
-    document.body.classList.remove('ink-locked');
-    document.documentElement.classList.remove('ink-locked');
-    inkMode='scroll';
-    window.scrollTo(0,savedScrollY);
-    refreshInkModeUI();
+    if(!pageLocked)return;
+    document.body.style.position='';document.body.style.top='';
+    document.body.style.left='';document.body.style.right='';document.body.style.width='';
+    document.body.classList.remove('ink-locked');document.documentElement.classList.remove('ink-locked');
+    pageLocked=false;window.scrollTo(0,savedScrollY);
   }
-  function toggleInkMode(){
-    if(inkMode==='write'){
-      if(ink.pointerId!==null){ink.pointerId=null;ink.inputSource=null;finishInk();}
-      unlockPage();
-    }else lockPage();
+  function setInkMode(mode){
+    if(!['auto','write','scroll'].includes(mode))return;
+    if(ink.pointerId!==null)endStroke(ink.pointerId,ink.inputSource);
+    fingerScroll=null;unlockPage();inkMode=mode;
+    if(mode==='write')lockPage();
+    data.settings.inputMode=mode;storeData();refreshInkModeUI();
   }
   function beginStroke(point,id,source){
     if(!selected.current||inkMode==='scroll'||ink.pointerId!==null)return false;
-    if(inkMode!=='write')lockPage();
+    lockPage();fingerScroll=null;
     ink.pointerId=id;ink.inputSource=source;
-    ink.undo.push(ink.strokes.slice());
-    if(ink.undo.length>35)ink.undo.shift();
-    ink.redo=[];
-    if(ink.tool==='eraser'){
-      ink.erasing=true;ink.erasedBefore=ink.strokes.slice();erase(point);
-    }else{
-      ink.active={color:ink.color,width:ink.width/scale,points:[point]};
-      ctx.fillStyle=ink.color;
-      ctx.beginPath();ctx.arc(point.x,point.y,ink.active.width/2,0,Math.PI*2);ctx.fill();
-    }
+    ink.undo.push(ink.strokes.slice());if(ink.undo.length>35)ink.undo.shift();ink.redo=[];
+    if(ink.tool==='eraser'){ink.erasing=true;ink.erasedBefore=ink.strokes.slice();erase(point);}
+    else{ink.active={color:ink.color,width:ink.width/scale,points:[point]};
+      ctx.fillStyle=ink.color;ctx.beginPath();ctx.arc(point.x,point.y,ink.active.width/2,0,Math.PI*2);ctx.fill();}
     return true;
   }
   function continueStroke(point,id,source){
@@ -212,38 +196,56 @@
   }
   function endStroke(id,source){
     if(ink.pointerId!==id||ink.inputSource!==source)return;
-    ink.pointerId=null;ink.inputSource=null;
-    finishInk();
-    // Absichtlich KEIN unlockPage(): Absetzen des Pencils darf NIE scrollen.
+    ink.pointerId=null;ink.inputSource=null;finishInk();
+    // Nur aktiven Pencil-Strich sperren; beim Abheben sofort Fingersteuerung freigeben.
+    if(inkMode==='auto')unlockPage();
   }
-  // Safari kann touch-action:none ignorieren. Non-passive Touch-Listener greifen
-  // daher VOR dem nativen Scroll-Recognizer – ausdrücklich auch beim Neuansetzen.
-  const stylusTouches=e=>Array.from(e.changedTouches||[]).filter(t=>t.touchType==='stylus');
+  const isStylus=t=>t.touchType==='stylus';
   pen.addEventListener('touchstart',e=>{
-    const pencil=stylusTouches(e);
-    if(inkMode!=='scroll'&&e.cancelable)e.preventDefault();
-    if(pencil.length&&inkMode!=='scroll'){
-      const t=pencil[0];beginStroke(coord(t),'touch-'+t.identifier,'touch');
+    if(inkMode==='scroll'||!selected.current)return;
+    const touches=Array.from(e.changedTouches||[]);
+    const stylus=touches.find(isStylus);
+    if(stylus){
+      if(e.cancelable)e.preventDefault();
+      beginStroke(coord(stylus),'touch-'+stylus.identifier,'touch');
+      return;
+    }
+    if(inkMode==='auto'&&ink.pointerId===null){
+      const finger=touches.find(t=>!isStylus(t));
+      if(finger)fingerScroll={id:finger.identifier,y:finger.clientY};
+      return;
+    }
+    if(inkMode==='write'&&!data.settings.pencilOnly&&ink.pointerId===null&&touches[0]){
+      if(e.cancelable)e.preventDefault();
+      beginStroke(coord(touches[0]),'touch-'+touches[0].identifier,'touch');
     }
   },{passive:false});
   pen.addEventListener('touchmove',e=>{
-    if(inkMode!=='scroll'&&e.cancelable)e.preventDefault();
-    if(ink.inputSource!=='touch')return;
-    const t=Array.from(e.changedTouches||[]).find(x=>'touch-'+x.identifier===ink.pointerId);
-    if(t)continueStroke(coord(t),ink.pointerId,'touch');
+    if(inkMode==='scroll')return;
+    const touches=Array.from(e.changedTouches||[]);
+    if(ink.inputSource==='touch'){
+      const t=touches.find(t=>'touch-'+t.identifier===ink.pointerId);
+      if(t){if(e.cancelable)e.preventDefault();continueStroke(coord(t),ink.pointerId,'touch');}
+      return;
+    }
+    if(inkMode==='auto'&&fingerScroll&&ink.pointerId===null){
+      const t=touches.find(t=>t.identifier===fingerScroll.id&&!isStylus(t));
+      if(t){if(e.cancelable)e.preventDefault();const delta=fingerScroll.y-t.clientY;fingerScroll.y=t.clientY;if(delta)window.scrollBy(0,delta);}
+      return;
+    }
+    if(pageLocked&&e.cancelable)e.preventDefault();
   },{passive:false});
-  for(const eventName of ['touchend','touchcancel']){
-    pen.addEventListener(eventName,e=>{
-      if(ink.inputSource!=='touch')return;
-      const t=Array.from(e.changedTouches||[]).find(x=>'touch-'+x.identifier===ink.pointerId);
-      if(t)endStroke(ink.pointerId,'touch');
-    },{passive:false});
-  }
+  for(const name of ['touchend','touchcancel'])pen.addEventListener(name,e=>{
+    if(fingerScroll&&Array.from(e.changedTouches||[]).some(t=>t.identifier===fingerScroll.id))fingerScroll=null;
+    if(ink.inputSource!=='touch')return;
+    const t=Array.from(e.changedTouches||[]).find(t=>'touch-'+t.identifier===ink.pointerId);
+    if(t)endStroke(ink.pointerId,'touch');
+  },{passive:false});
   pen.addEventListener('pointerdown',e=>{
     if(inkMode==='scroll'||!selected.current)return;
-    if(data.settings.pencilOnly&&e.pointerType!=='pen')return;
+    if((inkMode==='auto'||data.settings.pencilOnly)&&e.pointerType!=='pen')return;
     if(e.cancelable)e.preventDefault();
-    const point=coord(e);if(!beginStroke(point,e.pointerId,'pointer'))return;
+    if(!beginStroke(coord(e),e.pointerId,'pointer'))return;
     try{pen.setPointerCapture(e.pointerId);}catch{}
   });
   pen.addEventListener('pointermove',e=>{
@@ -252,24 +254,17 @@
     const rect=pen.getBoundingClientRect();
     for(const ev of e.getCoalescedEvents?.()||[e])continueStroke(coord(ev,rect),e.pointerId,'pointer');
   });
-  for(const eventName of ['pointerup','pointercancel']){
-    pen.addEventListener(eventName,e=>endStroke(e.pointerId,'pointer'));
-  }
+  for(const name of ['pointerup','pointercancel'])pen.addEventListener(name,e=>endStroke(e.pointerId,'pointer'));
   pen.addEventListener('lostpointercapture',()=>{if(ink.inputSource==='pointer')endStroke(ink.pointerId,'pointer');});
-  // Zweite Schutzschicht gegen iPadOS-Seitenverschiebung, inkl. Palm-Rejection.
-  document.addEventListener('touchmove',e=>{
-    if(inkMode==='write'&&e.cancelable)e.preventDefault();
-  },{passive:false,capture:true});
-  document.addEventListener('gesturestart',e=>{
-    if(inkMode==='write'&&e.cancelable)e.preventDefault();
-  },{passive:false});
-  // Browser-Scrollen durch Leertaste / Touchpad / Rad bei gesperrter Schreibfläche
-  // verhindern, ohne Tastaturbefehle in Eingabefeldern zu blockieren.
-  document.addEventListener('wheel',e=>{
-    if(inkMode==='write'&&e.cancelable)e.preventDefault();
-  },{passive:false,capture:true});
-  $('inkModeBtn').addEventListener('click',toggleInkMode);
-  refreshInkModeUI();
+  // Keine globale Finger-Sperre mehr! Nur bei aktivem Stiftstrich/manuellem Schreiben.
+  document.addEventListener('touchmove',e=>{if(pageLocked&&e.cancelable)e.preventDefault();},{passive:false,capture:true});
+  document.addEventListener('gesturestart',e=>{if(pageLocked&&e.cancelable)e.preventDefault();},{passive:false});
+  document.addEventListener('wheel',e=>{if(pageLocked&&e.cancelable)e.preventDefault();},{passive:false,capture:true});
+  $('inkAutoBtn').addEventListener('click',()=>setInkMode('auto'));
+  $('inkModeBtn').addEventListener('click',()=>setInkMode('write'));
+  $('inkScrollBtn').addEventListener('click',()=>setInkMode('scroll'));
+  // Default Auto: vorherige permanente Schreibsperre wird nicht übernommen.
+  inkMode='auto';refreshInkModeUI();
   function tool(t){ink.tool=t;for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}}
   function undo(){if(!ink.undo.length)return;ink.redo.push(ink.strokes.slice());ink.strokes=ink.undo.pop();renderInk();saveInk();}
   function redo(){if(!ink.redo.length)return;ink.undo.push(ink.strokes.slice());ink.strokes=ink.redo.pop();renderInk();saveInk();}

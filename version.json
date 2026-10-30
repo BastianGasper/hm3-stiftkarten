@@ -1,10 +1,11 @@
 {
-  "version": "2026-10-30.8",
+  "version": "2026-10-30.9",
   "released": "2026-10-30",
   "features": [
     "Glatte Stiftkurven",
     "Höhere Stiftauflösung",
     "Offline-Vorbereitung",
-    "Updateprüfung bei Wiederverbindung"
+    "Updateprüfung bei Wiederverbindung",
+    "Automatische Apple-Pencil- und Finger-Unterscheidung"
   ]
 }

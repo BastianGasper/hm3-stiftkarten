@@ -72,3 +72,12 @@ body.ink-locked #inkCanvas,body.ink-locked .sheet{touch-action:none!important}
 #offlineSaveStatus{display:block;font-size:12px;color:#556879;margin-top:8px}
 #updateAppBtn.is-update-ready{border-color:#6d92b0;background:#eaf2f9;color:#244763;font-weight:700}
 @media(max-width:800px){.top-actions{flex-wrap:wrap;justify-content:flex-end;gap:6px}.network-status{font-size:11px}}
+
+/* V9 Eingabe: Auto bevorzugt, Schreiben/Scrollen als manuelle Alternativen. */
+.ink-mode-choices{display:flex;gap:3px;flex-wrap:nowrap;border:1px solid #cbd6df;border-radius:7px;padding:3px;background:#f5f7f9}
+.ink-mode-choice{min-width:0;min-height:35px;padding:6px 10px;border:0;border-radius:5px;background:transparent;color:#43566a;font-weight:550}
+.ink-mode-choice.is-selected{background:#264a68;color:#fff;font-weight:650}
+.ink-mode-dock{max-width:min(100vw - 20px,650px)}
+@media(max-width:700px){.ink-mode-dock{flex-direction:column;align-items:stretch;gap:5px}.ink-mode-dock span{font-size:11px;white-space:normal}.ink-mode-choices{justify-content:space-between}.ink-mode-choice{flex:1}}
+body:not(.ink-locked) #inkCanvas,body:not(.ink-locked) .sheet{touch-action:none!important}
+body.ink-scroll #inkCanvas,body.ink-scroll .sheet{touch-action:pan-y!important}
