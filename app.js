@@ -245,6 +245,10 @@
     const cross=(p,q,r)=>(q.x-p.x)*(r.y-p.y)-(q.y-p.y)*(r.x-p.x);
     const ab1=cross(a,b,c),ab2=cross(a,b,d);
     const cd1=cross(c,d,a),cd2=cross(c,d,b);
+    if(Math.abs(ab1)<1e-8&&Math.abs(ab2)<1e-8&&Math.abs(cd1)<1e-8&&Math.abs(cd2)<1e-8){
+      return Math.max(Math.min(a.x,b.x),Math.min(c.x,d.x))<=Math.min(Math.max(a.x,b.x),Math.max(c.x,d.x))&&
+             Math.max(Math.min(a.y,b.y),Math.min(c.y,d.y))<=Math.min(Math.max(a.y,b.y),Math.max(c.y,d.y));
+    }
     return ((ab1>=0&&ab2<=0)||(ab1<=0&&ab2>=0))&&
            ((cd1>=0&&cd2<=0)||(cd1<=0&&cd2>=0));
   }
@@ -253,12 +257,25 @@
     return Math.min(distPointSegment(a,c,d),distPointSegment(b,c,d),
                     distPointSegment(c,a,b),distPointSegment(d,a,b));
   }
+  // Bounding boxes are computed once per immutable Pencil stroke.
+  // This keeps erasing smooth even on long study sheets.
+  const strokeBounds=new WeakMap();
+  function boundsForStroke(stroke){
+    const saved=strokeBounds.get(stroke);if(saved)return saved;
+    const pts=stroke.points||[];
+    let left=Infinity,right=-Infinity,top=Infinity,bottom=-Infinity;
+    for(const p of pts){if(p.x<left)left=p.x;if(p.x>right)right=p.x;if(p.y<top)top=p.y;if(p.y>bottom)bottom=p.y;}
+    const bounds={left,right,top,bottom};
+    strokeBounds.set(stroke,bounds);return bounds;
+  }
   function eraserHitsStroke(from,to,stroke,radius){
     const points=stroke.points||[];
     if(!points.length)return false;
     const reach=radius+(stroke.width||2)*.5;
     const minX=Math.min(from.x,to.x)-reach,maxX=Math.max(from.x,to.x)+reach;
     const minY=Math.min(from.y,to.y)-reach,maxY=Math.max(from.y,to.y)+reach;
+    const bounds=boundsForStroke(stroke);
+    if(bounds.right<minX||bounds.left>maxX||bounds.bottom<minY||bounds.top>maxY)return false;
     // Ignore strokes whose bounding boxes never reach the current eraser path.
     if(points.length===1)return distPointSegment(points[0],from,to)<=reach;
     for(let i=1;i<points.length;i++){
@@ -519,7 +536,7 @@
     return new Promise(resolve=>c.toBlob(resolve,'image/png'));
   }
   function filenameFor(a,i){return `skizzen/${String(i+1).padStart(3,'0')}_${a.cardId.replace(/[^a-zA-Z0-9_-]/g,'_')}.png`;}
-  function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);}
+  function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
   const encoder=new TextEncoder();const crcTable=Array.from({length:256},(_,n)=>{let c=n;for(let j=0;j<8;j++)c=c&1?(c>>>1)^0xedb88320:c>>>1;return c>>>0;});
   function checksum(bytes){let c=0xffffffff;for(const b of bytes)c=crcTable[(c^b)&255]^(c>>>8);return(c^0xffffffff)>>>0;}
   function u16(d,o,n){d.setUint16(o,n,true);}function u32(d,o,n){d.setUint32(o,n>>>0,true);}
