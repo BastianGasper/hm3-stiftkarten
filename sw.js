@@ -1,5 +1,5 @@
 'use strict';
-const CACHE='hm3-stiftkarten-v11-20261030';
+const CACHE='hm3-stiftkarten-v12-20261030';
 const SHELL=['./','./index.html','./style.css','./app.js','./cards.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('hm3-stiftkarten-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));

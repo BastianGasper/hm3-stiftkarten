@@ -63,11 +63,12 @@
     <section class="notes" aria-label="Notizblatt">
       <div class="notes-heading"><div><h2>Dein Lösungsblatt</h2><p>Auto: Nur der Apple Pencil zeichnet. Finger und Handballen auf dem Blatt werden ignoriert. Scrollen mit den Pfeiltasten unten links.</p></div><span class="paper-save" id="noteStatus">–</span></div>
       <div class="pen-toolbar" role="toolbar" aria-label="Stiftwerkzeuge">
-        <div class="toolset"><button class="tool is-active" id="penBtn" aria-pressed="true">Stift</button><button class="tool" id="eraserBtn" aria-pressed="false">Radierer</button></div>
+        <div class="toolset"><button class="tool is-active" id="penBtn" aria-pressed="true">Stift</button><button class="tool" id="eraserBtn" aria-pressed="false" title="Ganzer Pencil-Zug – jeweils nur ein Strich pro Kontakt">Radierer · Strich</button></div>
         <div class="toolset" aria-label="Farben"><button class="color is-active" data-color="#182231" style="--ink:#182231" aria-label="Schwarz" title="Schwarz"></button><button class="color" data-color="#245b9c" style="--ink:#245b9c" aria-label="Blau" title="Blau"></button><button class="color" data-color="#aa3d3d" style="--ink:#aa3d3d" aria-label="Rot" title="Rot"></button></div>
         <label class="compact-label">Stärke <select id="strokeWidth"><option value="1.6">Fein</option><option value="2.7" selected>Normal</option><option value="4.3">Breit</option></select></label>
         <div class="toolset toolbar-end"><button class="tool" id="undoBtn" aria-label="Rückgängig">Rückgängig</button><button class="tool" id="redoBtn" aria-label="Wiederholen">Wiederholen</button><button class="tool" id="clearBtn">Löschen</button></div>
       </div>
+      <p class="eraser-hint is-hidden" id="eraserHint">Ganzstrich-Radierer: Einmal einen Strich berühren = dieser Pencil-Zug verschwindet komplett. Sich kreuzende Striche bleiben bestehen. Für den nächsten Strich den Pencil erneut aufsetzen.</p>
       <div class="sheet sheet-grid" id="sheet"><canvas id="inkCanvas" aria-label="Freie Schreibfläche für Apple Pencil"></canvas></div>
       <div class="sheet-foot"><label>Vorlage <select id="sheetStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="blank">Blanko</option></select></label><label>Blattlänge <select id="sheetHeight"><option value="520">Kurz</option><option value="800">Normal</option><option value="1250">Lang</option><option value="1850">Sehr lang</option><option value="custom">Individuell</option></select></label><span id="sheetLengthInfo" aria-live="polite">800 px · pro Karte</span><span>Notizen je Karte gespeichert</span></div>
     </section>

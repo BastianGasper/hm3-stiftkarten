@@ -59,6 +59,13 @@ Die äußere Datei enthält ein Array dieser Kartenobjekte. **ID dauerhaft einde
 
 Die App hat keinen serverseitigen Schreibzugriff, sodass lokal hinzugefügte Fragen nicht automatisch auf GitHub landen. Für regelmäßige Erweiterungen können die Karten über den GitHub-Connector direkt ergänzt werden.
 
+## Ganzstrich-Radierer und Apple-Pencil-Doppeltipp (V12)
+
+- **Radierer · Strich:** Ein einziger Pencil-Zug vom Aufsetzen bis zum Abheben bildet ein eigenes löschbares Element. Das gilt auch für Striche, die sich räumlich schneiden, berühren oder überlappen.
+- Beim Radieren wird der dem Berührungspunkt nächstgelegene **einzelne Strich** vollständig gelöscht. Bei exakter Überlappung hat der zuletzt gezeichnete Strich Vorrang. Jeder neue Radierkontakt entfernt höchstens einen ganzen Strich; für den nächsten erneut aufsetzen. **Rückgängig** stellt den gelöschten Strich wieder her.
+- Der **Hardware-Doppeltipp auf den Apple Pencil** wird in Safari/iPadOS-Web-Apps nicht als unterstütztes JavaScript-Ereignis bereitgestellt. Apples offizielle Erkennung läuft über native SwiftUI-/UIKit-Schnittstellen (`onPencilDoubleTap`/`UIPencilInteraction`). Deshalb kann diese PWA den Hardware-Doppeltipp nicht zuverlässig zum Werkzeugwechsel verwenden.
+- Die Schaltfläche **Radierer · Strich** ist die zuverlässige Alternative. Die Stifteingabe funktioniert dabei wie gehabt Pencil-only.
+
 ## Feinere Handschrift und Offline-Paket (V8)
 
 - Die Stiftlinien werden als geglättete quadratische Kurven gerendert. Normale Blätter nutzen bis zu **3x Pixeldichte pro CSS-Achse**, lange Blätter erhalten ein adaptives Limit von insgesamt höchstens ca. 16 Mio. Canvas-Pixeln.
