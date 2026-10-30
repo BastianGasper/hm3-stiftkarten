@@ -13,7 +13,8 @@
   const safeText = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const now = () => Date.now();
   let cards=[],originalCards=new Map(),byId=new Map(),db=null,storageError=false,version=0,editingCardId=null;
-  let data={progress:{},cardPrefs:{},settings:{pencilOnly:true,sheetStyle:'grid',sheetHeight:800},sessionId:null};
+  let data={progress:{},cardPrefs:{},settings:{pencilOnly:true,sheetStyle:'grid',sheetHeight:800},sessionId:null,recordingActive:false,lastRecordingId:null,recordingTouchedCards:[]};
+  let recordingTouchedCards=new Set(),recordingNamingId=null;
   let selected={mode:'due',topic:'all',type:'all',current:null,seen:new Set(),history:[],revealed:false};
   let ink={tool:'pen',color:'#182231',width:2.7,strokes:[],active:null,erasing:false,undo:[],redo:[],erasedBefore:null,pointerId:null,cardId:null};
   const pen=$('inkCanvas'),ctx=pen.getContext('2d',{alpha:true});
@@ -24,7 +25,7 @@
   const status=(msg,error=false)=>{$('saveStatus').textContent=msg;$('saveStatus').classList.toggle('is-warning',error);};
   function notice(msg){const el=$('notice');el.textContent=msg;el.classList.add('is-visible');clearTimeout(noticeTimeout);noticeTimeout=setTimeout(()=>el.classList.remove('is-visible'),2600);}
 
-  function loadData(){try{const current=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');const old=JSON.parse(localStorage.getItem(LEGACY)||'null');if(current){data={...data,...current,settings:{...data.settings,...current.settings},cardPrefs:current.cardPrefs||{}};}else if(old){data.progress=old.progress||{};data.settings.sheetStyle=old.settings?.paperStyle||'grid';data.settings.sheetHeight=old.settings?.paperHeight||800;data.settings.pencilOnly=old.settings?.penOnly??true;}}
+  function loadData(){try{const current=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');const old=JSON.parse(localStorage.getItem(LEGACY)||'null');if(current){data={...data,...current,settings:{...data.settings,...current.settings},cardPrefs:current.cardPrefs||{}};if(current.recordingActive===undefined){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];}recordingTouchedCards=new Set(data.recordingTouchedCards||[]);}else if(old){data.progress=old.progress||{};data.settings.sheetStyle=old.settings?.paperStyle||'grid';data.settings.sheetHeight=old.settings?.paperHeight||800;data.settings.pencilOnly=old.settings?.penOnly??true;}}
     catch(e){console.warn('Settings read',e);storageError=true;}}
   function storeData(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(data));if(!storageError)status('Auf diesem Gerät gespeichert');return true;}catch(e){console.warn('Settings save',e);storageError=true;status('Speichern fehlgeschlagen – exportieren!',true);return false;}}
   function openDB(){return new Promise(resolve=>{if(!window.indexedDB)return resolve(null);let req;try{req=indexedDB.open('hm3-stiftkarten-notes',2);}catch{return resolve(null);}
@@ -43,7 +44,9 @@
     try{return await idb(store,'getAll');}catch(e){storageError=true;status('Datenbankproblem – Backup erstellen',true);return [];}}
   async function getAllSketches(){const result={};if(db){try{const [keys,all]=await Promise.all([idb('sketches','keys'),idb('sketches','getAll')]);keys.forEach((k,i)=>result[k]=all[i]);}catch(e){console.warn(e)}}else{for(const [id,strokes] of memory.sketches)result[id]=strokes;for(const c of cards){if(!result[c.id]){try{const x=JSON.parse(localStorage.getItem('hm3-note-'+c.id)||'null');if(Array.isArray(x))result[c.id]=x;}catch{}}}}return result;}
   // Ensure every edit is serialized before changing cards or creating a snapshot.
-  function saveInk(){const id=ink.cardId;if(!id)return Promise.resolve();const snapshot=ink.strokes.slice();$('noteStatus').textContent='Speichert …';
+  function saveInk(){const id=ink.cardId;if(!id)return Promise.resolve();
+    if(data.recordingActive&&data.sessionId){recordingTouchedCards.add(id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();}
+    const snapshot=ink.strokes.slice();$('noteStatus').textContent='Speichert …';
     saveQueue=saveQueue.catch(()=>{}).then(async()=>{const ok=await writeRecord('sketches',id,snapshot);if(ink.cardId===id)$('noteStatus').textContent=ok?'Gespeichert':'Speichern fehlgeschlagen';if(!ok){storageError=true;status('Notiz nicht gespeichert – exportieren!',true);}});return saveQueue;
   }
   async function loadInk(cardId){const token=++noteLoads;ink.cardId=cardId;ink.strokes=[];ink.active=null;ink.erasing=false;ink.undo=[];ink.redo=[];renderInk();$('noteStatus').textContent='Lade Notizen …';await saveQueue.catch(()=>{});const strokes=await readRecord('sketches',cardId);if(noteLoads!==token)return;ink.strokes=Array.isArray(strokes)?strokes:[];renderInk();$('noteStatus').textContent=ink.strokes.length?'Gespeichert':'Leeres Blatt';}
@@ -68,28 +71,95 @@
   function due(c){const p=data.progress[c.id];return !p||!p.next||p.next<=now();}
   function filtered(){return cards.filter(c=>!c.disabled&&(selected.topic==='all'||c.Bereich===selected.topic)&&(selected.type==='all'||c.Typ===selected.type)&&(selected.mode!=='favorites'||c.favorite));}
   function eligible(){const pool=filtered().filter(c=>!selected.seen.has(c.id)&&(selected.mode==='all'||due(c)));return selected.mode==='due'?pool.sort((a,b)=>(data.progress[a.id]?.next||0)-(data.progress[b.id]?.next||0)):pool;}
-  function updateStats(){const a=cards.filter(c=>!c.disabled).length,d=cards.filter(c=>!c.disabled&&due(c)).length;const rows=memory.attempts.filter(e=>e.sessionId===data.sessionId);
+  function updateStats(){const a=cards.filter(c=>!c.disabled).length,d=cards.filter(c=>!c.disabled&&due(c)).length;const rows=data.recordingActive?memory.attempts.filter(e=>e.sessionId===data.sessionId):[];
     $('statAll').textContent=a;$('statDue').textContent=d;$('statSession').textContent=rows.length;$('statWrong').textContent=rows.filter(e=>e.rating==='wrong').length;}
   function updateFilters(){for(const t of [...new Set(cards.map(c=>c.Bereich))])$('topicFilter').add(new Option(t,t));for(const t of [...new Set(cards.map(c=>c.Typ))])$('typeFilter').add(new Option(t,t));}
   function math(){const nodes=[$('cardQuestion'),...(selected.revealed?[$('cardAnswer')]:[])];mathQueue=mathQueue.catch(()=>{}).then(async()=>{if(!window.MathJax?.typesetPromise)return;try{window.MathJax.typesetClear?.(nodes);await window.MathJax.typesetPromise(nodes);}catch(e){console.warn('MathJax',e)}});}
-  async function showCard(id){await finishInk();selected.current=id;selected.revealed=false;const card=byId.get(id);if(!card)return showEmpty();$('workspace').classList.remove('is-hidden');$('emptyState').classList.add('is-hidden');
+  async function showCard(id){await finishInk();await saveQueue.catch(()=>{});if(selected.current&&selected.current!==id)await archiveDraftIfNeeded();selected.current=id;selected.revealed=false;const card=byId.get(id);if(!card)return showEmpty();$('workspace').classList.remove('is-hidden');$('emptyState').classList.add('is-hidden');
     $('cardTopic').textContent=`${card.Bereich} · ${card.Typ}`;$('cardSource').textContent=card.Quelle?`Quelle: ${card.Quelle}`:'';$('cardQuestion').textContent=card.Frage;$('cardAnswer').textContent=card.Antwort;
     $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!selected.history.length;quickActions();configureSheet();await loadInk(id);math();}
   function showEmpty(){selected.current=null;$('workspace').classList.add('is-hidden');$('emptyState').classList.remove('is-hidden');updateStats();}
-  async function advance(){const next=eligible()[0];if(next)await showCard(next.id);else{await finishInk();await saveQueue.catch(()=>{});showEmpty();}updateStats();}
+  async function advance(){const next=eligible()[0];if(next)await showCard(next.id);else{await finishInk();await saveQueue.catch(()=>{});await archiveDraftIfNeeded();showEmpty();}updateStats();}
   async function nextCard(skipped=false){if(!selected.current)return;const id=selected.current;await finishInk();await saveQueue.catch(()=>{});if(skipped){await snapshotAttempt('skip');}selected.seen.add(id);selected.history.push(id);await advance();}
   async function goBack(){if(!selected.history.length)return;await finishInk();await saveQueue.catch(()=>{});const previous=selected.history.pop();selected.seen.delete(previous);await showCard(previous);updateStats();}
   function planNext(id,rating){const old=data.progress[id]||{reps:0,interval:0,streak:0},DAY=86400000;let iv;
     if(rating==='wrong'){iv=10/1440;old.streak=0;}else if(rating==='partial'){iv=old.interval>=1?Math.max(1,Math.round(old.interval*1.2)):1;old.streak=0;}else{iv=old.interval>=1?Math.max(3,Math.round(old.interval*2.2)):3;old.streak=(old.streak||0)+1;}
     old.reps=(old.reps||0)+1;old.last=now();old.interval=iv;old.next=old.last+iv*DAY;old.lastRating=rating;data.progress[id]=old;storeData();}
   function uuid(prefix){return prefix+'-'+new Date().toISOString().replace(/[-:.TZ]/g,'')+'-'+Math.random().toString(36).slice(2,9);}
-  async function ensureSession(){let s=data.sessionId?await readRecord('sessions',data.sessionId):null;if(!s){s={id:uuid('session'),startedAt:new Date().toISOString(),endedAt:null};data.sessionId=s.id;await writeRecord('sessions',s.id,s);storeData();}return s;}
-  async function snapshotAttempt(rating){const c=byId.get(selected.current);if(!c)return false;const rec={id:uuid('attempt'),sessionId:data.sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating,at:new Date().toISOString(),strokes:clone(ink.strokes),height:cardSheetHeight(c.id)};
-    const saved=await writeRecord('attempts',rec.id,rec);if(saved){if(db)memory.attempts.push(rec);return true;}return false;}
+  // Nur ausdrücklich gestartete Aufnahmen archivieren Versuche für die Kontrolle.
+  async function snapshotAttempt(rating){
+    if(!data.recordingActive||!data.sessionId)return true;
+    const c=byId.get(selected.current);if(!c)return false;
+    const currentStrokes=ink.strokes.filter(stroke=>stroke.recordingId===data.sessionId);
+    const rec={id:uuid('attempt'),sessionId:data.sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating,at:new Date().toISOString(),strokes:clone(currentStrokes),height:cardSheetHeight(c.id)};
+    const saved=await writeRecord('attempts',rec.id,rec);
+    if(saved){
+      if(db)memory.attempts.push(rec);
+      recordingTouchedCards.delete(c.id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();
+    }
+    return saved;
+  }
+  async function archiveDraftIfNeeded(){
+    if(!data.recordingActive||!data.sessionId||!selected.current||!recordingTouchedCards.has(selected.current))return;
+    await finishInk();await saveQueue.catch(()=>{});
+    if(ink.strokes.some(stroke=>stroke.recordingId===data.sessionId))return snapshotAttempt('draft');
+    recordingTouchedCards.delete(selected.current);data.recordingTouchedCards=[...recordingTouchedCards];storeData();
+  }
   let acting=false;
-  async function grade(rating){if(acting||!selected.current||!selected.revealed)return;acting=true;try{await finishInk();await saveQueue.catch(()=>{});const success=await snapshotAttempt(rating);if(!success){notice('Antwort konnte nicht gespeichert werden – bitte Backup sichern.');return;}planNext(selected.current,rating);await nextCard(false);}finally{acting=false;}}
-  async function startSession(){if(!confirm('Neuen Durchgang beginnen? Der bisherige Durchgang mit Skizzen bleibt gespeichert.'))return;await finishInk();await saveQueue.catch(()=>{});const old=await readRecord('sessions',data.sessionId);if(old){old.endedAt=new Date().toISOString();await writeRecord('sessions',old.id,old);}const s={id:uuid('session'),startedAt:new Date().toISOString(),endedAt:null};await writeRecord('sessions',s.id,s);data.sessionId=s.id;storeData();selected.seen.clear();selected.history=[];await advance();await updateSessionInfo();notice('Neuer Durchgang begonnen – alte Versuche bleiben erhalten.');}
-  async function updateSessionInfo(){const s=await readRecord('sessions',data.sessionId);$('sessionTitle').textContent='Seit '+dateString(s?.startedAt||now());$('sessionMeta').textContent='Bewertungen und Skizzen werden für jeden Versuch gespeichert';updateStats();}
+  async function grade(rating){
+    if(acting||!selected.current||!selected.revealed)return;
+    acting=true;
+    try{
+      await finishInk();await saveQueue.catch(()=>{});
+      if(!await snapshotAttempt(rating)){notice('Aufnahme konnte nicht gespeichert werden. Bitte Backup erstellen.');return;}
+      planNext(selected.current,rating);await nextCard(false);
+    }finally{acting=false;}
+  }
+  function updateRecordingUI(){
+    const active=!!data.recordingActive;
+    $('recordingStartBtn').disabled=active;
+    $('recordingStopBtn').disabled=!active;
+    $('recordingStatus').textContent=active?'● AUFNAHME LÄUFT':'KEINE AUFNAHME';
+    $('recordingStatus').classList.toggle('recording-live',active);
+    $('exportSessionBtn').disabled=active||!data.lastRecordingId;
+    $('exportSessionBtn2').disabled=active||!data.lastRecordingId;
+    $('exportSessionBtn').textContent=active?'Aufnahme läuft …':'Letzte Aufnahme exportieren';
+    $('sessionTitle').textContent=active?'Lösungen werden aufgezeichnet':data.lastRecordingId?'Aufnahme gespeichert':'Freies Lernen';
+    $('sessionMeta').textContent=active?'Nur während dieser Aufnahme neu gezeichnete Striche und bewertete Lösungen werden archiviert.':'Freies Lernen: Es werden keine neuen Kontrollversuche archiviert.';
+  }
+  async function startRecording(){
+    if(data.recordingActive)return;
+    await finishInk();await saveQueue.catch(()=>{});
+    const session={id:uuid('session'),name:'Unbenannte Aufnahme',recording:true,startedAt:new Date().toISOString(),endedAt:null};
+    if(!await writeRecord('sessions',session.id,session)){notice('Aufnahme konnte nicht gespeichert werden.');return;}
+    data.sessionId=session.id;data.recordingActive=true;recordingTouchedCards.clear();data.recordingTouchedCards=[];
+    storeData();updateRecordingUI();updateStats();
+    notice('Aufnahme gestartet. Neue Stiftstriche werden jetzt für die Kontrolle gespeichert.');
+  }
+  async function stopRecording(){
+    if(!data.recordingActive)return;
+    await finishInk();await saveQueue.catch(()=>{});await archiveDraftIfNeeded();
+    const id=data.sessionId,session=await readRecord('sessions',id);
+    if(!session){notice('Aufnahme nicht gefunden. Bitte Backup erstellen.');return;}
+    session.endedAt=new Date().toISOString();
+    if(!await writeRecord('sessions',id,session)){notice('Aufnahme konnte nicht beendet werden.');return;}
+    data.recordingActive=false;data.lastRecordingId=id;data.sessionId=null;
+    recordingTouchedCards.clear();data.recordingTouchedCards=[];
+    storeData();updateRecordingUI();updateStats();
+    recordingNamingId=id;
+    $('recordingNameInput').value='HM3 Aufnahme '+new Date().toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    $('recordingNameDialog').showModal();
+  }
+  async function saveRecordingName(exportAfter=false){
+    const id=recordingNamingId;if(!id)return;
+    const session=await readRecord('sessions',id);if(!session)return;
+    session.name=$('recordingNameInput').value.trim()||'Unbenannte Aufnahme';
+    if(!await writeRecord('sessions',id,session)){notice('Name konnte nicht gespeichert werden.');return;}
+    $('recordingNameDialog').close();recordingNamingId=null;
+    await sessionList();notice('Aufnahme „'+session.name+'“ lokal gespeichert.');
+    if(exportAfter)await exportSession(id);
+  }
+  async function updateSessionInfo(){updateRecordingUI();updateStats();}
 
   // Das Schreibblatt gehört zur Karte; das Ändern einer Karte verändert keine andere.
   function cardSheetHeight(id=selected.current){const n=Number(data.cardPrefs?.[id]?.sheetHeight);return Number.isFinite(n)&&n>=520?Math.min(n,4000):(Number(data.settings.sheetHeight)||800);}
@@ -182,7 +252,7 @@
     ink.pointerId=id;ink.inputSource=source;
     ink.undo.push(ink.strokes.slice());if(ink.undo.length>35)ink.undo.shift();ink.redo=[];
     if(ink.tool==='eraser'){ink.erasing=true;ink.erasedBefore=ink.strokes.slice();erase(point);}
-    else{ink.active={color:ink.color,width:ink.width/scale,points:[point]};
+    else{ink.active={color:ink.color,width:ink.width/scale,points:[point],recordingId:data.recordingActive?data.sessionId:null};
       ctx.fillStyle=ink.color;ctx.beginPath();ctx.arc(point.x,point.y,ink.active.width/2,0,Math.PI*2);ctx.fill();}
     return true;
   }
