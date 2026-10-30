@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.9';
-  const OFFLINE_CACHE='hm3-stiftkarten-v9-20261030';
+  const APP_VERSION='2026-10-30.10';
+  const OFFLINE_CACHE='hm3-stiftkarten-v10-20261030';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
