@@ -105,6 +105,25 @@
     if(ink.strokes.some(stroke=>stroke.recordingId===data.sessionId))return snapshotAttempt('draft');
     recordingTouchedCards.delete(selected.current);data.recordingTouchedCards=[...recordingTouchedCards];storeData();
   }
+  async function archivePendingDrafts(){
+    if(!data.recordingActive||!data.sessionId)return true;
+    // Nach einem iPad-Neustart kann die letzte Skizze auf einer anderen Karte
+    // liegen. Diese offenen Zeichnungen aus dem aktuellen Aufnahmelauf retten.
+    for(const cardId of [...recordingTouchedCards]){
+      const card=byId.get(cardId);
+      if(!card)continue;
+      const strokes=(await readRecord('sketches',cardId))||[];
+      const fresh=Array.isArray(strokes)?strokes.filter(stroke=>stroke.recordingId===data.sessionId):[];
+      if(fresh.length){
+        const rec={id:uuid('attempt'),sessionId:data.sessionId,cardId:card.id,Frage:card.Frage,Antwort:card.Antwort,Bereich:card.Bereich,Typ:card.Typ,Quelle:card.Quelle,rating:'draft',at:new Date().toISOString(),strokes:clone(fresh),height:cardSheetHeight(cardId)};
+        if(!await writeRecord('attempts',rec.id,rec))return false;
+        if(db)memory.attempts.push(rec);
+      }
+      recordingTouchedCards.delete(cardId);
+      data.recordingTouchedCards=[...recordingTouchedCards];storeData();
+    }
+    return true;
+  }
   let acting=false;
   async function grade(rating){
     if(acting||!selected.current||!selected.revealed)return;
@@ -139,6 +158,7 @@
   async function stopRecording(){
     if(!data.recordingActive)return;
     await finishInk();await saveQueue.catch(()=>{});await archiveDraftIfNeeded();
+    if(!await archivePendingDrafts()){notice('Einige Entwürfe konnten nicht gespeichert werden. Aufnahme bleibt aktiv.');return;}
     const id=data.sessionId,session=await readRecord('sessions',id);
     if(!session){notice('Aufnahme nicht gefunden. Bitte Backup erstellen.');return;}
     session.endedAt=new Date().toISOString();
