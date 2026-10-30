@@ -526,17 +526,29 @@
   function undo(){if(!ink.undo.length)return;ink.redo.push(ink.strokes.slice());ink.strokes=ink.undo.pop();renderInk();saveInk();}
   function redo(){if(!ink.redo.length)return;ink.undo.push(ink.strokes.slice());ink.strokes=ink.redo.pop();renderInk();saveInk();}
 
-  function imageForAttempt(a){const strokes=a.strokes||[];if(!strokes.length)return Promise.resolve(null);
-    // Höhere Exportauflösung, dieselben geglätteten Vektorkurven wie auf dem iPad.
-    const w=1600,sc=w/1000;let maxY=0;
-    for(const stroke of strokes)for(const p of stroke.points||[])if(p.y>maxY)maxY=p.y;
-    const h=Math.max(750,Math.min(9500,Math.ceil(Math.max(maxY+80,(a.height||800)*1000/Math.max(cssWidth,400))*sc)));
-    const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
-    x.fillStyle='#fff';x.fillRect(0,0,w,h);x.strokeStyle='#e9edf1';x.lineWidth=1;
-    for(let i=0;i<w;i+=35){x.beginPath();x.moveTo(i,0);x.lineTo(i,h);x.stroke();}
-    for(let i=0;i<h;i+=35){x.beginPath();x.moveTo(0,i);x.lineTo(w,i);x.stroke();}
-    x.scale(sc,sc);for(const stroke of strokes)strokePath(x,stroke);
-    return new Promise(resolve=>c.toBlob(resolve,'image/png'));
+  function imageForAttempt(a){
+    const strokes=a.strokes||[];
+    if(!strokes.length)return Promise.resolve(null);
+    let maxY=0;
+    for(const stroke of strokes)for(const point of stroke.points||[])if(point.y>maxY)maxY=point.y;
+    // Only export written content plus margin. Long, extended sheets must not
+    // lose their lower rows because of the former fixed 9500-pixel cap.
+    const logicalH=Math.max(480,maxY+100);
+    let w=Math.min(1600,Math.floor(Math.sqrt(12000000*1000/logicalH)),Math.floor(8900*1000/logicalH));
+    w=Math.max(600,w);
+    const sc=w/1000,h=Math.ceil(logicalH*sc);
+    if(w*h>16000000)throw Error('Skizze ist zu groß für einen sicheren PNG-Export');
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    const x=c.getContext('2d');
+    if(!x)throw Error('PNG-Zeichenfläche konnte nicht erstellt werden');
+    x.fillStyle='#fff';x.fillRect(0,0,w,h);
+    x.strokeStyle='#e9edf1';x.lineWidth=1;
+    const grid=Math.max(16,Math.round(22*sc));
+    for(let i=0;i<w;i+=grid){x.beginPath();x.moveTo(i,0);x.lineTo(i,h);x.stroke();}
+    for(let i=0;i<h;i+=grid){x.beginPath();x.moveTo(0,i);x.lineTo(w,i);x.stroke();}
+    x.scale(sc,sc);
+    for(const stroke of strokes)strokePath(x,stroke);
+    return new Promise((resolve,reject)=>c.toBlob(blob=>blob?resolve(blob):reject(new Error('PNG-Erstellung fehlgeschlagen')),'image/png'));
   }
   function filenameFor(a,i){return `skizzen/${String(i+1).padStart(3,'0')}_${a.cardId.replace(/[^a-zA-Z0-9_-]/g,'_')}.png`;}
   function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
