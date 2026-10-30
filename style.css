@@ -46,3 +46,15 @@
 .extend-button{font-weight:650;border-color:#b4c6d4;color:#244762;background:#f1f5f8}
 #sheetLengthInfo{white-space:nowrap;font-variant-numeric:tabular-nums;color:#4a6376}
 @media(max-width:640px){.top-actions{flex-wrap:wrap;justify-content:flex-end}.top-actions #updateAppBtn{font-size:11px}.sheet-foot .extend-button{min-height:40px}}
+
+/* Stabiler iPad-Schreibmodus: keine Scrollgesten zwischen zwei Pencil-Strichen. */
+html.ink-locked,body.ink-locked{overscroll-behavior:none!important;-webkit-overflow-scrolling:auto}
+body.ink-locked{overflow:hidden!important}
+.sheet{touch-action:pan-y}
+#inkCanvas{touch-action:none!important;-webkit-touch-callout:none!important;user-select:none!important;-webkit-user-select:none!important}
+.ink-mode-dock{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:20;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #bac8d4;border-radius:9px;padding:7px 8px 7px 12px;box-shadow:0 2px 9px #21384b1f;max-width:calc(100vw - 24px)}
+.ink-mode-dock span{font-size:12px;color:#43576a;white-space:nowrap}
+.ink-mode-button{min-width:112px;background:#264a68;color:#fff;font-weight:650;border-color:#264a68}
+.ink-mode-button.is-writing{background:#f8f4eb;color:#754c1d;border-color:#c6ab82}
+.ink-mode-button.is-writing:active{background:#f4ead7}
+@media(max-width:520px){.ink-mode-dock{right:10px;bottom:10px;gap:6px;padding:5px}.ink-mode-dock span{font-size:10px}.ink-mode-button{min-width:98px}}
