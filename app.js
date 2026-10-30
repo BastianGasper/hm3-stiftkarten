@@ -29,7 +29,7 @@
 
   function loadData(){try{const current=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');const old=JSON.parse(localStorage.getItem(LEGACY)||'null');if(current){data={...data,...current,settings:{...data.settings,...current.settings},cardPrefs:current.cardPrefs||{}};if(current.recordingActive===undefined){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];}recordingTouchedCards=new Set(data.recordingTouchedCards||[]);}else if(old){data.progress=old.progress||{};data.settings.sheetStyle=old.settings?.paperStyle||'grid';data.settings.sheetHeight=old.settings?.paperHeight||800;data.settings.pencilOnly=old.settings?.penOnly??true;}}
     catch(e){console.warn('Settings read',e);storageError=true;}}
-  function storeData(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(data));if(!storageError)status('Auf diesem Gerät gespeichert');return true;}catch(e){console.warn('Settings save',e);storageError=true;status('Speichern fehlgeschlagen – exportieren!',true);return false;}}
+  function storeData(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(data));if(!storageError)status('');return true;}catch(e){console.warn('Settings save',e);storageError=true;status('Speichern fehlgeschlagen – exportieren!',true);return false;}}
   function openDB(){return new Promise(resolve=>{if(!window.indexedDB)return resolve(null);let req;try{req=indexedDB.open('hm3-stiftkarten-notes',2);}catch{return resolve(null);}
     req.onupgradeneeded=()=>{const d=req.result;for(const name of ['sketches','attempts','sessions'])if(!d.objectStoreNames.contains(name))d.createObjectStore(name);};req.onsuccess=()=>resolve(req.result);req.onerror=()=>resolve(null);req.onblocked=()=>resolve(null);
   });}
@@ -749,7 +749,7 @@
     window.addEventListener('resize',resizeInk);document.addEventListener('visibilitychange',()=>{if(document.hidden)finishInk();});document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();e.shiftKey?redo():undo();}});
   }
   async function init(){try{$('appVersion').textContent='App V'+APP_VERSION.split('.').at(-1);status('Lade Karten …');loadData();db=await openDB();if(!db){storageError=true;status('Speicher eingeschränkt – Backup wichtig',true);try{memory.attempts=JSON.parse(localStorage.getItem('hm3-fallback-attempts')||'[]');memory.sessions=JSON.parse(localStorage.getItem('hm3-fallback-sessions')||'[]');}catch{}}
-    await fetchCards();memory.attempts=await listRecords('attempts');if(data.recordingActive&&data.sessionId){const old=await readRecord('sessions',data.sessionId);if(!old||old.endedAt){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];storeData();}}updateFilters();listeners();configureSheet();await advance();await updateSessionInfo();if(!storageError)status('Auf diesem Gerät gespeichert');
+    await fetchCards();memory.attempts=await listRecords('attempts');if(data.recordingActive&&data.sessionId){const old=await readRecord('sessions',data.sessionId);if(!old||old.endedAt){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];storeData();}}updateFilters();listeners();configureSheet();await advance();await updateSessionInfo();if(!storageError)status('');
   }catch(e){console.error(e);status('Start fehlgeschlagen',true);$('cardQuestion').textContent=e.message;}}
   init();
   // Automatische Hintergrund-Prüfung, sobald die PWA geöffnet oder wieder online ist.
