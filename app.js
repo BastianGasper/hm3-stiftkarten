@@ -574,6 +574,30 @@
     memory.sessions=[];for(const entry of sessions){if(!entry||typeof entry.id!=='string'||!await writeRecord('sessions',entry.id,entry))throw Error('Aufnahme konnte nicht gespeichert werden');if(db)memory.sessions.push(entry);}
     if(!data.recordingActive){data.sessionId=null;data.recordingTouchedCards=[];}recordingTouchedCards=new Set(data.recordingTouchedCards||[]);storeData();rebuildCards();renderLibraryIfOpen();selected.seen.clear();selected.history=[];configureSheet();await advance();await updateSessionInfo();$('settingsDialog').close();notice('Backup wiederhergestellt.');
   }catch(e){console.error(e);notice('Import fehlgeschlagen: '+e.message);}}
+  async function deleteRecording(id){
+    const record=await readRecord('sessions',id);
+    if(!record||data.recordingActive&&data.sessionId===id)return;
+    if(!confirm('Aufnahme „'+(record.name||'Unbenannt')+'“ und alle zugehörigen Kontrollversuche wirklich löschen? Deine normalen Pencil-Notizen und Bewertungen bleiben erhalten.'))return;
+    const affected=memory.attempts.filter(x=>x.sessionId===id);
+    try{
+      if(db){
+        for(const attempt of affected)await idb('attempts','delete',attempt.id);
+        await idb('sessions','delete',id);
+      }else{
+        const attempts=memory.attempts.filter(x=>x.sessionId!==id);
+        const sessions=memory.sessions.filter(x=>x.id!==id);
+        localStorage.setItem('hm3-fallback-attempts',JSON.stringify(attempts));
+        localStorage.setItem('hm3-fallback-sessions',JSON.stringify(sessions));
+        memory.sessions=sessions;
+      }
+      memory.attempts=memory.attempts.filter(x=>x.sessionId!==id);
+      if(data.lastRecordingId===id){
+        const remaining=(await listRecords('sessions')).filter(x=>x.endedAt).sort((x,y)=>y.startedAt.localeCompare(x.startedAt));
+        data.lastRecordingId=remaining[0]?.id||null;
+      }
+      storeData();await sessionList();updateRecordingUI();notice('Aufnahme und '+affected.length+' Kontrollversuche gelöscht.');
+    }catch(e){console.error('Recording delete',e);status('Löschen unvollständig – Backup erstellen',true);notice('Aufnahme konnte nicht vollständig gelöscht werden.');}
+  }
   async function sessionList(){
     const list=(await listRecords('sessions')).sort((a,b)=>b.startedAt.localeCompare(a.startedAt));
     $('sessionList').replaceChildren();
@@ -585,7 +609,12 @@
       const meta=document.createElement('small');meta.textContent=dateString(ses.startedAt)+' · '+entries.length+' Versuche'+(ses.endedAt?'':' · läuft');
       info.append(title,meta);
       const exportBtn=document.createElement('button');exportBtn.className='button';exportBtn.textContent='ZIP exportieren';exportBtn.disabled=!entries.length;exportBtn.onclick=()=>exportSession(ses.id);
-      buttons.append(exportBtn);row.append(info,buttons);$('sessionList').append(row);
+      const deleteBtn=document.createElement('button');
+      deleteBtn.className='button recording-delete';
+      deleteBtn.textContent='Löschen';deleteBtn.setAttribute('aria-label','Aufnahme '+(ses.name||'Unbenannt')+' löschen');
+      deleteBtn.disabled=data.recordingActive&&data.sessionId===ses.id;
+      deleteBtn.addEventListener('click',()=>deleteRecording(ses.id));
+      buttons.append(exportBtn,deleteBtn);row.append(info,buttons);$('sessionList').append(row);
     }
     if(!list.length)$('sessionList').textContent='Noch keine Aufnahmen vorhanden.';
   }
