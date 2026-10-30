@@ -44,7 +44,7 @@
     try{await idb(store,'put',key,value);return true;}catch(e){console.warn('Save failed',e);storageError=true;status('Speicherproblem – Backup erstellen',true);return false;}}
   async function listRecords(store){if(!db){if(store==='sketches')return [...memory.sketches].map(([id,strokes])=>({id,strokes}));return clone(memory[store]);}
     try{return await idb(store,'getAll');}catch(e){storageError=true;status('Datenbankproblem – Backup erstellen',true);return [];}}
-  async function getAllSketches(){const result={};if(db){try{const [keys,all]=await Promise.all([idb('sketches','keys'),idb('sketches','getAll')]);keys.forEach((k,i)=>result[k]=all[i]);}catch(e){console.warn(e)}}else{for(const [id,strokes] of memory.sketches)result[id]=strokes;for(const c of cards){if(!result[c.id]){try{const x=JSON.parse(localStorage.getItem('hm3-note-'+c.id)||'null');if(Array.isArray(x))result[c.id]=x;}catch{}}}}return result;}
+  async function getAllSketches(){const result={};if(db){try{const [keys,all]=await Promise.all([idb('sketches','keys'),idb('sketches','getAll')]);keys.forEach((k,i)=>result[k]=all[i]);}catch(e){storageError=true;status('Backup nicht möglich: Notizen konnten nicht gelesen werden',true);throw e;}}else{for(const [id,strokes] of memory.sketches)result[id]=strokes;for(const c of cards){if(!result[c.id]){try{const x=JSON.parse(localStorage.getItem('hm3-note-'+c.id)||'null');if(Array.isArray(x))result[c.id]=x;}catch{}}}}return result;}
   // Ensure every edit is serialized before changing cards or creating a snapshot.
   function saveInk(){const id=ink.cardId;if(!id)return Promise.resolve();
     if(data.recordingActive&&data.sessionId&&ink.strokes.some(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId)){recordingTouchedCards.add(id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();}
@@ -570,13 +570,27 @@
     const entries=[['LERNDURCHGANG.html',encoder.encode(reportHTML(attempts,images,ses))],['lerndurchgang.json',encoder.encode(JSON.stringify(result,null,2))],['HINWEIS.txt',encoder.encode('HM3 Stiftkarten: Im Ordner skizzen liegen PNG-Bilder deiner handschriftlichen Lösungen. Lade diese ZIP-Datei bei ChatGPT hoch und bitte um die Prüfung aller Aufgaben. Die App führt keine automatische Bewertung aus.\n')],...files];
     const filename=(ses.name||'HM3-Aufnahme').replace(/[^a-zA-Z0-9 _-]/g,'').trim().replace(/\s+/g,'_').slice(0,55)||'HM3-Aufnahme';download(await zip(entries),filename+'_'+sessionId.slice(-7)+'.zip');notice(`Durchgang exportiert: ${attempts.length} Versuche, ${files.length} Skizzen.`);
   }catch(e){console.error('ZIP export',e);notice('Export fehlgeschlagen: '+e.message);}finally{exporting=false;updateRecordingUI();}}
-  async function exportBackup(){if(ink.pointerId!==null){notice('Zum Sichern zuerst den Pencil abheben.');return;}await finishInk();await saveQueue.catch(()=>{});const payload={app:'HM3 Stiftkarten',version:2,exportedAt:new Date().toISOString(),data,sketches:await getAllSketches(),attempts:await listRecords('attempts'),sessions:await listRecords('sessions')};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),`HM3-Gesamtbackup-${new Date().toISOString().slice(0,10)}.json`);notice('Gesamtes Backup erstellt.');}
+  async function exportBackup(){
+    if(ink.pointerId!==null){notice('Zum Sichern zuerst den Pencil abheben.');return;}
+    try{
+      await finishInk();await saveQueue.catch(()=>{});
+      if(storageError&&db)throw Error('Speicherfehler erkannt – bitte zuerst die Datenbank prüfen');
+      const sketches=await getAllSketches();
+      const attempts=db?await idb('attempts','getAll'):await listRecords('attempts');
+      const sessions=db?await idb('sessions','getAll'):await listRecords('sessions');
+      const payload={app:'HM3 Stiftkarten',version:2,exportedAt:new Date().toISOString(),data,sketches,attempts,sessions};
+      download(new Blob([JSON.stringify(payload)],{type:'application/json'}),'HM3-Gesamtbackup-'+new Date().toISOString().slice(0,10)+'.json');
+      notice('Vollständiges Gesamtbackup erstellt.');
+    }catch(e){console.error('Backup export',e);status('Backup unvollständig – nicht gespeichert',true);notice('Backup fehlgeschlagen: '+e.message);}
+  }
   async function importBackup(file){try{const input=JSON.parse(await file.text());if(input.app!=='HM3 Stiftkarten')throw Error('Keine HM3-Datensicherung');
     if(input.version!==1&&input.version!==2)throw Error('Unbekannte Backup-Version');
     const rawSketches=input.version===1?(input.notes||{}):(input.sketches||{});
     if(!input.data||typeof input.data!=='object'||Array.isArray(input.data)||!rawSketches||typeof rawSketches!=='object'||Array.isArray(rawSketches)||Object.values(rawSketches).some(x=>!Array.isArray(x)))
       throw Error('Backup unvollständig oder beschädigt – vorhandene Daten bleiben erhalten');
-    if(input.version===2&&(!Array.isArray(input.attempts)||!Array.isArray(input.sessions)))throw Error('Aufnahme-Archive fehlen – Import abgebrochen');
+    if(input.version===2&&(!Array.isArray(input.attempts)||!Array.isArray(input.sessions)||
+      input.attempts.some(x=>!x||typeof x.id!=='string')||input.sessions.some(x=>!x||typeof x.id!=='string')))
+      throw Error('Aufnahme-Archive unvollständig – vorhandene Daten bleiben erhalten');
     if(!confirm('Backup wiederherstellen? Bestehende Bewertungen und Notizen werden überschrieben. Erstelle vorher ein eigenes Backup.'))return;
     await finishInk();await saveQueue.catch(()=>{});let sketches,attempts=[],sessions=[];if(input.version===1){sketches=input.notes||{};data={...data,progress:input.data?.progress||{},cardPrefs:{},settings:{...data.settings,pencilOnly:input.data?.settings?.penOnly??true,sheetStyle:input.data?.settings?.paperStyle||'grid',sheetHeight:input.data?.settings?.paperHeight||800}};}else if(input.version===2){sketches=input.sketches||{};attempts=input.attempts||[];sessions=input.sessions||[];data={...data,...input.data,cardPrefs:input.data?.cardPrefs||{},settings:{...data.settings,...(input.data?.settings||{})}};}else throw Error('Unbekannte Backup-Version');
     if(db){for(const store of ['sketches','attempts','sessions'])await new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).clear();tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}else{memory.sketches.clear();memory.attempts=[];memory.sessions=[];
