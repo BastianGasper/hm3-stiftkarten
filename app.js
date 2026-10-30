@@ -13,6 +13,7 @@
   let selected={mode:'due',topic:'all',type:'all',current:null,seen:new Set(),history:[],revealed:false};
   let ink={tool:'pen',color:'#182231',width:2.7,strokes:[],active:null,erasing:false,undo:[],redo:[],erasedBefore:null,pointerId:null,cardId:null};
   const pen=$('inkCanvas'),ctx=pen.getContext('2d',{alpha:true});
+  let fingerScroll=null,appRefreshing=false;
   let logicalWidth=1000,logicalHeight=1000,cssWidth=800,cssHeight=800,scale=1;
   let noteLoads=0,saveQueue=Promise.resolve(),noticeTimeout=null,mathQueue=Promise.resolve();
   const status=(msg,error=false)=>{$('saveStatus').textContent=msg;$('saveStatus').classList.toggle('is-warning',error);};
@@ -46,7 +47,7 @@
     if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=response.map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
   function prefFor(id){return data.cardPrefs?.[id]||{};}
   function rebuildCards(){cards=[...originalCards.values()].map(c=>{const p=prefFor(c.id);return {...c,Frage:typeof p.Frage==='string'&&p.Frage.trim()?p.Frage:c.Frage,Antwort:typeof p.Antwort==='string'&&p.Antwort.trim()?p.Antwort:c.Antwort,favorite:!!p.favorite,disabled:!!p.disabled};});byId=new Map(cards.map(c=>[c.id,c]));}
-  function mutatePref(id,patch){const p={...prefFor(id),...patch};if(!data.cardPrefs)data.cardPrefs={};if(!p.favorite&&!p.disabled&&!('Frage'in p)&&!('Antwort'in p))delete data.cardPrefs[id];else data.cardPrefs[id]=p;storeData();rebuildCards();updateStats();}
+  function mutatePref(id,patch){const p={...prefFor(id),...patch};if(!data.cardPrefs)data.cardPrefs={};if(!p.favorite&&!p.disabled&&!('Frage'in p)&&!('Antwort'in p)&&!('sheetHeight'in p))delete data.cardPrefs[id];else data.cardPrefs[id]=p;storeData();rebuildCards();updateStats();}
   function quickActions(){const c=byId.get(selected.current);if(!c)return;const fav=$('cardFavoriteBtn');fav.textContent=c.favorite?'★':'☆';fav.classList.toggle('is-favorite',c.favorite);fav.setAttribute('aria-pressed',String(c.favorite));fav.setAttribute('aria-label',c.favorite?'Favorit entfernen':'Als Favorit markieren');fav.title=c.favorite?'Favorit entfernen':'Als Favorit markieren';const dis=$('cardDisableBtn');dis.textContent=c.disabled?'Aktivieren':'Deaktivieren';dis.classList.toggle('is-disabled',c.disabled);dis.title=c.disabled?'Karte wieder in den Lerndurchgang aufnehmen':'Karte aus normalen Lerndurchgängen nehmen';}
   async function changeFavorite(id){const c=byId.get(id);if(!c)return;mutatePref(id,{favorite:!c.favorite});if(selected.current===id){quickActions();if(selected.mode==='favorites'&&!byId.get(id).favorite){selected.seen.add(id);await advance();}}renderLibraryIfOpen();}
   async function changeDisabled(id){const c=byId.get(id);if(!c)return;if(selected.current===id){await finishInk();await saveQueue.catch(()=>{});}mutatePref(id,{disabled:!c.disabled});if(selected.current===id&&byId.get(id).disabled){selected.seen.add(id);await advance();}else if(selected.current===id)quickActions();else if(!selected.current&&!byId.get(id).disabled)await advance();renderLibraryIfOpen();}
@@ -68,7 +69,7 @@
   function math(){const nodes=[$('cardQuestion'),...(selected.revealed?[$('cardAnswer')]:[])];mathQueue=mathQueue.catch(()=>{}).then(async()=>{if(!window.MathJax?.typesetPromise)return;try{window.MathJax.typesetClear?.(nodes);await window.MathJax.typesetPromise(nodes);}catch(e){console.warn('MathJax',e)}});}
   async function showCard(id){await finishInk();selected.current=id;selected.revealed=false;const card=byId.get(id);if(!card)return showEmpty();$('workspace').classList.remove('is-hidden');$('emptyState').classList.add('is-hidden');
     $('cardTopic').textContent=`${card.Bereich} · ${card.Typ}`;$('cardSource').textContent=card.Quelle?`Quelle: ${card.Quelle}`:'';$('cardQuestion').textContent=card.Frage;$('cardAnswer').textContent=card.Antwort;
-    $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!selected.history.length;quickActions();await loadInk(id);math();}
+    $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!selected.history.length;quickActions();configureSheet();await loadInk(id);math();}
   function showEmpty(){selected.current=null;$('workspace').classList.add('is-hidden');$('emptyState').classList.remove('is-hidden');updateStats();}
   async function advance(){const next=eligible()[0];if(next)await showCard(next.id);else{await finishInk();await saveQueue.catch(()=>{});showEmpty();}updateStats();}
   async function nextCard(skipped=false){if(!selected.current)return;const id=selected.current;await finishInk();await saveQueue.catch(()=>{});if(skipped){await snapshotAttempt('skip');}selected.seen.add(id);selected.history.push(id);await advance();}
@@ -78,15 +79,18 @@
     old.reps=(old.reps||0)+1;old.last=now();old.interval=iv;old.next=old.last+iv*DAY;old.lastRating=rating;data.progress[id]=old;storeData();}
   function uuid(prefix){return prefix+'-'+new Date().toISOString().replace(/[-:.TZ]/g,'')+'-'+Math.random().toString(36).slice(2,9);}
   async function ensureSession(){let s=data.sessionId?await readRecord('sessions',data.sessionId):null;if(!s){s={id:uuid('session'),startedAt:new Date().toISOString(),endedAt:null};data.sessionId=s.id;await writeRecord('sessions',s.id,s);storeData();}return s;}
-  async function snapshotAttempt(rating){const c=byId.get(selected.current);if(!c)return false;const rec={id:uuid('attempt'),sessionId:data.sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating,at:new Date().toISOString(),strokes:clone(ink.strokes),height:Number(data.settings.sheetHeight)};
+  async function snapshotAttempt(rating){const c=byId.get(selected.current);if(!c)return false;const rec={id:uuid('attempt'),sessionId:data.sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating,at:new Date().toISOString(),strokes:clone(ink.strokes),height:cardSheetHeight(c.id)};
     const saved=await writeRecord('attempts',rec.id,rec);if(saved){if(db)memory.attempts.push(rec);return true;}return false;}
   let acting=false;
   async function grade(rating){if(acting||!selected.current||!selected.revealed)return;acting=true;try{await finishInk();await saveQueue.catch(()=>{});const success=await snapshotAttempt(rating);if(!success){notice('Antwort konnte nicht gespeichert werden – bitte Backup sichern.');return;}planNext(selected.current,rating);await nextCard(false);}finally{acting=false;}}
   async function startSession(){if(!confirm('Neuen Durchgang beginnen? Der bisherige Durchgang mit Skizzen bleibt gespeichert.'))return;await finishInk();await saveQueue.catch(()=>{});const old=await readRecord('sessions',data.sessionId);if(old){old.endedAt=new Date().toISOString();await writeRecord('sessions',old.id,old);}const s={id:uuid('session'),startedAt:new Date().toISOString(),endedAt:null};await writeRecord('sessions',s.id,s);data.sessionId=s.id;storeData();selected.seen.clear();selected.history=[];await advance();await updateSessionInfo();notice('Neuer Durchgang begonnen – alte Versuche bleiben erhalten.');}
   async function updateSessionInfo(){const s=await readRecord('sessions',data.sessionId);$('sessionTitle').textContent='Seit '+dateString(s?.startedAt||now());$('sessionMeta').textContent='Bewertungen und Skizzen werden für jeden Versuch gespeichert';updateStats();}
 
-  function configureSheet(){const h=Number(data.settings.sheetHeight)||800;const style=data.settings.sheetStyle||'grid';$('sheetHeight').value=String(h);$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;pen.style.touchAction=data.settings.pencilOnly?'pan-y':'none';resizeInk();}
-  function resizeInk(){const r=pen.getBoundingClientRect();if(!r.width||!r.height)return;cssWidth=r.width;cssHeight=r.height;scale=cssWidth/1000;logicalHeight=cssHeight/scale;const dpr=Math.min(devicePixelRatio||1,2);pen.width=Math.round(cssWidth*dpr);pen.height=Math.round(cssHeight*dpr);ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);renderInk();}
+  // Das Schreibblatt gehört zur Karte; das Ändern einer Karte verändert keine andere.
+  function cardSheetHeight(id=selected.current){const n=Number(data.cardPrefs?.[id]?.sheetHeight);return Number.isFinite(n)&&n>=520?Math.min(n,4000):(Number(data.settings.sheetHeight)||800);}
+  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction='none';resizeInk();}
+  async function setCardSheetHeight(height){if(!selected.current)return;const h=Math.min(4000,Math.max(520,Math.round(height)));await finishInk();await saveQueue.catch(()=>{});const id=selected.current;data.cardPrefs[id]={...prefFor(id),sheetHeight:h};storeData();configureSheet();notice('Blattlänge gespeichert – deine bisherigen Skizzen bleiben erhalten.');}
+  function resizeInk(){const r=pen.getBoundingClientRect();if(!r.width||!r.height)return;cssWidth=r.width;cssHeight=r.height;scale=cssWidth/1000;logicalHeight=cssHeight/scale;const dpr=Math.min(devicePixelRatio||1,2,Math.sqrt(10000000/(cssWidth*cssHeight)));pen.width=Math.round(cssWidth*dpr);pen.height=Math.round(cssHeight*dpr);ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);renderInk();}
   function coord(e,r=pen.getBoundingClientRect()){return {x:Math.max(0,Math.min(1000,(e.clientX-r.left)/scale)),y:Math.max(0,Math.min(logicalHeight,(e.clientY-r.top)/scale))};}
   function strokePath(c,s){const p=s.points||[];if(!p.length)return;c.lineWidth=s.width||2;c.strokeStyle=s.color||'#182231';c.fillStyle=c.strokeStyle;c.lineJoin='round';c.lineCap='round';if(p.length===1){c.beginPath();c.arc(p[0].x,p[0].y,(s.width||2)/2,0,Math.PI*2);c.fill();return;}c.beginPath();c.moveTo(p[0].x,p[0].y);for(let i=1;i<p.length;i++)c.lineTo(p[i].x,p[i].y);c.stroke();}
   function renderInk(){ctx.clearRect(0,0,1000,logicalHeight);for(const s of ink.strokes)strokePath(ctx,s);if(ink.active)strokePath(ctx,ink.active);}
@@ -96,16 +100,25 @@
   function finishInk(){if(!ink.active&&!ink.erasing)return Promise.resolve();let changed=false;if(ink.active){ink.strokes.push(ink.active);ink.active=null;changed=true;}
     if(ink.erasing){ink.erasing=false;changed=changed||ink.strokes.length!==(ink.erasedBefore?.length||0);ink.erasedBefore=null;}
     if(changed){renderInk();return saveInk();}return Promise.resolve();}
-  pen.addEventListener('pointerdown',e=>{if(!selected.current||(data.settings.pencilOnly&&e.pointerType!=='pen'))return;if(ink.pointerId!==null)return;e.preventDefault();ink.pointerId=e.pointerId;try{pen.setPointerCapture(e.pointerId);}catch{}const p=coord(e);ink.undo.push(clone(ink.strokes));if(ink.undo.length>35)ink.undo.shift();ink.redo=[];
+  // iPad: Safari erhält kein natives Scroll-/Zoomrecht auf der Zeichenfläche.
+  // Finger scrollt bei aktiviertem Pencil-Modus bewusst separat; Apple Pencil zeichnet.
+  pen.addEventListener('pointerdown',e=>{if(!selected.current)return;
+    if(data.settings.pencilOnly&&e.pointerType!=='pen'){
+      if(e.pointerType==='touch'&&fingerScroll===null){fingerScroll={id:e.pointerId,y:e.clientY};try{pen.setPointerCapture(e.pointerId);}catch{}}
+      return;
+    }
+    if(ink.pointerId!==null)return;e.preventDefault();ink.pointerId=e.pointerId;try{pen.setPointerCapture(e.pointerId);}catch{}const p=coord(e);ink.undo.push(clone(ink.strokes));if(ink.undo.length>35)ink.undo.shift();ink.redo=[];
     if(ink.tool==='eraser'){ink.erasing=true;ink.erasedBefore=clone(ink.strokes);erase(p);}else{ink.active={color:ink.color,width:ink.width/scale,points:[p]};ctx.fillStyle=ink.color;ctx.beginPath();ctx.arc(p.x,p.y,ink.active.width/2,0,Math.PI*2);ctx.fill();}});
-  pen.addEventListener('pointermove',e=>{if(ink.pointerId!==e.pointerId)return;e.preventDefault();const list=e.getCoalescedEvents?.()||[e],rect=pen.getBoundingClientRect();for(const ev of list){const p=coord(ev,rect);if(ink.erasing)erase(p);else if(ink.active){const last=ink.active.points[ink.active.points.length-1];if(last.x===p.x&&last.y===p.y)continue;ink.active.points.push(p);drawSegment(last,p,ink.active);}}});
-  function penUp(e){if(ink.pointerId!==e.pointerId)return;ink.pointerId=null;finishInk();}
-  pen.addEventListener('pointerup',penUp);pen.addEventListener('pointercancel',penUp);pen.addEventListener('lostpointercapture',()=>{if(ink.pointerId!==null){ink.pointerId=null;finishInk();}});
+  pen.addEventListener('pointermove',e=>{if(fingerScroll?.id===e.pointerId){if(e.cancelable)e.preventDefault();const dy=fingerScroll.y-e.clientY;fingerScroll.y=e.clientY;if(Math.abs(dy)>0)window.scrollBy(0,dy);return;}if(ink.pointerId!==e.pointerId)return;e.preventDefault();const list=e.getCoalescedEvents?.()||[e],rect=pen.getBoundingClientRect();for(const ev of list){const p=coord(ev,rect);if(ink.erasing)erase(p);else if(ink.active){const last=ink.active.points[ink.active.points.length-1];if(last.x===p.x&&last.y===p.y)continue;ink.active.points.push(p);drawSegment(last,p,ink.active);}}});
+  function penUp(e){if(fingerScroll?.id===e.pointerId){fingerScroll=null;return;}if(ink.pointerId!==e.pointerId)return;ink.pointerId=null;finishInk();}
+  pen.addEventListener('pointerup',penUp);pen.addEventListener('pointercancel',penUp);pen.addEventListener('lostpointercapture',()=>{fingerScroll=null;if(ink.pointerId!==null){ink.pointerId=null;finishInk();}});
+  // Ergänzende Safari-Absicherung gegen Scrollen durch Pencil-TouchEvents.
+  pen.addEventListener('touchmove',e=>{const stylus=[...e.touches].some(t=>t.touchType==='stylus');if((stylus||ink.pointerId!==null)&&e.cancelable)e.preventDefault();},{passive:false});
   function tool(t){ink.tool=t;for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}}
   function undo(){if(!ink.undo.length)return;ink.redo.push(clone(ink.strokes));ink.strokes=ink.undo.pop();renderInk();saveInk();}
   function redo(){if(!ink.redo.length)return;ink.undo.push(clone(ink.strokes));ink.strokes=ink.redo.pop();renderInk();saveInk();}
 
-  function imageForAttempt(a){const strokes=a.strokes||[];if(!strokes.length)return Promise.resolve(null);const w=1200,sc=w/1000,maxY=Math.max(0,...strokes.flatMap(s=>(s.points||[]).map(p=>p.y)));const height=Math.max(550,Math.min(3200,Math.ceil(Math.max(maxY+80, (a.height||800)*1000/Math.max(cssWidth,400))*sc)));const c=document.createElement('canvas');c.width=w;c.height=height;const x=c.getContext('2d');x.fillStyle='white';x.fillRect(0,0,w,height);x.strokeStyle='#e9edf1';x.lineWidth=1;for(let i=0;i<w;i+=27){x.beginPath();x.moveTo(i,0);x.lineTo(i,height);x.stroke();}for(let i=0;i<height;i+=27){x.beginPath();x.moveTo(0,i);x.lineTo(w,i);x.stroke();}x.scale(sc,sc);for(const s of strokes)strokePath(x,s);return new Promise(resolve=>c.toBlob(resolve,'image/png'));}
+  function imageForAttempt(a){const strokes=a.strokes||[];if(!strokes.length)return Promise.resolve(null);const w=1200,sc=w/1000;let maxY=0;for(const stroke of strokes){for(const p of stroke.points||[]){if(p.y>maxY)maxY=p.y;}}const height=Math.max(550,Math.min(7200,Math.ceil(Math.max(maxY+80,(a.height||800)*1000/Math.max(cssWidth,400))*sc)));const c=document.createElement('canvas');c.width=w;c.height=height;const x=c.getContext('2d');x.fillStyle='white';x.fillRect(0,0,w,height);x.strokeStyle='#e9edf1';x.lineWidth=1;for(let i=0;i<w;i+=27){x.beginPath();x.moveTo(i,0);x.lineTo(i,height);x.stroke();}for(let i=0;i<height;i+=27){x.beginPath();x.moveTo(0,i);x.lineTo(w,i);x.stroke();}x.scale(sc,sc);for(const s of strokes)strokePath(x,s);return new Promise(resolve=>c.toBlob(resolve,'image/png'));}
   function filenameFor(a,i){return `skizzen/${String(i+1).padStart(3,'0')}_${a.cardId.replace(/[^a-zA-Z0-9_-]/g,'_')}.png`;}
   function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);}
   const encoder=new TextEncoder();const crcTable=Array.from({length:256},(_,n)=>{let c=n;for(let j=0;j<8;j++)c=c&1?(c>>>1)^0xedb88320:c>>>1;return c>>>0;});
@@ -119,7 +132,7 @@
   function reportHTML(attempts,images,session){const rows=attempts.map((a,i)=>`<section><header><strong>${i+1}. ${safeText(a.Bereich)} · ${safeText(a.Typ)}</strong><span>${safeText(ratingLabel(a.rating))} · ${safeText(new Date(a.at).toLocaleString('de-DE'))}</span></header><h2>${safeText(a.Frage)}</h2><p class="source">${safeText(a.Quelle)}</p>${images[i]?`<img src="${safeText(images[i])}" alt="Handschriftliche Lösung ${i+1}">`:'<p class="none">Keine Handschrift zu diesem Versuch gespeichert.</p>'}<details><summary>Musterantwort (als LaTeX-Text)</summary><pre>${safeText(a.Antwort)}</pre></details></section>`).join('');return `<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>HM3 – Lerndurchgang</title><style>body{font:15px/1.6 system-ui,Arial;color:#1c2b3a;max-width:900px;margin:36px auto;padding:0 16px}h1{margin-bottom:4px}small,.source,.none{color:#657387}section{page-break-inside:avoid;border:1px solid #ddd;border-radius:8px;margin:22px 0;padding:20px}section header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}section header span{color:#536577}h2{font-size:18px}img{max-width:100%;border:1px solid #eee}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}details{margin-top:15px}</style><h1>HM3 – Lerndurchgang</h1><small>Beginn: ${safeText(new Date(session.startedAt).toLocaleString('de-DE'))} · ${attempts.length} Versuche · Einschätzung durch Lernenden</small><p>Die folgenden Skizzen sind unveränderte handschriftliche Antworten. Die Musterlösung wurde nicht automatisch bewertet.</p>${rows}</html>`;}
   let exporting=false;
   async function exportSession(sessionId=data.sessionId){if(exporting)return;exporting=true;$('exportSessionBtn').disabled=true;try{await finishInk();await saveQueue.catch(()=>{});const ses=await readRecord('sessions',sessionId);const attempts=(await listRecords('attempts')).filter(x=>x.sessionId===sessionId).sort((a,b)=>a.at.localeCompare(b.at));
-    if(sessionId===data.sessionId&&selected.current&&ink.strokes.length){const c=byId.get(selected.current);attempts.push({id:'draft',sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating:'draft',at:new Date().toISOString(),strokes:clone(ink.strokes),height:Number(data.settings.sheetHeight)});}
+    if(sessionId===data.sessionId&&selected.current&&ink.strokes.length){const c=byId.get(selected.current);attempts.push({id:'draft',sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating:'draft',at:new Date().toISOString(),strokes:clone(ink.strokes),height:cardSheetHeight(c.id)});}
     if(!attempts.length){notice('Noch keine Versuche oder Skizzen für diesen Durchgang.');return;}const files=[],images=[];
     for(let i=0;i<attempts.length;i++){const b=await imageForAttempt(attempts[i]);if(b){const path=filenameFor(attempts[i],i);files.push([path,b]);images.push(path);}else images.push(null);}
     const result={format:'hm3-study-session',version:2,exportedAt:new Date().toISOString(),session:ses,attempts:attempts.map((a,i)=>({...a,sketchImage:images[i]})),cardsInDeck:cards.length,notesIncluded:'Als PNG-Bilder und editierbare Strichdaten in JSON'};
@@ -136,13 +149,46 @@
     storeData();rebuildCards();renderLibraryIfOpen();await ensureSession();selected.seen.clear();selected.history=[];configureSheet();await advance();await updateSessionInfo();$('settingsDialog').close();notice('Backup wiederhergestellt.');
   }catch(e){console.error(e);notice('Import fehlgeschlagen: '+e.message);}}
   async function sessionList(){const list=(await listRecords('sessions')).sort((a,b)=>b.startedAt.localeCompare(a.startedAt));$('sessionList').replaceChildren();for(const s of list){const entries=memory.attempts.filter(a=>a.sessionId===s.id);const el=document.createElement('div'),info=document.createElement('div'),button=document.createElement('button');info.innerHTML=`<strong>${safeText(dateString(s.startedAt))}${s.id===data.sessionId?' · aktuell':''}</strong><small>${entries.length} bewertete/übersprungene Karten</small>`;button.className='button';button.textContent='ZIP exportieren';button.addEventListener('click',()=>exportSession(s.id));el.append(info,button);$('sessionList').appendChild(el);}if(!list.length)$('sessionList').textContent='Noch keine Durchgänge.';}
+  // Update erzwingen, ohne IndexedDB, Stiftstriche oder Selbstbewertungen zu löschen.
+  async function refreshApp(){
+    if(appRefreshing)return;
+    if(!navigator.onLine){notice('Offline: Zum Aktualisieren bitte Internet verbinden.');return;}
+    const button=$('updateAppBtn');appRefreshing=true;button.disabled=true;button.textContent='Prüfe Update …';
+    try{
+      await finishInk();await saveQueue.catch(()=>{});
+      if(storageError||!storeData())throw new Error('Speicherung nicht bestätigt. Bitte zuerst ein Gesamtbackup erstellen.');
+      if('serviceWorker' in navigator){
+        const reg=await navigator.serviceWorker.getRegistration();
+        if(reg){
+          await reg.update();
+          if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+          if(reg.installing||reg.waiting){
+            await Promise.race([
+              new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true})),
+              new Promise(resolve=>setTimeout(resolve,3000))
+            ]);
+          }
+        }
+      }
+      // Nur zwischengespeicherte App-Dateien löschen, nie die persönlichen Notizen.
+      if('caches' in window){
+        const keys=await caches.keys();
+        for(const key of keys.filter(k=>k.startsWith('hm3-stiftkarten-'))){
+          const cache=await caches.open(key);
+          await Promise.all(['./','./index.html','./app.js','./style.css','./cards.json','./manifest.webmanifest'].map(p=>cache.delete(new URL(p,location.href),{ignoreSearch:true})));
+        }
+      }
+      const url=new URL(location.href);url.searchParams.set('updated',String(Date.now()));window.location.replace(url.href);
+    }catch(e){console.error('App update',e);notice('Aktualisierung fehlgeschlagen: '+e.message);}
+    finally{appRefreshing=false;button.disabled=false;button.textContent='App aktualisieren';}
+  }
   function listeners(){document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',async()=>{selected.mode=b.dataset.mode;selected.seen.clear();selected.history=[];document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('is-active',x===b));await advance();}));
     $('topicFilter').addEventListener('change',async e=>{selected.topic=e.target.value;selected.seen.clear();selected.history=[];await advance();});$('typeFilter').addEventListener('change',async e=>{selected.type=e.target.value;selected.seen.clear();selected.history=[];await advance();});$('prevBtn').onclick=goBack;$('skipBtn').onclick=()=>nextCard(true);$('showAllBtn').onclick=async()=>{selected.mode='all';selected.seen.clear();selected.history=[];document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.mode==='all'));await advance();};
     $('showSolutionBtn').onclick=()=>{selected.revealed=!selected.revealed;$('solutionContent').classList.toggle('is-hidden',!selected.revealed);$('showSolutionBtn').textContent=selected.revealed?'Musterlösung ausblenden':'Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded',String(selected.revealed));if(selected.revealed)math();};
     document.querySelectorAll('[data-rating]').forEach(b=>b.onclick=()=>grade(b.dataset.rating));$('newSessionBtn').onclick=startSession;$('exportSessionBtn').onclick=()=>exportSession();$('exportSessionBtn2').onclick=()=>exportSession();$('footerExport').onclick=()=>exportSession();
     $('penBtn').onclick=()=>tool('pen');$('eraserBtn').onclick=()=>tool('eraser');document.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{ink.color=b.dataset.color;document.querySelectorAll('[data-color]').forEach(x=>x.classList.toggle('is-active',x===b));tool('pen');});$('strokeWidth').onchange=e=>ink.width=Number(e.target.value);$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;
     $('clearBtn').onclick=()=>{if(!ink.strokes.length)return;if(!confirm('Alle Striche auf diesem Blatt löschen? Frühere exportierte Versuche bleiben bestehen.'))return;ink.undo.push(clone(ink.strokes));ink.strokes=[];ink.redo=[];renderInk();saveInk();};
-    $('sheetStyle').onchange=e=>{data.settings.sheetStyle=e.target.value;storeData();configureSheet();};$('sheetHeight').onchange=e=>{data.settings.sheetHeight=Number(e.target.value);storeData();configureSheet();};
+    $('sheetStyle').onchange=e=>{data.settings.sheetStyle=e.target.value;storeData();configureSheet();};$('sheetHeight').onchange=e=>{const h=Number(e.target.value);if(Number.isFinite(h))setCardSheetHeight(h);};$('extendSheetBtn').onclick=()=>setCardSheetHeight(cardSheetHeight()+400);$('updateAppBtn').onclick=refreshApp;
     $('cardFavoriteBtn').onclick=()=>selected.current&&changeFavorite(selected.current);$('cardDisableBtn').onclick=()=>selected.current&&changeDisabled(selected.current);$('cardEditBtn').onclick=()=>selected.current&&openEditor(selected.current);
     $('libraryBtn').onclick=()=>{renderLibrary();$('libraryDialog').showModal();};$('closeLibraryBtn').onclick=()=>$('libraryDialog').close();$('librarySearch').oninput=renderLibrary;$('libraryFilter').onchange=renderLibrary;
     $('editCardForm').onsubmit=saveEditor;$('closeEditorBtn').onclick=closeEditor;$('resetCardBtn').onclick=resetEditor;$('editorDialog').addEventListener('close',()=>editingCardId=null);
