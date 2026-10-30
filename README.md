@@ -6,7 +6,7 @@ Kostenlose, schlichte, offlinefähige iPad-Web-App für Höhere Mathematik III (
 
 - Website: https://bastiangasper.github.io/hm3-stiftkarten/
 - Auf dem iPad in Safari öffnen und über **Teilen → Zum Home-Bildschirm** installieren.
-- **Auto (Standard):** Apple Pencil zeichnet; die Seite wird nur während eines tatsächlichen Stiftkontakts fixiert. Danach sind Finger-Scrollen und Buttons sofort wieder möglich. Auf dem Zeichenblatt übernimmt die App das Finger-Scrollen, damit Safari den Pencil nicht als Scrollgeste deutet. **Schreiben** und **Scrollen** bleiben als manuelle Notfall-Modi erhalten.
+- **Auto (Standard, V11):** Die Seite bleibt dauerhaft gesperrt, ohne durch `position: fixed` verschoben zu werden. **Apple Pencil zeichnet; Finger und Handfläche auf dem Blatt werden ignoriert.** Alle normalen Buttons bleiben antippbar. Ein kleines Steuerfeld **unten links** bietet `↑ Hoch`, `↓ Runter` und `+ Blatt`. Auf der rechten und unteren rechten Seite stehen keine schwebenden Bedienelemente. **Scrollen** als manuelle Alternative gibt Finger-Scrollen frei und pausiert das Zeichnen. **Schreiben** bleibt als harter Pencil-only-Fallback.
 
 ## Freiwillige Aufnahmen für die mathematische Kontrolle (V10)
 

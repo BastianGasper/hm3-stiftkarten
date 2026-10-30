@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-30.10",
+  "version": "2026-10-30.11",
   "released": "2026-10-30",
   "features": [
     "Glatte Stiftkurven",
@@ -7,6 +7,7 @@
     "Offline-Vorbereitung",
     "Updateprüfung bei Wiederverbindung",
     "Automatische Apple-Pencil- und Finger-Unterscheidung",
-    "Start-Stopp-Aufnahmen mit Namen und gezieltem ZIP-Export"
+    "Start-Stopp-Aufnahmen mit Namen und gezieltem ZIP-Export",
+    "Stabile Pencil-Koordinaten nach Scrollen, nur-Pencil-Auto mit Navigation links"
   ]
 }
