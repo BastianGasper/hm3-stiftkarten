@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.15';
-  const OFFLINE_CACHE='hm3-stiftkarten-v15-20261030';
+  const APP_VERSION='2026-10-30.16';
+  const OFFLINE_CACHE='hm3-stiftkarten-v16-20261030';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
@@ -13,7 +13,7 @@
   const safeText = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const now = () => Date.now();
   let cards=[],originalCards=new Map(),byId=new Map(),db=null,storageError=false,version=0,editingCardId=null;
-  let data={progress:{},cardPrefs:{},settings:{pencilOnly:true,sheetStyle:'grid',sheetHeight:800},sessionId:null,recordingActive:false,lastRecordingId:null,recordingTouchedCards:[]};
+  let data={progress:{},cardPrefs:{},settings:{pencilOnly:true,sheetStyle:'grid',sheetHeight:800},sessionId:null,recordingActive:false,lastRecordingId:null,recordingTouchedCards:[],quiz:null};
   let recordingTouchedCards=new Set(),recordingNamingId=null;
   let selected={mode:'due',topic:'all',type:'all',current:null,seen:new Set(),history:[],revealed:false};
   let ink={tool:'pen',color:'#182231',width:2.7,strokes:[],active:null,erasing:false,undo:[],redo:[],erasedBefore:null,pointerId:null,cardId:null};
@@ -58,7 +58,7 @@
   function prefFor(id){return data.cardPrefs?.[id]||{};}
   function rebuildCards(){cards=[...originalCards.values()].map(c=>{const p=prefFor(c.id);return {...c,Frage:typeof p.Frage==='string'&&p.Frage.trim()?p.Frage:c.Frage,Antwort:typeof p.Antwort==='string'&&p.Antwort.trim()?p.Antwort:c.Antwort,favorite:!!p.favorite,disabled:!!p.disabled};});byId=new Map(cards.map(c=>[c.id,c]));}
   function mutatePref(id,patch){const p={...prefFor(id),...patch};if(!data.cardPrefs)data.cardPrefs={};if(!p.favorite&&!p.disabled&&!('Frage'in p)&&!('Antwort'in p)&&!('sheetHeight'in p))delete data.cardPrefs[id];else data.cardPrefs[id]=p;storeData();rebuildCards();updateStats();}
-  function quickActions(){const c=byId.get(selected.current);if(!c)return;const fav=$('cardFavoriteBtn');fav.textContent=c.favorite?'★':'☆';fav.classList.toggle('is-favorite',c.favorite);fav.setAttribute('aria-pressed',String(c.favorite));fav.setAttribute('aria-label',c.favorite?'Favorit entfernen':'Als Favorit markieren');fav.title=c.favorite?'Favorit entfernen':'Als Favorit markieren';const dis=$('cardDisableBtn');dis.textContent=c.disabled?'Aktivieren':'Deaktivieren';dis.classList.toggle('is-disabled',c.disabled);dis.title=c.disabled?'Karte wieder in den Lerndurchgang aufnehmen':'Karte aus normalen Lerndurchgängen nehmen';}
+  function quickActions(){const c=byId.get(selected.current);if(!c)return;const fav=$('cardFavoriteBtn');fav.textContent=c.favorite?'★':'☆';fav.classList.toggle('is-favorite',c.favorite);fav.setAttribute('aria-pressed',String(c.favorite));fav.setAttribute('aria-label',c.favorite?'Favorit entfernen':'Als Favorit markieren');fav.title=c.favorite?'Favorit entfernen':'Als Favorit markieren';const dis=$('cardDisableBtn');dis.disabled=!!data.quiz?.active;dis.textContent=c.disabled?'Aktivieren':'Deaktivieren';dis.classList.toggle('is-disabled',c.disabled);dis.title=c.disabled?'Karte wieder in den Lerndurchgang aufnehmen':'Karte aus normalen Lerndurchgängen nehmen';}
   async function changeFavorite(id){const c=byId.get(id);if(!c)return;mutatePref(id,{favorite:!c.favorite});if(selected.current===id){quickActions();if(selected.mode==='favorites'&&!byId.get(id).favorite){selected.seen.add(id);await advance();}}renderLibraryIfOpen();}
   async function changeDisabled(id){const c=byId.get(id);if(!c)return;if(selected.current===id){await finishInk();await saveQueue.catch(()=>{});}mutatePref(id,{disabled:!c.disabled});if(selected.current===id&&byId.get(id).disabled){selected.seen.add(id);await advance();}else if(selected.current===id)quickActions();else if(!selected.current&&!byId.get(id).disabled)await advance();renderLibraryIfOpen();}
   function renderLibraryIfOpen(){if($('libraryDialog').open)renderLibrary();}
@@ -72,17 +72,121 @@
 
   function due(c){const p=data.progress[c.id];return !p||!p.next||p.next<=now();}
   function filtered(){return cards.filter(c=>!c.disabled&&(selected.topic==='all'||c.Bereich===selected.topic)&&(selected.type==='all'||c.Typ===selected.type)&&(selected.mode!=='favorites'||c.favorite));}
-  function eligible(){const pool=filtered().filter(c=>!selected.seen.has(c.id)&&(selected.mode==='all'||due(c)));return selected.mode==='due'?pool.sort((a,b)=>(data.progress[a.id]?.next||0)-(data.progress[b.id]?.next||0)):pool;}
+  function shuffle(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function eligible(){return shuffle(filtered().filter(c=>!selected.seen.has(c.id)&&(selected.mode==='all'||due(c))));}
   function updateStats(){const a=cards.filter(c=>!c.disabled).length,d=cards.filter(c=>!c.disabled&&due(c)).length;const rows=data.recordingActive?memory.attempts.filter(e=>e.sessionId===data.sessionId):[];
     $('statAll').textContent=a;$('statDue').textContent=d;$('statSession').textContent=rows.length;$('statWrong').textContent=rows.filter(e=>e.rating==='wrong').length;}
   function updateFilters(){for(const t of [...new Set(cards.map(c=>c.Bereich))])$('topicFilter').add(new Option(t,t));for(const t of [...new Set(cards.map(c=>c.Typ))])$('typeFilter').add(new Option(t,t));}
+  // V16: independent randomized quiz with immutable initial pool.
+  // Cumulative results belong to original question IDs, never to the current review batch.
+  function quizCount(){
+    const topics=new Set([...document.querySelectorAll('[data-quiz-topic]:checked')].map(e=>e.value));
+    const types=new Set([...document.querySelectorAll('[data-quiz-type]:checked')].map(e=>e.value));
+    return cards.filter(c=>!c.disabled&&topics.has(c.Bereich)&&types.has(c.Typ)).length;
+  }
+  function quizCheckbox(container,attribute,value){
+    const label=document.createElement('label');label.className='quiz-check';
+    const check=document.createElement('input');check.type='checkbox';check.value=value;
+    check.checked=true;check.setAttribute(attribute,'');check.addEventListener('change',updateQuizCount);
+    const textNode=document.createElement('span');textNode.textContent=value;
+    label.append(check,textNode);container.append(label);
+  }
+  function quizSelectUI(){
+    $('quizTopics').replaceChildren();$('quizTypes').replaceChildren();
+    const topics=[...new Set(cards.filter(c=>!c.disabled).map(c=>c.Bereich))];
+    const types=[...new Set(cards.filter(c=>!c.disabled).map(c=>c.Typ))];
+    topics.forEach(t=>quizCheckbox($('quizTopics'),'data-quiz-topic',t));
+    types.forEach(t=>quizCheckbox($('quizTypes'),'data-quiz-type',t));
+    updateQuizCount();
+  }
+  function updateQuizCount(){
+    const count=quizCount();
+    $('quizSetupCount').textContent=count+' Fragen';
+    $('quizBeginBtn').disabled=count===0;
+  }
+  async function beginQuiz(e){
+    e.preventDefault();
+    if(data.quiz?.active)return;
+    if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
+    const topics=[...document.querySelectorAll('[data-quiz-topic]:checked')].map(x=>x.value);
+    const types=[...document.querySelectorAll('[data-quiz-type]:checked')].map(x=>x.value);
+    const initialIds=cards.filter(c=>!c.disabled&&topics.includes(c.Bereich)&&types.includes(c.Typ)).map(c=>c.id);
+    if(!initialIds.length)return;
+    await finishInk();await saveQueue.catch(()=>{});
+    data.quiz={active:true,stage:'cards',initialIds,results:{},queue:shuffle(initialIds),index:0,round:1,topics,types,startedAt:new Date().toISOString()};
+    storeData();$('quizSetupDialog').close();updateQuizChrome();await advance();
+  }
+  function updateQuizChrome(){
+    const q=data.quiz;
+    const active=!!q?.active;
+    document.body.classList.toggle('quiz-active',active);
+    $('quizToolbar').classList.toggle('is-hidden',!active);
+    if(!active){$('quizSummary').classList.add('is-hidden');return;}
+    $('quizRoundLabel').textContent='Runde '+q.round;
+    $('quizProgress').textContent=q.stage==='results'?q.queue.length+' / '+q.queue.length:Math.min(q.index+1,q.queue.length)+' / '+q.queue.length;
+    if(q.stage!=='results')$('quizSummary').classList.add('is-hidden');
+  }
+  async function quizRate(rating){
+    const q=data.quiz;
+    if(!q?.active||q.stage!=='cards'||q.index>=q.queue.length)return;
+    const id=q.queue[q.index];
+    if(selected.current!==id)return;
+    await finishInk();await saveQueue.catch(()=>{});
+    q.results[id]=rating;
+    planNext(id,rating);
+    q.index+=1;storeData();
+    await advance();
+  }
+  async function quizFinish(){
+    const q=data.quiz;if(!q?.active)return;
+    await finishInk();await saveQueue.catch(()=>{});
+    await archiveDraftIfNeeded();
+    q.stage='results';storeData();
+    updateQuizChrome();
+    $('workspace').classList.add('is-hidden');
+    $('emptyState').classList.add('is-hidden');
+    const counts={good:0,partial:0,wrong:0};
+    for(const id of q.initialIds){const key=q.results[id];if(key in counts)counts[key]+=1;}
+    $('quizSummaryTitle').textContent='Runde '+q.round+' · '+q.initialIds.length+' Fragen';
+    $('quizGood').textContent=counts.good;
+    $('quizPartial').textContent=counts.partial;
+    $('quizWrong').textContent=counts.wrong;
+    $('quizRepeatWrong').disabled=!counts.wrong;
+    $('quizRepeatPartial').disabled=!counts.partial;
+    $('quizRepeatAll').disabled=!q.initialIds.length;
+    $('quizSummary').classList.remove('is-hidden');
+  }
+  async function repeatQuiz(which){
+    const q=data.quiz;if(!q?.active||q.stage!=='results')return;
+    const ids=q.initialIds.filter(id=>which==='all'||q.results[id]===which);
+    if(!ids.length)return;
+    q.queue=shuffle(ids);q.index=0;q.round+=1;q.stage='cards';
+    storeData();$('quizSummary').classList.add('is-hidden');updateQuizChrome();await advance();
+  }
+  async function exitQuiz(){
+    if(!data.quiz?.active)return;
+    if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
+    await finishInk();await saveQueue.catch(()=>{});
+    if(!confirm('Abfrage beenden?'))return;
+    await archiveDraftIfNeeded();
+    data.quiz=null;storeData();
+    selected.seen.clear();selected.history=[];
+    updateQuizChrome();await advance();
+  }
   function math(){const nodes=[$('cardQuestion'),...(selected.revealed?[$('cardAnswer')]:[])];mathQueue=mathQueue.catch(()=>{}).then(async()=>{if(!window.MathJax?.typesetPromise)return;try{window.MathJax.typesetClear?.(nodes);await window.MathJax.typesetPromise(nodes);}catch(e){console.warn('MathJax',e)}});}
   async function showCard(id){await finishInk();await saveQueue.catch(()=>{});if(selected.current&&selected.current!==id)await archiveDraftIfNeeded();selected.current=id;selected.revealed=false;const card=byId.get(id);if(!card)return showEmpty();$('workspace').classList.remove('is-hidden');$('emptyState').classList.add('is-hidden');
     $('cardTopic').textContent=`${card.Bereich} · ${card.Typ}`;$('cardSource').textContent=card.Quelle?`Quelle: ${card.Quelle}`:'';$('cardQuestion').textContent=card.Frage;$('cardAnswer').textContent=card.Antwort;
-    $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!selected.history.length;quickActions();configureSheet();await loadInk(id);math();}
+    $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!!data.quiz?.active||!selected.history.length;quickActions();configureSheet();await loadInk(id);math();}
   function showEmpty(){selected.current=null;$('workspace').classList.add('is-hidden');$('emptyState').classList.remove('is-hidden');updateStats();}
-  async function advance(){const next=eligible()[0];if(next)await showCard(next.id);else{await finishInk();await saveQueue.catch(()=>{});await archiveDraftIfNeeded();showEmpty();}updateStats();}
-  async function nextCard(skipped=false){if(!selected.current)return;const id=selected.current;await finishInk();await saveQueue.catch(()=>{});if(skipped){await snapshotAttempt('skip');}selected.seen.add(id);selected.history.push(id);await advance();}
+  async function advance(){if(data.quiz?.active){
+      const q=data.quiz;
+      if(q.stage==='results'||q.index>=q.queue.length){await quizFinish();return;}
+      updateQuizChrome();await showCard(q.queue[q.index]);return;
+    }
+    const next=eligible()[0];if(next)await showCard(next.id);else{await finishInk();await saveQueue.catch(()=>{});await archiveDraftIfNeeded();showEmpty();}updateStats();}
+  async function nextCard(skipped=false){if(!selected.current)return;
+    if(data.quiz?.active){if(skipped){await finishInk();await saveQueue.catch(()=>{});await snapshotAttempt('skip');await quizRate('wrong');}return;}
+    const id=selected.current;await finishInk();await saveQueue.catch(()=>{});if(skipped){await snapshotAttempt('skip');}selected.seen.add(id);selected.history.push(id);await advance();}
   async function goBack(){if(!selected.history.length)return;await finishInk();await saveQueue.catch(()=>{});const previous=selected.history.pop();selected.seen.delete(previous);await showCard(previous);updateStats();}
   function planNext(id,rating){const old=data.progress[id]||{reps:0,interval:0,streak:0},DAY=86400000;let iv;
     if(rating==='wrong'){iv=10/1440;old.streak=0;}else if(rating==='partial'){iv=old.interval>=1?Math.max(1,Math.round(old.interval*1.2)):1;old.streak=0;}else{iv=old.interval>=1?Math.max(3,Math.round(old.interval*2.2)):3;old.streak=(old.streak||0)+1;}
@@ -138,7 +242,7 @@
     try{
       await finishInk();await saveQueue.catch(()=>{});
       if(!await snapshotAttempt(rating)){notice('Aufnahme konnte nicht gespeichert werden. Bitte Backup erstellen.');return;}
-      planNext(selected.current,rating);await nextCard(false);
+      if(data.quiz?.active){await quizRate(rating);}else{planNext(selected.current,rating);await nextCard(false);}
     }finally{acting=false;}
   }
   function updateRecordingUI(){
@@ -734,7 +838,15 @@
     }catch(e){console.error('App update',e);notice('Aktualisierung fehlgeschlagen: '+e.message);}
     finally{appRefreshing=false;button.disabled=false;button.textContent='App aktualisieren';}
   }
-  function listeners(){document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',async()=>{selected.mode=b.dataset.mode;selected.seen.clear();selected.history=[];document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('is-active',x===b));await advance();}));
+  function listeners(){
+    $('quizStartBtn').onclick=()=>{quizSelectUI();$('quizSetupDialog').showModal();};
+    $('quizSetupClose').onclick=()=>$('quizSetupDialog').close();
+    $('quizSetupForm').onsubmit=beginQuiz;
+    $('quizExitBtn').onclick=exitQuiz;$('quizSummaryExit').onclick=exitQuiz;
+    $('quizRepeatAll').onclick=()=>repeatQuiz('all');
+    $('quizRepeatWrong').onclick=()=>repeatQuiz('wrong');
+    $('quizRepeatPartial').onclick=()=>repeatQuiz('partial');
+    document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',async()=>{selected.mode=b.dataset.mode;selected.seen.clear();selected.history=[];document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('is-active',x===b));await advance();}));
     $('topicFilter').addEventListener('change',async e=>{selected.topic=e.target.value;selected.seen.clear();selected.history=[];await advance();});$('typeFilter').addEventListener('change',async e=>{selected.type=e.target.value;selected.seen.clear();selected.history=[];await advance();});$('prevBtn').onclick=goBack;$('skipBtn').onclick=()=>nextCard(true);$('showAllBtn').onclick=async()=>{selected.mode='all';selected.seen.clear();selected.history=[];document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.mode==='all'));await advance();};
     $('showSolutionBtn').onclick=()=>{selected.revealed=!selected.revealed;$('solutionContent').classList.toggle('is-hidden',!selected.revealed);$('showSolutionBtn').textContent=selected.revealed?'Musterlösung ausblenden':'Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded',String(selected.revealed));if(selected.revealed)math();};
     document.querySelectorAll('[data-rating]').forEach(b=>b.onclick=()=>grade(b.dataset.rating));$('recordingStartBtn').onclick=startRecording;$('recordingStopBtn').onclick=stopRecording;$('recordingsBtn').onclick=async()=>{await sessionList();$('settingsDialog').showModal();};$('recordingNameForm').onsubmit=e=>{e.preventDefault();void saveRecordingName(false);};$('saveAndExportRecordingBtn').onclick=()=>{void saveRecordingName(true);};$('recordingNameDialog').addEventListener('cancel',e=>{e.preventDefault();void saveRecordingName(false);});$('exportSessionBtn').onclick=()=>exportSession();$('exportSessionBtn2').onclick=()=>exportSession();$('footerExport').onclick=()=>exportSession();
@@ -749,7 +861,14 @@
     window.addEventListener('resize',resizeInk);document.addEventListener('visibilitychange',()=>{if(document.hidden)finishInk();});document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();e.shiftKey?redo():undo();}});
   }
   async function init(){try{$('appVersion').textContent='App V'+APP_VERSION.split('.').at(-1);status('Lade Karten …');loadData();db=await openDB();if(!db){storageError=true;status('Speicher eingeschränkt – Backup wichtig',true);try{memory.attempts=JSON.parse(localStorage.getItem('hm3-fallback-attempts')||'[]');memory.sessions=JSON.parse(localStorage.getItem('hm3-fallback-sessions')||'[]');}catch{}}
-    await fetchCards();memory.attempts=await listRecords('attempts');if(data.recordingActive&&data.sessionId){const old=await readRecord('sessions',data.sessionId);if(!old||old.endedAt){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];storeData();}}updateFilters();listeners();configureSheet();await advance();await updateSessionInfo();if(!storageError)status('');
+    await fetchCards();memory.attempts=await listRecords('attempts');if(data.recordingActive&&data.sessionId){const old=await readRecord('sessions',data.sessionId);if(!old||old.endedAt){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];storeData();}}updateFilters();listeners();configureSheet();
+     if(data.quiz?.active){
+       const q=data.quiz;
+       if(!Array.isArray(q.initialIds)||!Array.isArray(q.queue)||q.queue.some(id=>!byId.has(id))){
+         data.quiz=null;storeData();
+       }
+     }
+     updateQuizChrome();await advance();await updateSessionInfo();if(!storageError)status('');
   }catch(e){console.error(e);status('Start fehlgeschlagen',true);$('cardQuestion').textContent=e.message;}}
   init();
   // Automatische Hintergrund-Prüfung, sobald die PWA geöffnet oder wieder online ist.
