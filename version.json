@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-30.16",
+  "version": "2026-10-30.17",
   "released": "2026-10-30",
   "features": [
     "Glatte Stiftkurven",
@@ -15,6 +15,7 @@
     "Fortlaufender Ganzstrich-Radierer mit orangener visueller Spur",
     "Abschlussrevision: gesicherter Datenexport, effiziente Zeichenflächen und Aufnahmeverwaltung",
     "Schlankes Layout ohne erklärende Texte und ohne überlagernde Bedienelemente; neuer App-Name",
-    "63 vorlesungsnahe Verständnis-, Methoden- und Beweiskarten; zufällige, individuell gefilterte Abfrage mit persistentem Gesamtresultat"
+    "63 vorlesungsnahe Verständnis-, Methoden- und Beweiskarten; zufällige, individuell gefilterte Abfrage mit persistentem Gesamtresultat",
+    "Beweislernmodus in 5 Stufen mit 29 mathematisch ausgearbeiteten Beweisen, eigenen iPad-Notizen je Stufe; 41 vertiefte Karten einschließlich 13 Testataufgaben"
   ]
 }

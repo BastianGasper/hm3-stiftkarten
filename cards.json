@@ -1,506 +1,330 @@
 [
   {
-    "id": "hm3-v16-001",
-    "Frage": "Eine Differentialgleichung hat die Form \\(y^{(n)}=f(x,y,\\ldots,y^{(n-1)})\\). Was macht daraus ein Anfangswertproblem \\(n\\)-ter Ordnung? Erläutere ausdrücklich, wie viele Anfangswerte wo vorliegen müssen und was „explizit“ bedeutet.",
-    "Antwort": "Ein AWP besteht aus der DGL und \\(n\\) am selben Punkt \\(x_0\\) vorgeschriebenen Werten \\(y(x_0)=a_0,\\ldots,y^{(n-1)}(x_0)=a_{n-1}\\). „Explizit“ heißt: nach der höchsten Ableitung \\(y^{(n)}\\) aufgelöst. Anfangswerte an unterschiedlichen Stellen ergeben im Allgemeinen kein AWP dieser Form.",
-    "Quelle": "V01 S. 1–2",
+    "id": "hm3-v17-001",
     "Bereich": "V01",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V01 S. 1–3",
+    "Frage": "Gegeben ist \\(y^{(3)}=x y y\\prime +2y\\prime y\\prime\\prime\\), \\(y(0)=1\\), \\(y\\prime(0)=2\\), \\(y\\prime\\prime(0)=2\\). (a) Bestimme Ordnung und AWP-Charakter. (b) Überführe vollständig in \\(Y\\prime=F(x,Y)\\). (c) Zeige die Äquivalenz in beide Richtungen. (d) Nenne die Voraussetzungen, die ein Existenz-/Eindeutigkeitssatz anschließend prüfen muss.",
+    "Antwort": "(a) Es ist eine explizite nichtlineare DGL dritter Ordnung mit drei Anfangsdaten an \\(x_0=0\\).\n(b) \\(Y=(y,y\\prime,y\\prime\\prime)^T\\), \\(Y\\prime=(Y_2,Y_3,xY_1Y_2+2Y_2Y_3)^T\\), \\(Y(0)=(1,2,2)^T\\).\n(c) Aus jeder skalaren Lösung folgt durch Definition der Komponenten das System. Umgekehrt implizieren \\(Y_1\\prime=Y_2\\), \\(Y_2\\prime=Y_3\\) und die letzte Komponente die ursprüngliche DGL für \\(y=Y_1\\) einschließlich Anfangsdaten.\n(d) \\(F\\) ist auf \\(\\mathbb R\\times\\mathbb R^3\\) stetig und wegen polynomialer Abhängigkeit von \\(Y\\) lokal Lipschitz. Deshalb ist das AWP lokal eindeutig lösbar; globale Existenz folgt daraus noch nicht."
   },
   {
-    "id": "hm3-v16-002",
-    "Frage": "Überführe \\(y'''=xyy'+2y'y''\\), \\(y(0)=1,\\ y'(0)=2,\\ y''(0)=2\\), vollständig in ein System erster Ordnung. Welche Größe entspricht der Ordnung der ursprünglichen DGL?",
-    "Antwort": "Setze \\(Y_1=y,\\ Y_2=y',\\ Y_3=y''\\). Dann \\(Y'=(Y_2,\\ Y_3,\\ xY_1Y_2+2Y_2Y_3)^T\\), \\(Y(0)=(1,2,2)^T\\). Es entsteht ein System mit drei Komponenten; die Ordnung der ursprünglichen DGL ist \\(n=3\\).",
-    "Quelle": "V01 S. 5–7",
+    "id": "hm3-v17-002",
     "Bereich": "V01",
-    "Typ": "Methode"
+    "Typ": "Vertiefung",
+    "Quelle": "V01 S. 1–4",
+    "Frage": "Zwei Begriffe „homogen“ werden in HM3 verwendet. Stelle anhand von \\(y\\prime=g(y/x)\\) und \\(y\\prime+q(x)y=0\\) dar, worin sie sich unterscheiden. Leite jeweils die sinnvolle Lösungsstrategie her und erläutere die nötigen Definitionsbereiche.",
+    "Antwort": "(1) Homogen erster Ordnung im Substitutionssinn: \\(y\\prime=g(y/x)\\) für \\(x\ne0\\). Mit \\(u=y/x\\) gilt \\(y=xu\\), \\(y\\prime=u+xu\\prime\\). Daraus \\(xu\\prime=g(u)-u\\), ggf. Variablentrennung. Ein Intervall darf \\(x=0\\) nicht durchschreiten.\n(2) Homogen im linearen Sinn: \\(y\\prime+q(x)y=0\\) besitzt keine Störfunktion. Mit \\(Q\\prime=q\\) ist \\((e^Qy)\\prime=0\\), also \\(y=Ce^{-Q}\\).\nDie Bezeichnungen sind strukturell verschieden; aus „homogen“ allein darf man keine Methode ableiten."
   },
   {
-    "id": "hm3-v16-003",
-    "Frage": "Warum reduziert man eine explizite DGL höherer Ordnung auf \\(Y'=F(x,Y)\\)? Gib die allgemeine Konstruktion für Ordnung \\(n\\) an und erläutere, was die Anfangswerte dabei werden.",
-    "Antwort": "Die Aussagen und Verfahren für Systeme erster Ordnung sind dann anwendbar. \\(Y=(y,y',\\ldots,y^{(n-1)})^T\\), \\(F=(Y_2,\\ldots,Y_n,f(x,Y_1,\\ldots,Y_n))^T\\). Die \\(n\\) skalaren Anfangswerte werden zu genau einem Vektorwert \\(Y(x_0)=(a_0,\\ldots,a_{n-1})^T\\).",
-    "Quelle": "V01 S. 4–6",
+    "id": "hm3-v17-003",
     "Bereich": "V01",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V01 S. 3–6",
+    "Frage": "Ein gedämpfter Oszillator erfüllt \\(my\\prime\\prime+dy\\prime+ky=F(t)\\), \\(y(0)=a\\), \\(y\\prime(0)=v\\). (a) Erkläre die Modellterme. (b) Gib die explizite Normalform und das Zustandsraummodell an. (c) Welche Annahme an \\(m\\) ist erforderlich? (d) Welche Rolle spielen die Anfangswerte?",
+    "Antwort": "(a) \\(my\\prime\\prime\\): Trägheit, \\(dy\\prime\\): Dämpfung, \\(ky\\): Federkraft, \\(F\\): Anregung.\n(b) Für \\(m\ne0\\): \\(y\\prime\\prime=(F(t)-dy\\prime-ky)/m\\). Mit \\(Y=(y,v)^T\\) gilt \\(Y\\prime=\\begin{pmatrix}v\\\\[F(t)-dv-ky]/m\\end{pmatrix}\\), \\(Y(0)=(a,v)^T\\).\n(c) Nur für \\(m\ne0\\) ist die DGL in der zweiten Ableitung explizit; physikalisch \\(m>0\\).\n(d) Beide Anfangswerte sind notwendig, um die zwei Integrationskonstanten der homogenen Lösung eindeutig festzulegen."
   },
   {
-    "id": "hm3-v16-004",
-    "Frage": "Beim gedämpften, erzwungenen Feder-Masse-System gilt \\(m y''+d y'+k y=F(t)\\). Ordne die mathematischen Terme physikalisch zu und formuliere das AWP als System erster Ordnung.",
-    "Antwort": "\\(m y''\\): Trägheit; \\(d y'\\): Dämpfung; \\(k y\\): Federkraft; \\(F(t)\\): äußere Anregung. Mit \\(Y=(y,v)^T\\) gilt \\(Y'=(v,(F(t)-dv-ky)/m)^T\\), \\(Y(0)=(s_0,v_0)^T\\).",
-    "Quelle": "V01 S. 3",
+    "id": "hm3-v17-004",
     "Bereich": "V01",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V01 S. 2–3; Ü00",
+    "Frage": "In V01 steht die Gleichung \\(y\\prime\\prime=(1+y\\prime)/\\sin y\\). (a) Weshalb ist das eine explizite DGL zweiter Ordnung? (b) Welche Einschränkungen gelten für den Definitionsbereich? (c) Wie lautet das zugehörige System erster Ordnung? (d) Welche Anfangsbedingungen sind nötig?",
+    "Antwort": "(a) Die höchste auftretende Ableitung ist \\(y\\prime\\prime\\), und sie ist isoliert. Die rechte Seite darf von \\(y\\) und \\(y\\prime\\) abhängen.\n(b) Notwendig ist \\(\\sin y\ne0\\), also dürfen Lösungswerte nicht \\(k\\pi\\) für \\(k\\in\\mathbb Z\\) sein. Ein geeignetes offenes Gebiet muss diese Singularitäten ausschließen.\n(c) Setze \\(Y_1=y\\), \\(Y_2=y\\prime\\). Dann \\(Y\\prime=(Y_2,(1+Y_2)/\\sin Y_1)^T\\).\n(d) Für ein klassisches AWP werden beide Werte \\(y(x_0)=a_0\\), \\(y\\prime(x_0)=a_1\\) am selben Punkt benötigt; es muss \\(\\sin a_0\ne0\\) gelten."
   },
   {
-    "id": "hm3-v16-005",
-    "Frage": "Du sollst eine DGL erster Ordnung einem bekannten Lösungstyp zuordnen. Woran erkennst du bei \\(y'=f(x,y)\\) (a) Variablentrennung, (b) Homogenität im Sinne \\(f(y/x)\\), (c) Linearität? Welche Methode folgt jeweils?",
-    "Antwort": "(a) \\(y'=g(x)h(y)\\): Variablen trennen (Sonderlösungen \\(h(y)=0\\) prüfen). (b) \\(y'=g(y/x)\\), \\(x\\neq0\\): \\(u=y/x\\), also \\(y=xu\\) und \\(y'=u+xu'\\). (c) \\(y'+q(x)y=s(x)\\): integrierender Faktor \\(e^{Q(x)}\\), \\(Q'=q\\). Diese drei Strukturmerkmale sind nicht dasselbe.",
-    "Quelle": "V01 S. 1",
-    "Bereich": "V01",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-006",
-    "Frage": "Ein Modell beschreibt zwei sich gegenseitig beeinflussende Größen durch \\(A'(t)=-\\beta B(t)\\), \\(B'(t)=-\\alpha A(t)\\). Was ist hier das AWP, und warum reicht ein einzelner Anfangswert nicht?",
-    "Antwort": "Mit \\(Y=(A,B)^T\\) ist \\(Y'=F(t,Y)=(-\\beta B,-\\alpha A)^T\\) und \\(Y(0)=(A_0,B_0)^T\\). Das System hat zwei unabhängige Zustandskomponenten. Für die Festlegung eines Anfangszustands müssen beide Werte vorliegen.",
-    "Quelle": "V01 S. 3–4",
-    "Bereich": "V01",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-007",
-    "Frage": "Betrachte \\(y'''=\\frac1x y''-\\frac2{x^2}y'+y+\\tan x\\). Wie entscheidest du, auf welchem Intervall du ein AWP mit den üblichen Existenz-/Eindeutigkeitssätzen behandeln kannst?",
-    "Antwort": "Rechte Seite und Anfangsdaten müssen auf einem passenden gemeinsamen Intervall liegen, auf dem die Koeffizienten definiert/stetig sind. Hier dürfen \\(x=0\\) und Polstellen von \\(\\tan x\\) nicht enthalten sein. Erst danach wird das System \\(Y'=(Y_2,Y_3,\\frac1xY_3-\\frac2{x^2}Y_2+Y_1+\\tan x)^T\\) betrachtet.",
-    "Quelle": "V01 S. 2–3",
-    "Bereich": "V01",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-008",
-    "Frage": "Gegeben \\(y'=f(x,y)\\), \\(y(x_0)=y_0\\): Wie entsteht das zugehörige Fixpunktproblem aus der DGL, und weshalb ist diese Umformung die Grundlage der Picard-Iteration?",
-    "Antwort": "Durch Integration: \\(y(x)=y_0+\\int_{x_0}^{x} f(t,y(t))\\,dt=:T(y)(x)\\). Lösungen sind genau die Fixpunkte \\(T(y)=y\\), sofern \\(f,y\\) die erforderliche Stetigkeit besitzen. Picard ersetzt die unbekannte Funktion im Integranden schrittweise durch die vorherige Näherung.",
-    "Quelle": "V02 S. 1",
+    "id": "hm3-v17-005",
     "Bereich": "V02",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-009",
-    "Frage": "Formuliere Peanos Existenzsatz mit Rechteck \\(R=\\{|x-x_0|\\le a,\\ |y-y_0|\\le b\\}\\): Was ist \\(M\\), wie entsteht \\(\\alpha\\), und welche Aussage darf man nicht folgern?",
-    "Antwort": "Ist \\(f\\) auf \\(R\\) stetig, setze \\(M=\\max_R|f|\\) und bei \\(M>0\\) \\(\\alpha=\\min\\{a,b/M\\}\\) (bei \\(M=0\\): \\(\\alpha=a\\)). Dann existiert mindestens eine Lösung auf \\([x_0-\\alpha,x_0+\\alpha]\\). Peano garantiert keine Eindeutigkeit.",
-    "Quelle": "V02 S. 2–3",
-    "Bereich": "V02",
-    "Typ": "Satz & Anwendung"
-  },
-  {
-    "id": "hm3-v16-010",
-    "Frage": "Warum enthält Peanos Existenzintervall die Schranke \\(b/M\\)? Erkläre dies aus der Integraldarstellung und behandle auch den Fall \\(M=0\\).",
-    "Antwort": "Aus \\(|f|\\le M\\) folgt \\(|y(x)-y_0|=|\\int_{x_0}^x f(t,y(t))dt|\\le M|x-x_0|\\). Damit die vertikale Rechteckgrenze \\(b\\) nicht verlassen wird, genügt \\(|x-x_0|\\le b/M\\). Ist \\(M=0\\), ist \\(f\\equiv0\\) auf \\(R\\), sodass die konstante Lösung bis zur horizontalen Grenze \\(a\\) reicht.",
-    "Quelle": "V02 S. 2",
-    "Bereich": "V02",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-011",
-    "Frage": "Für ein AWP ist \\(f\\) auf einem kompakten Rechteck stetig und in \\(y\\) gleichmäßig Lipschitz-stetig. Welche Aussagen liefern Peano und Picard-Lindelöf jeweils? Formuliere die Lipschitz-Bedingung vollständig.",
-    "Antwort": "Peano: mindestens eine lokale Lösung. Picard-Lindelöf: genau eine lokale Lösung auf dem im Satz genannten Intervall. Lipschitz: \\(|f(x,z)-f(x,y)|\\le L|z-y|\\) für alle relevanten \\((x,y),(x,z)\\) im Rechteck, mit einem gemeinsamen \\(L>0\\). Nur Stetigkeit reicht für die Eindeutigkeit nicht.",
+    "Typ": "Vertiefung",
     "Quelle": "V02 S. 1–3",
-    "Bereich": "V02",
-    "Typ": "Satz & Anwendung"
+    "Frage": "Für \\(y\\prime=f(x,y)\\) auf \\(R=[x_0-a,x_0+a]\\times[y_0-b,y_0+b]\\): (a) Leite die Integralform her. (b) Formuliere Peano und Picard-Lindelöf mit Voraussetzungen. (c) Erkläre \\(\\alpha=\\min(a,b/M)\\) aus einer Abschätzung. (d) Sage exakt, welche Eindeutigkeitsaussage ohne Lipschitz NICHT folgt.",
+    "Antwort": "(a) \\(y(x)=y_0+\\int_{x_0}^x f(t,y(t))dt\\), äquivalent zur DGL bei stetigem Integranden.\n(b) Peano: \\(f\\in C(R)\\) impliziert mindestens eine Lösung für \\(|x-x_0|\\le\\alpha\\). Picard-Lindelöf: zusätzliche Lipschitz-Bedingung im zweiten Argument impliziert Eindeutigkeit (und Existenz).\n(c) \\(M=\\max_R|f|\\); \\(|y(x)-y_0|\\le\\int|f|\\le M|x-x_0|\\le b\\). Daher \\(\\alpha\\le b/M\\), zusätzlich \\(\\alpha\\le a\\). Bei \\(M=0\\) ist die konstante Lösung möglich.\n(d) Stetigkeit allein garantiert keine Eindeutigkeit. Ein Gegenbeispiel ist \\(y\\prime=\\sqrt{|y|}\\), \\(y(0)=0\\): Nullfunktion und spätere ansetzende Parabeln lösen es."
   },
   {
-    "id": "hm3-v16-012",
-    "Frage": "Wie weist du bei \\(f(x,y)=x+y\\) und bei \\(f(x,y)=y^2\\) auf einem Rechteck \\(|y-y_0|\\le b\\) die Lipschitz-Bedingung im zweiten Argument nach? Wo ist der Unterschied?",
-    "Antwort": "Für \\(x+y\\): \\(|f(x,z)-f(x,y)|=|z-y|\\), also \\(L=1\\). Für \\(y^2\\): \\(|z^2-y^2|=|z+y||z-y|\\le2(|y_0|+b)|z-y|\\). Hier hängt die mögliche Konstante vom beschränkten \\(y\\)-Bereich ab; global auf ganz \\(\\mathbb R\\) gibt es kein einheitliches \\(L\\).",
-    "Quelle": "V02 S. 1–2",
+    "id": "hm3-v17-006",
     "Bereich": "V02",
-    "Typ": "Methode"
+    "Typ": "Vertiefung",
+    "Quelle": "V02 S. 1–3; Ü01",
+    "Frage": "Untersuche \\(y\\prime=y^2+x\\), \\(y(0)=1\\), auf \\(R=\\{|x|\\le1,|y-1|\\le1\\}\\). (a) Beweise Stetigkeit und eine konkrete Lipschitz-Konstante in \\(y\\). (b) Bestimme eine gültige Schranke \\(M\\) und das Peano-Intervall. (c) Formuliere die präzise lokale Existenzaussage und Eindeutigkeitsaussage.",
+    "Antwort": "(a) \\(f(x,y)=y^2+x\\) ist stetig. Für \\(y,z\\in[0,2]\\): \\(|f(x,y)-f(x,z)|=|y+z||y-z|\\le4|y-z|\\). Daher \\(L=4\\).\n(b) \\(|f(x,y)|\\le y^2+|x|\\le4+1=5\\); mit \\(a=b=1\\) genügt \\(\\alpha=\\min(1,1/5)=1/5\\). Dies ist eine sichere obere Schranke für \\(M\\), nicht notwendig das exakte Maximum. Tatsächlich ist \\(M=5\\) (bei \\(x=1,y=2\\)).\n(c) Peano garantiert mindestens eine lokale Lösung auf \\([-1/5,1/5]\\). Picard-Lindelöf gibt auf diesem betrachteten Satzintervall eindeutige Lösbarkeit. Das sagt nicht, dass die Lösung für alle \\(x\\in\\mathbb R\\) existiert."
   },
   {
-    "id": "hm3-v16-013",
-    "Frage": "Wende die Picard-Iteration auf \\(y'=y,\\ y(1)=e\\) an, starte mit \\(\\varphi_0(x)=e\\). Bestimme \\(\\varphi_1,\\varphi_2\\) und formuliere die begründete allgemeine Vermutung.",
-    "Antwort": "\\(\\varphi_{n+1}(x)=e+\\int_1^x\\varphi_n(t)\\,dt\\). Daher \\(\\varphi_1=e[1+(x-1)]\\), \\(\\varphi_2=e[1+(x-1)+(x-1)^2/2]\\). Vermutung: \\(\\varphi_n(x)=e\\sum_{k=0}^{n}(x-1)^k/k!\\). Der Grenzwert ist \\(e\\,e^{x-1}=e^x\\). Die Vermutung lässt sich per vollständiger Induktion zeigen.",
-    "Quelle": "V02 S. 3, 6–8",
+    "id": "hm3-v17-007",
     "Bereich": "V02",
-    "Typ": "Methode"
+    "Typ": "Vertiefung",
+    "Quelle": "V02 S. 6–8",
+    "Frage": "Behandle die Picard-Iteration \\(y\\prime=y\\), \\(y(1)=e\\), \\(\\varphi_0=e\\): (a) Berechne \\(\\varphi_1,\\varphi_2,\\varphi_3\\). (b) Vermute eine allgemeine Formel. (c) Beweise sie mittels vollständiger Induktion einschließlich Indexwechsel. (d) Bestimme den Grenzwert.",
+    "Antwort": "Iteration \\(\\varphi_{n+1}(x)=e+\\int_1^x\\varphi_n(t)dt\\).\n(a) \\(\\varphi_1=e[1+(x-1)]\\), \\(\\varphi_2=e[1+(x-1)+(x-1)^2/2]\\), \\(\\varphi_3=e[1+(x-1)+(x-1)^2/2+(x-1)^3/6]\\).\n(b) \\(\\varphi_n=e\\sum_{k=0}^n(x-1)^k/k!\\).\n(c) IA \\(n=0\\) stimmt. Aus IV folgt \\(\\varphi_{n+1}=e+e\\sum_{k=0}^n(x-1)^{k+1}/(k+1)!=e\\sum_{j=0}^{n+1}(x-1)^j/j!\\).\n(d) Gleichmäßige Konvergenz auf kompakten Intervallen gegen \\(ee^{x-1}=e^x\\)."
   },
   {
-    "id": "hm3-v16-014",
-    "Frage": "Warum beginnt die Summe in der Picard-Formel \\(\\varphi_n(x)=e\\sum_{k=0}^n (x-1)^k/k!\\) bei \\(k=0\\)? Erkläre ihre Rolle für den Induktionsanfang und den Grenzübergang.",
-    "Antwort": "Das Glied \\(k=0\\) ist \\(e\\) und liefert den Startwert \\(\\varphi_0=e\\). Die weiteren Potenzen entstehen bei jedem Integrationsschritt. Erst mit dem Anfangsglied stimmt die endliche Summe mit den Taylor-Partialsummen der Exponentialfunktion überein: \\(e\\sum_{k=0}^\\infty(x-1)^k/k!=e^x\\).",
-    "Quelle": "V02 S. 3, 7",
+    "id": "hm3-v17-008",
     "Bereich": "V02",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V02 S. 4–5; Ü01",
+    "Frage": "Unterscheide explizites Euler-, implizites Euler- und Crank-Nicolson-Verfahren für \\(Y\\prime=F(x,Y)\\). (a) Leite alle drei Updates her. (b) Entscheide, welche Unbekannte im neuen Schritt zu bestimmen ist. (c) Gib die globale Konsistenzordnung bei hinreichender Regularität an. (d) Warum ist „implizit“ nicht mit „ungenau“ gleichzusetzen?",
+    "Antwort": "(a) Explizit: \\(Y_{k+1}=Y_k+hF(x_k,Y_k)\\). Implizit: \\(Y_{k+1}=Y_k+hF(x_{k+1},Y_{k+1})\\). Crank-Nicolson: \\(Y_{k+1}=Y_k+\\frac h2[F(x_k,Y_k)+F(x_{k+1},Y_{k+1})]\\).\n(b) Die letzten zwei sind Gleichungen für den unbekannten Vektor \\(Y_{k+1}\\), die z. B. durch Lösen eines (nicht)linearen Systems bestimmt werden.\n(c) Global Ordnung 1 für beide Euler-Verfahren, Ordnung 2 für Crank-Nicolson – bei entsprechender Glattheit und Stabilität.\n(d) Implizit beschreibt die Auswertestelle, nicht unmittelbar die Fehlerordnung; CN ist implizit und unter üblichen Voraussetzungen genauer."
   },
   {
-    "id": "hm3-v16-015",
-    "Frage": "Leite aus \\(y'=f(x,y)\\) das explizite Euler-Verfahren her und erläutere geometrisch, welcher Fehler durch die Verwendung von \\(f(x_k,y_k)\\) entsteht.",
-    "Antwort": "Mit \\(h>0\\): \\(y'(x_k)\\approx(y(x_k+h)-y(x_k))/h\\). Ersetzen durch die DGL ergibt \\(x_{k+1}=x_k+h,\\ y_{k+1}=y_k+h f(x_k,y_k)\\). Dies ist der Polygonzug mit der am alten Punkt ausgewerteten Steigung; Veränderungen der Steigung innerhalb des Schritts werden nicht berücksichtigt.",
-    "Quelle": "V02 S. 4–6",
+    "id": "hm3-v17-009",
     "Bereich": "V02",
-    "Typ": "Methode"
+    "Typ": "Vertiefung",
+    "Quelle": "V02 S. 2–4; Beweiskatalog P04–P07",
+    "Frage": "Entwickle ein sauberes Beweisschema für die lokale Existenz bei Peano und die eindeutige Lösbarkeit bei Picard-Lindelöf. (a) Welche Konstruktion verwendet Peano? (b) Welche zusätzliche Abschätzung trägt Picard? (c) An welcher Stelle muss ein Konvergenzargument stehen? (d) Welche Sätze allein sind keine vollständigen Beweise?",
+    "Antwort": "(a) Peano: Euler-Polygonzüge auf feiner werdenden Zerlegungen; die Schranke \\(M\\) begrenzt Steigungen und Aufenthalt im Rechteck.\n(b) Picard-Lindelöf: Lipschitz in \\(y\\) mit \\(L\\) und Picard-Iteration \\(\\varphi_{n+1}=y_0+\\int f(t,\\varphi_n(t))dt\\).\n(c) Bei Peano braucht man einen gleichmäßig konvergenten Teilzug (z. B. Arzelà–Ascoli) und das Bestehen des Grenzübergangs in der Integralgleichung. Bei Picard eine Summen-/Fakultätsabschätzung für die Iterationsdifferenzen, die gleichmäßige Konvergenz erlaubt.\n(d) Die Behauptungen „Euler-Polygonzüge werden kleiner“ oder „die Picard-Funktionen konvergieren“ ersetzen den Nachweis dieser Grenzübergänge nicht. In V02 wird Peanos Vollbeweis nur skizziert."
   },
   {
-    "id": "hm3-v16-016",
-    "Frage": "Berechne für \\(y'=x+y\\), \\(y(0)=1\\), Schrittweite \\(h=1/4\\), die ersten beiden expliziten Euler-Werte \\(y_1,y_2\\). Gib die verwendete Rekursion an.",
-    "Antwort": "\\(x_k=k/4\\), \\(y_{k+1}=y_k+\\frac14(x_k+y_k)\\). \\(y_1=1+\\frac14(0+1)=5/4\\). \\(y_2=5/4+\\frac14(1/4+5/4)=5/4+3/8=13/8\\).",
-    "Quelle": "V02 S. 5",
-    "Bereich": "V02",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-017",
-    "Frage": "Wie hängt das im Peano-Beweis skizzierte Polygonzugverfahren mit dem expliziten Euler-Verfahren zusammen, und worin unterscheidet sich das Ziel von einer numerischen Euler-Rechnung?",
-    "Antwort": "Beide nutzen abschnittsweise die Steigung der DGL am vorangegangenen Stützpunkt. Numerischer Euler liefert bei festem \\(h\\) eine Näherung. In der Peano-Beweisidee betrachtet man Folgen solcher Polygonzüge mit Schrittweiten gegen null, um unter Stetigkeitsvoraussetzungen eine tatsächliche Lösung zu konstruieren.",
-    "Quelle": "V02 S. 4, 6",
-    "Bereich": "V02",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-018",
-    "Frage": "Formuliere eine normierte lineare DGL \\(n\\)-ter Ordnung als \\(L(y)=s\\). Welche Voraussetzungen an die Koeffizienten gelten, und warum ist die Lösungsmenge bei \\(s\\ne0\\) kein Vektorraum?",
-    "Antwort": "\\(L(y)=y^{(n)}+a_1(x)y^{(n-1)}+\\cdots+a_n(x)y=s(x)\\), mit \\(a_j,s\\) stetig auf einem Intervall \\(I\\). \\(L\\) ist linear; \\(\\ker L\\) ist ein Vektorraum. Die Menge \\(\\{y:L(y)=s\\}\\) ist für \\(s\\ne0\\) eine Verschiebung dieses Kerns, aber kein Vektorraum (insbesondere ist \\(0\\) keine Lösung).",
-    "Quelle": "V03 S. 1–2",
+    "id": "hm3-v17-010",
     "Bereich": "V03",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V03 S. 1–3",
+    "Frage": "Für \\(L(y)=y^{(n)}+a_1y^{(n-1)}+\\cdots+a_ny\\) auf \\(I\\): (a) Beweise Linearität. (b) Zeige beide Inklusionen der allgemeinen inhomogenen Lösungsmenge. (c) Begründe, warum ein Fundamentalsystem aus genau \\(n\\) Lösungen besteht. (d) Erläutere die Bedeutung der Anfangswerte für die Koeffizienten.",
+    "Antwort": "(a) Aus \\((\\alpha y+\\beta z)^{(k)}=\\alpha y^{(k)}+\\beta z^{(k)}\\) folgt \\(L(\\alpha y+\\beta z)=\\alpha L(y)+\\beta L(z)\\).\n(b) Ist \\(L(y_p)=s\\), gilt für \\(h\\in\\ker L\\) stets \\(L(y_p+h)=s\\). Umgekehrt erfüllt jede Lösung \\(y\\) mit \\(L(y)=s\\) die Bedingung \\(L(y-y_p)=0\\). Daher \\(\\{L=s\\}=y_p+\\ker L\\).\n(c) Bei stetigen \\(a_j\\) bildet die Anfangsdatenabbildung \\(y\\mapsto(y(x_0),\\ldots,y^{(n-1)}(x_0))\\) wegen linearer AWP-Existenz/Eindeutigkeit einen Isomorphismus \\(\\ker L\\cong\\mathbb K^n\\); somit Dimension \\(n\\).\n(d) Die \\(n\\) Anfangswerte bestimmen die \\(n\\) Konstanten der homogenen Linearkombination durch ein eindeutig lösbares LGS."
   },
   {
-    "id": "hm3-v16-019",
-    "Frage": "Eine partikuläre Lösung \\(y_p\\) der inhomogenen DGL \\(L(y)=s\\) ist bekannt. Wie erhältst du daraus alle Lösungen, und was bestimmt anschließend ein AWP?",
-    "Antwort": "Alle Lösungen sind \\(y=y_p+y_h\\) mit \\(y_h\\in\\ker L\\). Bei einer normierten DGL \\(n\\)-ter Ordnung hat \\(\\ker L\\) Dimension \\(n\\), sodass \\(y_h=\\sum_{j=1}^n c_jy_j\\) für ein Fundamentalsystem. Die \\(n\\) Anfangswerte legen die Koeffizienten \\(c_j\\) eindeutig fest.",
-    "Quelle": "V03 S. 2–3",
+    "id": "hm3-v17-011",
     "Bereich": "V03",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-020",
-    "Frage": "Gegeben drei Lösungen \\(y_1,y_2,y_3\\) einer homogenen linearen DGL dritter Ordnung. Wie bildest du die Wronski-Matrix und wie nutzt du sie, um ein Fundamentalsystem nachzuweisen?",
-    "Antwort": "\\(V(x)=\\begin{pmatrix}y_1&y_2&y_3\\\\y_1'&y_2'&y_3'\\\\y_1''&y_2''&y_3''\\end{pmatrix}\\), \\(W=\\det V\\). Sind alle drei tatsächlich Lösungen und \\(W(x_0)\\ne0\\) an einer Stelle, sind sie linear unabhängig und wegen \\(\\dim\\ker L=3\\) ein Fundamentalsystem.",
-    "Quelle": "V03 S. 3–4",
-    "Bereich": "V03",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-021",
-    "Frage": "Beim Ableiten einer Wronski-Determinante: Warum verschwinden fast alle Summanden der Zeilen-Ableitungsregel, und welche Rolle spielt dabei die zugrunde liegende DGL?",
-    "Antwort": "Die Ableitung der Zeile \\(j<n\\) ergibt genau die bereits vorhandene Zeile \\(j+1\\), also eine Determinante mit zwei gleichen Zeilen: null. Nur die Ableitung der letzten Zeile bleibt. Dort setzt man \\(y_j^{(n)}=-a_1y_j^{(n-1)}-\\cdots-a_ny_j\\) ein. Die Terme mit \\(a_2,\\ldots,a_n\\) erzeugen wieder doppelte Zeilen; übrig bleibt \\(-a_1W\\).",
+    "Typ": "Vertiefung",
     "Quelle": "V03 S. 4–6",
+    "Frage": "Beweise \\(W\\prime+a_1W=0\\) für die normierte homogene DGL n-ter Ordnung mit stetigen Koeffizienten. (a) Formuliere die Determinanten-Ableitungsregel. (b) Erläutere das Verschwinden jeder Zeile außer der letzten. (c) Zeige, warum \\(a_2,\\ldots,a_n\\) entfallen. (d) Löse die entstehende Wronski-DGL ohne Division durch \\(W\\).",
+    "Antwort": "(a) \\((\\det V)\\prime\\) ist Summe der Determinanten, in denen jeweils genau eine Zeile abgeleitet wurde.\n(b) Die Ableitung der Zeile \\(k<n\\) ergibt die bereits vorhandene Zeile \\(k+1\\), also Determinante null.\n(c) Die neue letzte Zeile ist wegen der DGL \\(-a_1R_{n-1}-a_2R_{n-2}-\\cdots-a_nR_0\\). Mit \\(R_j\\) für \\(j<n-1\\) entstehen wieder Doppelzeilen; einzig \\(-a_1R_{n-1}\\) bleibt. Somit \\(W\\prime=-a_1W\\).\n(d) Multipliziere mit \\(\\exp(\\int_{x_0}^x a_1)\\). Die Produktableitung ist null. Daher \\(W(x)=W(x_0)\\exp[-\\int_{x_0}^x a_1(t)dt]\\). Dies gilt ausdrücklich auch für \\(W(x_0)=0\\), dann \\(W\\equiv0\\)."
+  },
+  {
+    "id": "hm3-v17-012",
     "Bereich": "V03",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V03 S. 3–7",
+    "Frage": "Du erhältst drei Funktionen, die alle \\(y\\prime\\prime\\prime+a_1y\\prime\\prime+a_2y\\prime+a_3y=0\\) erfüllen. Beweise die Äquivalenz zwischen \\(W(x_0)\ne0\\) und linearer Unabhängigkeit. Warum wäre der Umkehrschluss für beliebige glatte Funktionen falsch?",
+    "Antwort": "Bei \\(W(x_0)\ne0\\) ist die Wronski-Matrix invertierbar. Aus \\(\\sum c_jy_j\\equiv0\\) folgt durch Ableiten und Einsetzen von \\(x_0\\) das LGS \\(V(x_0)c=0\\), also \\(c=0\\).\nBei \\(W(x_0)=0\\) existiert \\(c\ne0\\) mit \\(V(x_0)c=0\\). Die Linearkombination \\(z=\\sum c_jy_j\\) ist dann Lösung **derselben** homogenen DGL mit allen Null-Anfangswerten. Die AWP-Eindeutigkeit erzwingt \\(z\\equiv0\\); somit sind die Funktionen abhängig.\nOhne gemeinsame lineare DGL kann eine Wronski-Determinante an einer einzelnen Stelle verschwinden, obwohl die Funktionen unabhängig sind, z. B. \\(1,x^2\\) bei \\(x=0\\). Die Voraussetzung darf im Beweis nicht entfallen."
   },
   {
-    "id": "hm3-v16-022",
-    "Frage": "Gib die Abelsche Identität für \\(y^{(n)}+a_1(x)y^{(n-1)}+\\cdots+a_n(x)y=0\\) an. Was sagt sie über das mögliche Nullstellenverhalten von \\(W\\) aus?",
-    "Antwort": "\\(W'(x)+a_1(x)W(x)=0\\), also \\(W(x)=W(x_0)\\exp[-\\int_{x_0}^x a_1(t)\\,dt]\\). Der Exponentialfaktor ist nie null. Also gilt auf dem ganzen Intervall entweder \\(W\\equiv0\\) oder \\(W(x)\\ne0\\) an jeder Stelle.",
-    "Quelle": "V03 S. 5–6",
+    "id": "hm3-v17-013",
     "Bereich": "V03",
-    "Typ": "Satz & Anwendung"
+    "Typ": "Vertiefung",
+    "Quelle": "V03 S. 3–7",
+    "Frage": "Prüfe \\(y_1=e^x\\), \\(y_2=xe^x\\), \\(y_3=e^{2x}\\) als Fundamentalsystem der DGL \\(y\\prime\\prime\\prime-4y\\prime\\prime+5y\\prime-2y=0\\). (a) Zeige die DGL-Eigenschaft. (b) Berechne \\(W(0)\\). (c) Bestimme \\(W(x)\\) mithilfe von Abel und interpretiere das Ergebnis.",
+    "Antwort": "(a) Das charakteristische Polynom ist \\(p(\\lambda)=(\\lambda-1)^2(\\lambda-2)\\). Die genannten Funktionen gehören zur doppelten Wurzel \\(1\\) und einfachen Wurzel \\(2\\), also sind sie Lösungen.\n(b) \\(V(0)=\\begin{pmatrix}1&0&1\\\\1&1&2\\\\1&2&4\\end{pmatrix}\\), \\(W(0)=1\\).\n(c) Der Koeffizient vor \\(y\\prime\\prime\\) ist \\(a_1=-4\\), somit \\(W(x)=W(0)e^{-\\int_0^x(-4)dt}=e^{4x}\ne0\\). Die Funktionen sind auf \\(\\mathbb R\\) unabhängig; wegen Dimension 3 bilden sie ein Fundamentalsystem."
   },
   {
-    "id": "hm3-v16-023",
-    "Frage": "Warum ist die Umformung \\(W'/W=-a_1\\) beim Beweis der Abelschen Identität nicht allgemein zulässig? Formuliere die korrekte Behandlung des Falls \\(W(x_0)=0\\).",
-    "Antwort": "Division durch \\(W\\) ist verboten, wenn \\(W\\) irgendwo null ist. Zuerst aus der Determinantenableitung ohne Division \\(W'+a_1W=0\\) gewinnen. Die eindeutige Lösung dieses linearen AWPs lautet \\(W(x)=W(x_0)e^{-\\int_{x_0}^x a_1}\\). Ist \\(W(x_0)=0\\), folgt \\(W\\equiv0\\).",
-    "Quelle": "V03 S. 5–6",
+    "id": "hm3-v17-014",
     "Bereich": "V03",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V03 S. 2–4",
+    "Frage": "Ein Fundamentalsystem \\(y_1,\\ldots,y_n\\) liegt vor. Erläutere formal und nicht nur verbal, wie ein beliebiges AWP \\(L(y)=s\\) mit Anfangsdaten bei \\(x_0\\) in ein lineares Gleichungssystem für die Konstanten übergeht. Zeige, warum dieses System invertierbar ist.",
+    "Antwort": "Wähle eine partikuläre Lösung \\(y_p\\). Dann \\(y=y_p+\\sum_{j=1}^n c_jy_j\\). Für jeden Anfangswert \\(y^{(k)}(x_0)=a_k\\), \\(k=0,\\ldots,n-1\\), erhält man \\(\\sum_j c_j y_j^{(k)}(x_0)=a_k-y_p^{(k)}(x_0)\\). In Matrixform \\(V(x_0)c=a-b_p\\), wobei \\(V\\) die Wronski-Matrix und \\(b_p=(y_p(x_0),\\ldots,y_p^{(n-1)}(x_0))^T\\) ist. Da das FS unabhängig ist, gilt \\(\\det V(x_0)\ne0\\) für jedes \\(x_0\\). Das LGS besitzt daher genau eine Lösung \\(c\\)."
   },
   {
-    "id": "hm3-v16-024",
-    "Frage": "Prüfe an \\(y''-2y'+y=0\\), ob \\(y_1=e^x\\), \\(y_2=xe^x\\) ein Fundamentalsystem bilden. Berechne nur \\(W(0)\\) und begründe anschließend die Aussage für jedes \\(x\\).",
-    "Antwort": "\\(y_1'=e^x\\), \\(y_2'=(1+x)e^x\\); daher \\(W(0)=\\det\\begin{pmatrix}1&0\\\\1&1\\end{pmatrix}=1\\ne0\\). Beide Funktionen lösen die DGL. Folglich sind sie ein Fundamentalsystem. Aus Abel mit \\(a_1=-2\\) folgt zusätzlich \\(W(x)=e^{2x}\\ne0\\) für alle \\(x\\).",
-    "Quelle": "V03 S. 4, 7",
-    "Bereich": "V03",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-025",
-    "Frage": "Worin liegt der Unterschied zwischen „\\(W(x_0)\\ne0\\)“ und „\\(W(x_0)=0\\)“ als Test der linearen Unabhängigkeit? Für welche Funktionsfamilien ist die Schlussrichtung im zweiten Fall gerechtfertigt?",
-    "Antwort": "\\(W(x_0)\\ne0\\) beweist für beliebige genügend glatte Funktionen lineare Unabhängigkeit. Aus \\(W(x_0)=0\\) folgt bei beliebigen Funktionen nicht allgemein Abhängigkeit. Hier ist die Umkehrung erlaubt, weil alle \\(n\\) Funktionen Lösungen derselben homogenen linearen DGL \\(n\\)-ter Ordnung mit stetigen Koeffizienten sind: Abel liefert \\(W\\equiv0\\), die Anfangswert-Eindeutigkeit die Abhängigkeit.",
-    "Quelle": "V03 S. 3, 6",
-    "Bereich": "V03",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-026",
-    "Frage": "Eine homogene DGL hat konstante Koeffizienten. Wie leitest du das charakteristische Polynom aus \\(L(y)=0\\) her, und wie entstehen aus den Nullstellen die Basisfunktionen?",
-    "Antwort": "Setze \\(y=e^{\\lambda x}\\). Dann \\(L(y)=p(\\lambda)e^{\\lambda x}\\) mit \\(p(\\lambda)=\\lambda^n+a_1\\lambda^{n-1}+\\cdots+a_n\\). Da \\(e^{\\lambda x}\\ne0\\), muss \\(p(\\lambda)=0\\). Zu einer Nullstelle der Vielfachheit \\(r\\) gehören \\(e^{\\lambda x},xe^{\\lambda x},\\ldots,x^{r-1}e^{\\lambda x}\\). Aus allen Wurzeln entstehen insgesamt \\(n\\) unabhängige Lösungen.",
-    "Quelle": "V04 S. 1–2, 4",
+    "id": "hm3-v17-015",
     "Bereich": "V04",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-027",
-    "Frage": "Das charakteristische Polynom besitzt die doppelte reelle Nullstelle \\(\\lambda\\). Warum reicht \\(e^{\\lambda x}\\) nicht zweimal aus, und weshalb ist \\(xe^{\\lambda x}\\) die richtige zweite Funktion?",
-    "Antwort": "Zwei identische Funktionen sind abhängig. Für \\(p(\\lambda)=p'(\\lambda)=0\\) gilt \\(L(e^{\\lambda x})=0\\) und \\(L(xe^{\\lambda x})=p'(\\lambda)e^{\\lambda x}=0\\). Die Wronski-Determinante beider Funktionen ist \\(e^{2\\lambda x}\\ne0\\); damit entsteht ein Fundamentalsystem.",
-    "Quelle": "V04 S. 2–3",
-    "Bereich": "V04",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-028",
-    "Frage": "Eine DGL mit reellen konstanten Koeffizienten hat die Nullstellen \\(\\lambda=\\alpha\\pm i\\beta\\), \\(\\beta\\ne0\\). Wie erhältst du zwei reelle Lösungen und warum bilden sie ein unabhängiges Paar?",
-    "Antwort": "Nach Euler \\(e^{(\\alpha+i\\beta)x}=e^{\\alpha x}(\\cos\\beta x+i\\sin\\beta x)\\). Wegen reeller Koeffizienten sind Real- und Imaginärteil Lösungen: \\(y_1=e^{\\alpha x}\\cos\\beta x\\), \\(y_2=e^{\\alpha x}\\sin\\beta x\\). Ihr Wronskian ist \\(W=\\beta e^{2\\alpha x}\\ne0\\).",
-    "Quelle": "V04 S. 2–3",
-    "Bereich": "V04",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-029",
-    "Frage": "Wie baust du das reelle Fundamentalsystem, wenn \\(\\alpha\\pm i\\beta\\) ein doppeltes konjugiertes Nullstellenpaar ist? Begründe die vier Funktionen aus Vielfachheit und Euler-Formel.",
-    "Antwort": "Aus den zweifachen komplexen Nullstellen entstehen \\(e^{(\\alpha\\pm i\\beta)x}\\) und \\(xe^{(\\alpha\\pm i\\beta)x}\\). Reell ergeben sich \\(e^{\\alpha x}\\cos\\beta x,\\ e^{\\alpha x}\\sin\\beta x,\\ xe^{\\alpha x}\\cos\\beta x,\\ xe^{\\alpha x}\\sin\\beta x\\). Für eine DGL vierter Ordnung bilden sie ein Fundamentalsystem.",
-    "Quelle": "V04 S. 4–5",
-    "Bereich": "V04",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-030",
-    "Frage": "Bestimme ein reelles Fundamentalsystem für \\(y'''+y''+y'+y=0\\). Zeige die Faktorisierung des charakteristischen Polynoms.",
-    "Antwort": "\\(p(\\lambda)=\\lambda^3+\\lambda^2+\\lambda+1=(\\lambda+1)(\\lambda^2+1)\\). Nullstellen: \\(-1,i,-i\\). Reelles Fundamentalsystem: \\(\\{e^{-x},\\cos x,\\sin x\\}\\).",
-    "Quelle": "V04 S. 5",
-    "Bereich": "V04",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-031",
-    "Frage": "Bestimme das Fundamentalsystem für \\(y^{(4)}-2y''+y=0\\). Was entscheidet über die Faktoren \\(x\\) in den Lösungen?",
-    "Antwort": "\\(p(\\lambda)=\\lambda^4-2\\lambda^2+1=(\\lambda^2-1)^2=(\\lambda-1)^2(\\lambda+1)^2\\). Beide reellen Wurzeln besitzen Vielfachheit 2. FS: \\(\\{e^x,xe^x,e^{-x},xe^{-x}\\}\\). Der Faktor \\(x\\) entsteht aus der Wurzelvielfachheit, nicht aus einer Störfunktion.",
-    "Quelle": "V04 S. 5",
-    "Bereich": "V04",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-032",
-    "Frage": "Bestimme ein reelles Fundamentalsystem für \\(y^{(4)}+2y''+y=0\\), und erläutere, weshalb auch \\(x\\cos x\\) und \\(x\\sin x\\) dazugehören.",
-    "Antwort": "\\(p(\\lambda)=(\\lambda^2+1)^2\\). Die komplexen Nullstellen \\(\\pm i\\) sind jeweils doppelt. Daher \\(\\{\\cos x,\\sin x,x\\cos x,x\\sin x\\}\\). Die \\(x\\)-Faktoren gehören zu den zweiten Basisfunktionen der doppelten Nullstellen.",
-    "Quelle": "V04 S. 5",
-    "Bereich": "V04",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-033",
-    "Frage": "Wie prüfst du bei einer vorgeschlagenen Liste von \\(n\\) Basisfunktionen, ob sie tatsächlich ein Fundamentalsystem ist? Welche zwei Aussagen müssen voneinander getrennt geprüft werden?",
-    "Antwort": "(1) Jede Funktion erfüllt die homogene DGL. (2) Die \\(n\\) Funktionen sind linear unabhängig, z. B. durch \\(W(x_0)\\ne0\\). Aus der bloßen Anzahl oder aus ihrer unterschiedlichen Schreibweise allein folgt kein Fundamentalsystem. Bei konstanten Koeffizienten erledigt die Wurzel-/Vielfachheitskonstruktion beide Punkte theoretisch.",
+    "Typ": "Vertiefung",
     "Quelle": "V04 S. 1–4",
+    "Frage": "Gegeben ist die homogene Gleichung \\(y^{(4)}+2y\\prime\\prime+y=0\\). (a) Leite das charakteristische Polynom her. (b) Bestimme sämtliche Nullstellen mit algebraischer Vielfachheit. (c) Konstruiere ein reelles Fundamentalsystem. (d) Begründe, dass die vier Funktionen Lösungen und linear unabhängig sind.",
+    "Antwort": "(a) \\(p(\\lambda)=\\lambda^4+2\\lambda^2+1=(\\lambda^2+1)^2\\).\n(b) \\(\\lambda=\\pm i\\) jeweils doppelt.\n(c) \\(\\{\\cos x,\\sin x,x\\cos x,x\\sin x\\}\\).\n(d) Für \\(r\\)-fache Wurzel liefern \\(x^k e^{\\lambda x}\\), \\(k=0,\\ldots,r-1\\), komplexe Lösungen. Die Gleichung hat reelle Koeffizienten; Real- und Imaginärteile sind Lösungen. Ihre Unabhängigkeit folgt aus der Theorie der Vielfachheitsblöcke, alternativ durch eine von null verschiedene Wronski-Determinante an \\(x=0\\). Die vier unabhängigen Lösungen bilden ein FS für Ordnung 4."
+  },
+  {
+    "id": "hm3-v17-016",
     "Bereich": "V04",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V04 S. 2–4",
+    "Frage": "Zeige mittels \\(L=p(D)\\), warum bei einer r-fachen Nullstelle \\(\\lambda\\) nicht nur \\(e^{\\lambda x}\\), sondern alle Funktionen \\(x^k e^{\\lambda x}\\) für \\(k<r\\) homogene Lösungen sind. Beweise auch die Unabhängigkeit innerhalb eines solchen Blocks.",
+    "Antwort": "Für jedes \\(k<r\\) gilt \\(L(x^ke^{\\lambda x})=L(\\partial_\\lambda^k e^{\\lambda x})=\\partial_\\lambda^k[p(\\lambda)e^{\\lambda x}]=\\sum_{j=0}^k\\binom kj p^{(j)}(\\lambda)x^{k-j}e^{\\lambda x}=0\\), da \\(p^{(j)}(\\lambda)=0\\) für \\(j<r\\).\nZur Unabhängigkeit: Aus \\(\\sum_{k=0}^{r-1}c_kx^ke^{\\lambda x}=0\\) folgt durch Division durch den nie verschwindenden Faktor \\(e^{\\lambda x}\\) die Polynomidentität \\(\\sum c_kx^k=0\\). Ein Polynom, das auf einem Intervall verschwindet, besitzt nur Nullkoeffizienten. Damit ist der Block unabhängig."
   },
   {
-    "id": "hm3-v16-034",
-    "Frage": "Wie löst du grundsätzlich eine inhomogene lineare DGL \\(L(y)=s\\)? Unterscheide klar die Aufgaben von Fundamentalsystem und partikulärer Lösung.",
-    "Antwort": "(1) Homogene Gleichung \\(L(y_h)=0\\) lösen und ein Fundamentalsystem \\(\\{y_1,\\ldots,y_n\\}\\) bestimmen. (2) Eine partikuläre Lösung \\(y_p\\) von \\(L(y_p)=s\\) finden. (3) Allgemeine Lösung \\(y=y_p+\\sum_{j=1}^n c_jy_j\\); Anfangswerte legen \\(c_j\\) fest. \\(y_p\\) selbst muss kein Fundamentalsystem enthalten.",
-    "Quelle": "V05 S. 1–2",
+    "id": "hm3-v17-017",
+    "Bereich": "V04",
+    "Typ": "Vertiefung",
+    "Quelle": "V04 S. 2–5",
+    "Frage": "Für eine reelle DGL mit \\(\\lambda=\\alpha\\pm i\\beta\\), \\(\\beta>0\\), beweise (a) die Paarung der Nullstellen, (b) die Reellwertigkeit und Lösungs-Eigenschaft von \\(e^{\\alpha x}\\cos\\beta x\\) und \\(e^{\\alpha x}\\sin\\beta x\\), (c) ihre Unabhängigkeit durch eine konkrete Wronski-Determinante.",
+    "Antwort": "(a) Für ein Polynom mit reellen Koeffizienten gilt \\(p(\\bar\\lambda)=\\overline{p(\\lambda)}\\), somit ist \\(\\bar\\lambda\\) ebenfalls Nullstelle.\n(b) \\(e^{(\\alpha+i\\beta)x}=e^{\\alpha x}(\\cos\\beta x+i\\sin\\beta x)\\). Bei reellen Koeffizienten ist \\(L(\\mathrm{Re}\\,z)=\\mathrm{Re}(Lz)\\), entsprechend imaginär; die beiden Funktionen sind daher reelle homogene Lösungen.\n(c) Direkt ergibt sich \\(W(x)=\\beta e^{2\\alpha x}\ne0\\). Sie sind unabhängig. Bei einer DGL zweiter Ordnung ist dies bereits ein FS; bei höherer Ordnung ein Teil eines solchen."
+  },
+  {
+    "id": "hm3-v17-018",
+    "Bereich": "V04",
+    "Typ": "Vertiefung",
+    "Quelle": "V04 S. 5; Ü02",
+    "Frage": "Bestimme aus \\(y\\prime\\prime\\prime+y\\prime\\prime+y\\prime+y=0\\) das reelle Fundamentalsystem. Warum genügt es nicht, die drei Nullstellen einfach aufzuschreiben? Führe mindestens eine überprüfbare Argumentation für die Unabhängigkeit an.",
+    "Antwort": "\\(p(\\lambda)=\\lambda^3+\\lambda^2+\\lambda+1=(\\lambda+1)(\\lambda^2+1)\\). Wurzeln \\(-1,\\pm i\\). Reelles FS: \\(e^{-x},\\cos x,\\sin x\\).\nZur Lösungseigenschaft folgt \\(L(e^{\\lambda x})=p(\\lambda)e^{\\lambda x}\\) für jede Wurzel; mit reellen Koeffizienten sind Real-/Imaginärteile ebenfalls Lösungen.\nUnabhängigkeit z. B. an \\(x=0\\): \\(V(0)=\\begin{pmatrix}1&1&0\\\\-1&0&1\\\\1&-1&0\\end{pmatrix}\\), \\(\\det V(0)=2\ne0\\). Drei unabhängige Lösungen einer DGL dritter Ordnung bilden ein FS."
+  },
+  {
+    "id": "hm3-v17-019",
     "Bereich": "V05",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V05 S. 2–4",
+    "Frage": "Führe die Variation der Konstanten für eine normierte lineare DGL n-ter Ordnung als mathematisch exaktes Verfahren her. (a) Ansatz, (b) alle \\(n\\) Nebenbedingungen, (c) Wronski-LGS, (d) Eindeutigkeit seiner Lösung, (e) Verifikation \\(L(y_p)=s\\).",
+    "Antwort": "(a) Bei FS \\(y_1,\\ldots,y_n\\): \\(y_p=\\sum c_j(x)y_j(x)\\).\n(b) Für \\(k=0,\\ldots,n-2\\): \\(\\sum_j c_j\\prime y_j^{(k)}=0\\); letzte Gleichung \\(\\sum_j c_j\\prime y_j^{(n-1)}=s\\).\n(c) Damit \\(V c\\prime=s e_n\\), \\(V_{kj}=y_j^{(k-1)}\\).\n(d) \\(\\det V=W\ne0\\) auf \\(I\\) wegen FS und Abel; daher \\(c\\prime=V^{-1}s e_n\\) eindeutig.\n(e) Wegen der Nebenbedingungen gilt \\(y_p^{(k)}=\\sum c_jy_j^{(k)}\\) bis \\(k=n-1\\) und \\(y_p^{(n)}=\\sum c_jy_j^{(n)}+s\\). Somit \\(L(y_p)=\\sum c_jL(y_j)+s=s\\). Anschließend \\(c\\prime\\) integrieren. Nicht normierte Gleichungen zuerst durch den höchsten Koeffizienten dividieren."
   },
   {
-    "id": "hm3-v16-035",
-    "Frage": "Führe die Variation der Konstanten für \\(y^{(n)}+a_1y^{(n-1)}+\\cdots+a_ny=s(x)\\) als vollständiges Rechenschema auf: Ansatz, Nebenbedingungen, LGS und Rücksubstitution.",
-    "Antwort": "Bei bekanntem FS \\(\\{y_j\\}\\): \\(y_p=\\sum_j c_j(x)y_j(x)\\). Fordere \\(\\sum_j c_j'y_j^{(k)}=0\\) für \\(k=0,\\ldots,n-2\\) sowie \\(\\sum_j c_j'y_j^{(n-1)}=s\\). Dann \\(V(x)c'(x)=s(x)e_n\\). Das LGS lösen, \\(c_j'\\) integrieren, in den Ansatz einsetzen; Integrationskonstanten wandern in die homogene Lösung.",
-    "Quelle": "V05 S. 2–3",
+    "id": "hm3-v17-020",
     "Bereich": "V05",
-    "Typ": "Methode"
+    "Typ": "Vertiefung",
+    "Quelle": "V05 S. 4; Ü03",
+    "Frage": "Löse \\(y\\prime\\prime+2y\\prime+2y=1\\) mittels Variation der Konstanten mit \\(y_1=e^{-x}\\cos x\\), \\(y_2=e^{-x}\\sin x\\). Stelle das vollständige LGS auf, bestimme \\(c_1\\prime,c_2\\prime\\) und eine partikuläre Lösung; prüfe durch Einsetzen.",
+    "Antwort": "\\(W=e^{-2x}\ne0\\). Nebenbedingungen: \\(c_1\\prime y_1+c_2\\prime y_2=0\\), \\(c_1\\prime y_1\\prime+c_2\\prime y_2\\prime=1\\). Aus Cramer ergibt sich \\(c_1\\prime=-y_2/W=-e^x\\sin x\\), \\(c_2\\prime=y_1/W=e^x\\cos x\\).\nIntegriere \\(c_1=-(e^x/2)(\\sin x-\\cos x)\\), \\(c_2=(e^x/2)(\\sin x+\\cos x)\\), Integrationskonstanten null. Dann \\(y_p=c_1e^{-x}\\cos x+c_2e^{-x}\\sin x=\\tfrac12(\\cos^2x+\\sin^2x)=1/2\\). Probe: \\(0+0+2(1/2)=1\\)."
   },
   {
-    "id": "hm3-v16-036",
-    "Frage": "Warum darfst du bei Variation der Konstanten die \\(n-1\\) Nebenbedingungen \\(\\sum_j c_j' y_j^{(k)}=0\\) einführen? Was vereinfachen sie konkret, und weshalb bleibt die Störfunktion übrig?",
-    "Antwort": "Der Ansatz \\(y_p=\\sum c_jy_j\\) enthält \\(n\\) unbekannte Funktionen \\(c_j\\). Die \\(n-1\\) Nebenbedingungen legen eine bequeme Wahl dieser Funktionen fest. Dadurch verschwinden in \\(y_p',\\ldots,y_p^{(n-1)}\\) die zusätzlichen \\(c_j'\\)-Terme. Wegen \\(L(y_j)=0\\) hebt sich im Ausdruck \\(L(y_p)\\) der Teil mit \\(c_j\\) auf; genau \\(\\sum c_j'y_j^{(n-1)}=s\\) bleibt.",
-    "Quelle": "V05 S. 2–3",
+    "id": "hm3-v17-021",
     "Bereich": "V05",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-037",
-    "Frage": "Warum ist das lineare Gleichungssystem \\(V(x)c'(x)=s(x)e_n\\) bei Variation der Konstanten auf dem ganzen Intervall eindeutig lösbar? Und was geschieht bei einer nicht normierten DGL?",
-    "Antwort": "Da die \\(y_j\\) ein Fundamentalsystem bilden, ist \\(W(x)=\\det V(x)\\ne0\\) für alle \\(x\\in I\\) (Abel), also \\(V(x)\\) invertierbar. Liegt \\(b_0(x)y^{(n)}+\\cdots=s\\) mit \\(b_0\\ne0\\) vor, muss zuerst durch \\(b_0(x)\\) dividiert werden: Im LGS steht dann \\(s/b_0\\), nicht \\(s\\).",
-    "Quelle": "V05 S. 3",
-    "Bereich": "V05",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-038",
-    "Frage": "Für \\(y''+2y'+2y=1\\) sei \\(y_1=e^{-x}\\cos x,\\ y_2=e^{-x}\\sin x\\) ein FS. Stelle das VoK-Gleichungssystem auf und nenne eine korrekte partikuläre Lösung.",
-    "Antwort": "\\(\\begin{pmatrix}y_1&y_2\\\\y_1'&y_2'\\end{pmatrix}\\binom{c_1'}{c_2'}=\\binom{0}{1}\\), also \\(y_1c_1'+y_2c_2'=0,\\ y_1'c_1'+y_2'c_2'=1\\). Das System ist wegen \\(W=e^{-2x}\\ne0\\) lösbar. Eine partikuläre Lösung ist \\(y_p=1/2\\), denn \\(0+0+2(1/2)=1\\).",
-    "Quelle": "V05 S. 4",
-    "Bereich": "V05",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-039",
-    "Frage": "Für \\(y'''-y'=3e^{2x}\\) ist \\(p(\\lambda)=\\lambda(\\lambda-1)(\\lambda+1)\\). Wähle ein FS, gib das VoK-LGS an und kontrolliere eine partikuläre Lösung.",
-    "Antwort": "FS: \\(\\{1,e^x,e^{-x}\\}\\). Mit \\(y_p=c_1+c_2e^x+c_3e^{-x}\\): \\(\\begin{pmatrix}1&e^x&e^{-x}\\\\0&e^x&-e^{-x}\\\\0&e^x&e^{-x}\\end{pmatrix}c'=(0,0,3e^{2x})^T\\). Eine partikuläre Lösung ist \\(y_p=\\tfrac12e^{2x}\\), denn \\(y_p'''-y_p'=(8-2)\\tfrac12e^{2x}=3e^{2x}\\).",
-    "Quelle": "V05 S. 5",
-    "Bereich": "V05",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-040",
-    "Frage": "Erkläre die Reduktion der Ordnung für konstante Koeffizienten bei bekannter Nullstelle \\(\\lambda\\) von \\(p\\): Welchen Ansatz wählst du und was genau fällt nach Einsetzen weg?",
-    "Antwort": "Setze \\(y_p=c(x)e^{\\lambda x}\\) für \\(p(\\lambda)=0\\). Weil \\(L(e^{\\lambda x})=p(\\lambda)e^{\\lambda x}=0\\), fällt jeder Ausdruck weg, in dem nur \\(c(x)\\) ohne Ableitung steht. Übrig bleibt eine DGL für \\(c',c'',\\ldots\\). Die Substitution \\(d=c'\\) verringert die Ordnung um eins; anschließend \\(d\\) integrieren.",
+    "Typ": "Vertiefung",
     "Quelle": "V05 S. 5–6",
-    "Bereich": "V05",
-    "Typ": "Methode"
+    "Frage": "Begründe die Reduktion der Ordnung aus \\(L=p(D)\\) bei bekannter Nullstelle \\(\\lambda\\). Gib die allgemeine Formel für \\(p(D+\\lambda)\\) an. Leite speziell für \\(L=D^2+a_1D+a_2\\) die Gleichung für \\(d=c\\prime\\) aus \\(y_p=ce^{\\lambda x}\\) her.",
+    "Antwort": "Für konstante Koeffizienten \\(p(D)(ce^{\\lambda x})=e^{\\lambda x}p(D+\\lambda)c\\) und \\(p(D+\\lambda)=\\sum_{k=0}^n p^{(k)}(\\lambda)D^k/k!\\). Bei \\(p(\\lambda)=0\\) verschwindet der undifferenzierte \\(c\\)-Term; setze \\(d=c\\prime\\).\nFür Ordnung 2: \\(p(z)=z^2+a_1z+a_2\\). Daher \\(p(D+\\lambda)c=c\\prime\\prime+(2\\lambda+a_1)c\\prime+p(\\lambda)c\\). Aus \\(L(y_p)=s\\) folgt \\(d\\prime+(2\\lambda+a_1)d=e^{-\\lambda x}s(x)\\). Dies ist eine lineare DGL erster Ordnung. Nach Lösen \\(d\\) integrieren und \\(y_p=ce^{\\lambda x}\\) einsetzen. Ohne konstante Koeffizienten ist diese Formel so nicht verfügbar."
   },
   {
-    "id": "hm3-v16-041",
-    "Frage": "Löse mittels Reduktion der Ordnung die partikuläre Gleichung \\(y''+y'-6y=-e^{-x}\\), wenn \\(\\lambda=-3\\) eine Nullstelle des charakteristischen Polynoms ist. Nenne die zugehörige reduzierte Gleichung.",
-    "Antwort": "\\(p(\\lambda)=(\\lambda+3)(\\lambda-2)\\). Ansatz \\(y_p=c(x)e^{-3x}\\). Einsetzen ergibt \\((c''-5c')e^{-3x}=-e^{-x}\\), also \\(d'-5d=-e^{2x}\\) für \\(d=c'\\). Ansatz \\(d_p=Ae^{2x}\\): \\((-3A)e^{2x}=-e^{2x}\\), somit \\(d_p=\\tfrac13e^{2x}\\). Integrieren: \\(c_p=\\tfrac16e^{2x}\\), daher \\(y_p=\\tfrac16e^{-x}\\).",
+    "id": "hm3-v17-022",
+    "Bereich": "V05",
+    "Typ": "Vertiefung",
     "Quelle": "V05 S. 6",
-    "Bereich": "V05",
-    "Typ": "Methode"
+    "Frage": "Löse \\(y\\prime\\prime+y\\prime-6y=-e^{-x}\\) mit dem in V05 gezeigten Ansatz der Reduktion der Ordnung. Begründe die Wahl \\(\\lambda=-3\\), führe die reduzierte DGL und die Integrationen vollständig aus und mache die direkte Probe.",
+    "Antwort": "Charakteristisches Polynom \\(p(\\lambda)=(\\lambda+3)(\\lambda-2)\\). \\(\\lambda=-3\\) ist Nullstelle, also Ansatz \\(y_p=c(x)e^{-3x}\\). Nach Einsetzen: \\((c\\prime\\prime-5c\\prime)e^{-3x}=-e^{-x}\\), also für \\(d=c\\prime\\): \\(d\\prime-5d=-e^{2x}\\). Wähle \\(d=Ae^{2x}\\); dann \\((2-5)A=-1\\), somit \\(A=1/3\\). \\(c=(1/6)e^{2x}\\), daher \\(y_p=(1/6)e^{-x}\\). Probe: \\(y_p\\prime=-(1/6)e^{-x}\\), \\(y_p\\prime\\prime=(1/6)e^{-x}\\); \\(y_p\\prime\\prime+y_p\\prime-6y_p=(1/6-1/6-1)e^{-x}=-e^{-x}\\)."
   },
   {
-    "id": "hm3-v16-042",
-    "Frage": "Variation der Konstanten und Reduktion der Ordnung benutzen beide bekannte homogene Lösungen. Wann ist welches Verfahren die günstigere Wahl, und welche Daten benötigt es jeweils?",
-    "Antwort": "VoK setzt ein vollständiges FS voraus und funktioniert auch bei variablen stetigen Koeffizienten; es führt zu \\(V c'=s e_n\\). Die hier behandelte Reduktion nutzt konstante Koeffizienten und eine bekannte Exponentiallösung \\(e^{\\lambda x}\\); der Ansatz \\(c e^{\\lambda x}\\) senkt die Ordnung. Man muss also nicht zuerst das vollständige FS berechnen.",
-    "Quelle": "V05 S. 2–6",
+    "id": "hm3-v17-023",
     "Bereich": "V05",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V05 S. 2–6; V06",
+    "Frage": "Entscheide für eine inhomogene lineare DGL anhand von drei Situationen, ob Variation der Konstanten, Reduktion der Ordnung oder unbestimmte Koeffizienten geeignet ist. Begründe jeweils die Voraussetzungen, den Ansatz und den mathematischen Vorteil – insbesondere bei variablen Koeffizienten.",
+    "Antwort": "(1) VoK: Für normierte lineare DGL mit stetigen, auch variablen Koeffizienten und bekanntem FS \\(y_1,\\ldots,y_n\\). Ansatz \\(y_p=\\sum c_jy_j\\), LGS \\(Vc\\prime=s e_n\\). Allgemein, aber vollständiges FS erforderlich.\n(2) RoO der V05: konstante Koeffizienten, bekannte Nullstelle \\(\\lambda\\), Ansatz \\(y_p=ce^{\\lambda x}\\); aus \\(p(\\lambda)=0\\) folgt eine niedrigere Gleichung für \\(d=c\\prime\\). Kein vollständiges FS nötig.\n(3) Unbestimmte Koeffizienten: konstante Koeffizienten und Störfunktion aus Polynom-Exponential-(Sinus/Cosinus)-Klasse. Ansatz \\(x^rQ_m e^{\\lambda x}\\). Oft kürzester Weg, aber für allgemeine \\(s(x)\\) nicht geeignet."
   },
   {
-    "id": "hm3-v16-043",
-    "Frage": "Für \\(L(y)=P_m(x)e^{\\lambda x}\\) mit konstanten Koeffizienten: Formuliere den Ansatz der unbestimmten Koeffizienten einschließlich Resonanz und erkläre die beiden Größen \\(m,r\\).",
-    "Antwort": "Man setzt \\(y_p=x^r Q_m(x)e^{\\lambda x}\\), wobei \\(Q_m\\) ein Polynom vom Grad höchstens \\(m\\) mit unbekannten Koeffizienten ist. \\(m\\) ist der Polynomgrad der Störfunktion; \\(r\\) ist die algebraische Vielfachheit von \\(\\lambda\\) als Nullstelle des charakteristischen Polynoms (\\(r=0\\), falls \\(p(\\lambda)\\ne0\\)). Koeffizienten durch Einsetzen und Koeffizientenvergleich bestimmen.",
-    "Quelle": "V06 S. 3",
+    "id": "hm3-v17-024",
     "Bereich": "V06",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-044",
-    "Frage": "Was bedeutet Resonanz im Ansatz der unbestimmten Koeffizienten? Warum muss man bei einer \\(r\\)-fachen Nullstelle den Faktor \\(x^r\\) ergänzen?",
-    "Antwort": "Liegt \\(\\lambda\\) im Spektrum der homogenen Gleichung, ist \\(e^{\\lambda x}\\) bereits eine homogene Lösung; bei Vielfachheit \\(r\\) gehören sogar \\(x^k e^{\\lambda x}\\) für \\(0\\le k<r\\) dazu. Ein unmodifizierter Ansatz würde nur homogene Beiträge erzeugen bzw. nicht die Störfunktion treffen. \\(x^r Q_m e^{\\lambda x}\\) ist die erste passende nicht-homogene Form.",
+    "Typ": "Vertiefung",
     "Quelle": "V06 S. 3–5",
-    "Bereich": "V06",
-    "Typ": "Verständnis"
+    "Frage": "Leite bei \\(L=p(D)\\) die Resonanzregel für \\(s(x)=P_m(x)e^{\\lambda x}\\) her. (a) Bedeutung der Nullstellenvielfachheit \\(r\\), (b) Ansatz \\(x^rQ_m e^{\\lambda x}\\), (c) Operatorbegründung, (d) Unterschied zu einem homogenen Vielfachheitsblock.",
+    "Antwort": "\\(r\\) ist die Vielfachheit von \\(\\lambda\\) als Nullstelle von \\(p\\), bei Nichtnullstelle \\(r=0\\).\nMit \\(p(z)=(z-\\lambda)^r q(z)\\), \\(q(\\lambda)\ne0\\), gilt \\(p(D)(e^{\\lambda x}u)=e^{\\lambda x}D^r q(D+\\lambda)u\\). Auf Polynomen bis Grad \\(m\\) ist \\(q(D+\\lambda)\\) invertierbar, weil es eine obere Dreiecksmatrix mit Diagonale \\(q(\\lambda)\ne0\\) darstellt. \\(D^r\\) bildet \\(x^r\\) mal Polynome vom Grad \\(\\le m\\) bijektiv auf Polynome vom Grad \\(\\le m\\) ab. Deshalb kann \\(u=x^rQ_m\\) gewählt werden.\nIm homogenen FS beschreibt \\(x^ke^{\\lambda x}\\), \\(k<r\\), gerade den Kern; der Faktor \\(x^r\\) im inhomogenen Ansatz verlässt diesen Kern."
   },
   {
-    "id": "hm3-v16-045",
-    "Frage": "Für \\(y'''-4y''+5y'-2y=2e^x\\): Bestimme \\(p\\), die Resonanzvielfachheit, einen geeigneten Ansatz und die partikuläre Lösung.",
-    "Antwort": "\\(p(\\lambda)=\\lambda^3-4\\lambda^2+5\\lambda-2=(\\lambda-1)^2(\\lambda-2)\\). Bei \\(\\lambda=1\\) ist \\(r=2\\). Ansatz \\(y_p=ax^2e^x\\). Einsetzen liefert \\(L(ax^2e^x)=-2ae^x\\), daher \\(a=-1\\) und \\(y_p=-x^2e^x\\).",
+    "id": "hm3-v17-025",
+    "Bereich": "V06",
+    "Typ": "Vertiefung",
     "Quelle": "V06 S. 4–5",
-    "Bereich": "V06",
-    "Typ": "Methode"
+    "Frage": "Für \\(y\\prime\\prime\\prime-4y\\prime\\prime+5y\\prime-2y=2e^x\\): (a) Finde die Faktorisierung von \\(p\\). (b) Bestimme die Resonanzvielfachheit. (c) Wähle den kleinstmöglichen partikulären Ansatz. (d) Bestimme den Koeffizienten und kontrolliere durch Probe.",
+    "Antwort": "\\(p(\\lambda)=\\lambda^3-4\\lambda^2+5\\lambda-2=(\\lambda-1)^2(\\lambda-2)\\); bei \\(\\lambda=1\\) ist \\(r=2\\). Für \\(s=2e^x\\) genügt \\(y_p=ax^2e^x\\).\nAus \\(p(D)(ax^2e^x)=ae^x p(D+1)x^2\\) folgt \\(p(D+1)=D^2(D-1)\\); angewandt auf \\(x^2\\) ergibt dies \\(-2\\). Also \\(L(y_p)=-2ae^x\\). Durch Vergleich mit \\(2e^x\\) folgt \\(a=-1\\). Partikuläre Lösung \\(y_p=-x^2e^x\\); direkte Probe via Operatoridentität liefert \\(L(y_p)=2e^x\\)."
   },
   {
-    "id": "hm3-v16-046",
-    "Frage": "Löse die partikuläre DGL \\(y''+y=x\\) durch einen Ansatz, und erläutere, weshalb die komplexe Reduktion der Ordnung hier nicht erforderlich ist.",
-    "Antwort": "Da \\(s(x)=x\\) ein Polynom ist und \\(p(0)=1\\ne0\\), reicht \\(y_p=ax+b\\). Dann \\(y_p''+y_p=ax+b=x\\), also \\(a=1,b=0\\): \\(y_p=x\\). Reduktion der Ordnung wäre möglich, aber für diese einfache Störfunktion unnötig aufwendig.",
-    "Quelle": "V06 S. 1–2",
+    "id": "hm3-v17-026",
     "Bereich": "V06",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-047",
-    "Frage": "Die Störfunktion lautet \\((x+i)e^{(1+i)x}\\) und \\(p(\\lambda)=\\lambda^2-2\\lambda+2\\). Welchen Ansatz verwendest du für eine partikuläre komplexe Lösung? Begründe den Resonanzfaktor.",
-    "Antwort": "\\(p(1+i)=0\\), und \\(1+i\\) ist einfache Nullstelle. Die Störfunktion hat Polynomgrad \\(m=1\\). Ansatz: \\(z_p(x)=x(ax+b)e^{(1+i)x}\\), mit \\(a,b\\in\\mathbb C\\). Erst nach Einsetzen in die komplexe DGL werden \\(a,b\\) bestimmt; für eine passende reelle Störfunktion nimmt man anschließend den Realteil.",
-    "Quelle": "V06 S. 3–4",
-    "Bereich": "V06",
-    "Typ": "Methode"
-  },
-  {
-    "id": "hm3-v16-048",
-    "Frage": "Warum ist die komplexe Hilfs-DGL bei einer reellen Störfunktion \\(e^{\\alpha x}\\cos(\\beta x)\\) oft rechnerisch kürzer? Welche Eigenschaft von \\(L\\) macht den Realteil-Schritt korrekt?",
-    "Antwort": "Man rechnet mit \\(L(z)=e^{(\\alpha+i\\beta)x}\\) statt direkt mit Sinus und Kosinus; Exponentialfunktionen bleiben beim Ableiten erhalten. Da \\(L\\) reelle Koeffizienten besitzt, gilt \\(L(\\operatorname{Re}z)=\\operatorname{Re}L(z)\\). Für \\(s=\\operatorname{Re}(e^{(\\alpha+i\\beta)x})\\) liefert \\(y_p=\\operatorname{Re}z_p\\) eine reelle partikuläre Lösung.",
+    "Typ": "Vertiefung",
     "Quelle": "V06 S. 1–4",
-    "Bereich": "V06",
-    "Typ": "Verständnis"
+    "Frage": "Warum ist bei \\(y\\prime\\prime-2y\\prime+2y=e^x\\cos x\\) die komplexe Ersatzstörfunktion sinnvoll? Löse die komplexe Hilfsgleichung mit Resonanz und gib eine reelle partikuläre Lösung an. Begründe jeden Übergang.",
+    "Antwort": "\\(L=D^2-2D+2\\), \\(p(\\lambda)=(\\lambda-1)^2+1\\), also \\(\\lambda=1+i\\) eine einfache Nullstelle. Wähle komplexe Störfunktion \\(e^{(1+i)x}\\) und \\(z_p=A x e^{(1+i)x}\\). Für \\(p(D+\\lambda)\\) gilt wegen \\(p(\\lambda)=0\\): \\(p(D+\\lambda)=D^2+p\\prime(\\lambda)D=D^2+2iD\\). Bei konstantem \\(A\\) folgt \\(L(Axe^{\\lambda x})=2i A e^{\\lambda x}\\), also \\(A=1/(2i)=-i/2\\). Somit \\(z_p=-(i/2)xe^{(1+i)x}\\). Da \\(L\\) reelle Koeffizienten besitzt, liefert \\(y_p=\\mathrm{Re}(z_p)=(x/2)e^x\\sin x\\) eine reelle partikuläre Lösung. Eine direkte Probe ist möglich und ergibt \\(e^x\\cos x\\)."
   },
   {
-    "id": "hm3-v16-049",
-    "Frage": "Welche Störfunktionen sind für die Methode der unbestimmten Koeffizienten in der Vorlesung geeignet, und bei welchen Strukturen würdest du stattdessen Variation der Konstanten bevorzugen?",
-    "Antwort": "Geeignet sind lineare Kombinationen von \\(P_m(x)e^{\\lambda x}\\), bei reellen DGLs auch die Real-/Imaginärteile (also Polynomial-Exponential-Sinus/Cosinus). Erforderlich: konstante Koeffizienten. Bei beliebigeren rechten Seiten oder variablen Koeffizienten ist VoK mit bekanntem FS die allgemeinere Methode.",
-    "Quelle": "V06 S. 3",
+    "id": "hm3-v17-027",
     "Bereich": "V06",
-    "Typ": "Verständnis"
-  },
-  {
-    "id": "hm3-v16-050",
-    "Frage": "Wieso ist der Faktor \\(xe^{\\lambda x}\\) in einem homogenen Fundamentalsystem nicht dasselbe wie der Faktor \\(x^r\\) bei der inhomogenen Ansatzmethode? Trenne die Zwecke an einem Beispiel.",
-    "Antwort": "Im homogenen FS liefert \\(xe^{\\lambda x}\\) eine weitere Lösung bei einer mindestens doppelten Nullstelle. Beim inhomogenen Ansatz verhindert \\(x^r\\) Resonanz mit allen \\(r\\) homogenen Funktionen. Beispiel \\(p=(\\lambda-1)^2(\\lambda-2)\\): \\(e^x,xe^x\\) gehören zum FS, während bei Störfunktion \\(e^x\\) ein partikulärer Ansatz \\(a x^2e^x\\) nötig ist.",
+    "Typ": "Vertiefung",
     "Quelle": "V06 S. 3–5",
+    "Frage": "Eine lineare DGL mit konstanten Koeffizienten hat \\(s(x)=2e^x+3x\\). Konstruiere einen vollständigen und minimalen partikulären Ansatz, wenn \\(p(\\lambda)=(\\lambda-1)^2(\\lambda-2)\\). Warum ist ein einfacher Ansatz \\(Ae^x+Bx+C\\) unzureichend?",
+    "Antwort": "Die Störfunktion ist Summe zweier Komponenten; wegen Linearität kann \\(y_p=y_{p,1}+y_{p,2}\\) gewählt werden.\nFür \\(2e^x\\): \\(\\lambda=1\\) ist doppelte Nullstelle, daher \\(y_{p,1}=A x^2e^x\\). Für \\(3x\\): \\(\\lambda=0\\) ist keine Nullstelle, \\(p(0)=(-1)^2(-2)=-2\ne0\\); daher \\(y_{p,2}=Bx+C\\).\nMinimaler Ansatz \\(y_p=Ax^2e^x+Bx+C\\). Ein bloßes \\(Ae^x\\) liegt im homogenen Kern und kann die Störfunktion \\(2e^x\\) nicht erzeugen."
+  },
+  {
+    "id": "hm3-v17-028",
     "Bereich": "V06",
-    "Typ": "Verständnis"
+    "Typ": "Vertiefung",
+    "Quelle": "V06 S. 1–3; V05",
+    "Frage": "Für \\(y\\prime\\prime+y=x\\) und \\(y\\prime\\prime+y=e^x\\cos x\\) vergleiche jeweils die drei Verfahren VoK, RoO und unbestimmte Koeffizienten. (a) Was ist bei der jeweiligen Störfunktion der mathematisch kürzeste Ansatz? (b) Welche Voraussetzungen und etwaige Resonanzen müssen geprüft werden?",
+    "Antwort": "Bei \\(y\\prime\\prime+y=x\\): \\(p(\\lambda)=\\lambda^2+1\\), \\(p(0)=1\ne0\\). Ansatz \\(y_p=Ax+B\\); sofort \\(A=1,B=0\\), also \\(y_p=x\\). VoK/RoO funktionieren grundsätzlich, sind aber unnötig aufwendig.\nBei \\(y\\prime\\prime+y=e^x\\cos x\\): komplexe Ersatzstörfunktion \\(e^{(1+i)x}\\). \\(p(1+i)=(1+i)^2+1=1+2i\ne0\\): keine Resonanz. Ansatz \\(z_p=A e^{(1+i)x}\\) mit \\(A=1/(1+2i)=(1-2i)/5\\), dann \\(y_p=\\mathrm{Re}z_p=e^x(\\cos x+2\\sin x)/5\\). Reelle Koeffizienten sind entscheidend für den Realteil-Schritt."
   },
   {
-    "id": "hm3-v16-051",
-    "Frage": "Eine DGL mit konstanten Koeffizienten hat \\(s(x)=2e^x+3x\\). Wie wählst du einen partikulären Ansatz, ohne beide Störanteile unnötig zu vermischen? Was musst du vorher über \\(p(1)\\) und \\(p(0)\\) prüfen?",
-    "Antwort": "Wegen Linearität \\(y_p=y_{p,1}+y_{p,2}\\). Für \\(2e^x\\): \\(y_{p,1}=A x^{r_1}e^x\\), \\(r_1=\\) Nullstellenvielfachheit von \\(1\\). Für \\(3x\\): \\(y_{p,2}=x^{r_0}(Bx+C)\\), \\(r_0=\\) Nullstellenvielfachheit von \\(0\\). Erst danach alle Konstanten einsetzen/bestimmen.",
-    "Quelle": "V06 S. 3–5",
-    "Bereich": "V06",
-    "Typ": "Methode"
+    "id": "hm3-v17-029",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V01–V02",
+    "Frage": "TESTAT · AWP und Existenzsätze. Für \\(y\\prime=y^2+x\\), \\(y(0)=1\\), untersuche das Rechteck \\(R=[-1,1]\\times[0,2]\\). Zeige in geeigneter Reihenfolge: (1) Integralform, (2) Existenz der benötigten Schranken, (3) konkrete Peano-Intervalllänge, (4) eine einheitliche Lipschitz-Konstante, (5) Schluss von Picard-Lindelöf, (6) Grenzen deiner Aussage.",
+    "Antwort": "1. Integralform \\(y(x)=1+\\int_0^x(y(t)^2+t)dt\\).\n2. \\(f\\) ist stetig auf kompaktem \\(R\\); Maximum \\(M=5\\) aus \\(|y^2+x|\\le5\\) mit Gleichheit bei \\((1,2)\\).\n3. \\(a=b=1\\), \\(\\alpha=\\min(1,1/5)=1/5\\). Peano liefert mindestens eine Lösung auf \\([-1/5,1/5]\\).\n4. \\(|f(x,y)-f(x,z)|=|y+z||y-z|\\le4|y-z|\\), da \\(0\\le y,z\\le2\\); also \\(L=4\\).\n5. Picard-Lindelöf: auf dem genannten lokalen Existenzbereich genau eine Lösung.\n6. Die Aussagen garantieren nicht die globale Fortsetzbarkeit; insbesondere kann \\(y^2\\) in anderen Anfangswertproblemen endliche Blow-up-Zeiten verursachen."
   },
   {
-    "id": "hm3-v16-052",
-    "Frage": "Peanos Existenzsatz: Welche Konstruktion steht hinter der Behauptung, dass bei stetigem \\(f\\) mindestens eine lokale Lösung existiert? Welche Aufgabe erfüllt die Schranke \\(M=\\max_R|f|\\)?",
-    "Antwort": "Beweisansatz aus der Vorlesung: Explizite Euler-Polygonzüge auf immer feineren Unterteilungen konstruieren. Die Schranke \\(|f|\\le M\\) begrenzt die Steigungen und über \\(\\alpha\\le b/M\\) den Aufenthalt im Rechteck. Danach wird aus geeigneten Grenzübergängen eine Lösung gewonnen. Die Vorlesungsmitschrift skizziert das Polygonzugprinzip; ein vollständiger analytischer Konvergenzbeweis ist dort nicht ausgeführt.",
-    "Quelle": "V02 S. 2, 4",
-    "Bereich": "Beweise",
-    "Typ": "Beweisansatz"
+    "id": "hm3-v17-030",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V02",
+    "Frage": "TESTAT · Gegenbeispiel. Untersuche \\(y\\prime=\\sqrt{|y|}\\), \\(y(0)=0\\). (1) Prüfe Stetigkeit im zweiten Argument, (2) zeige, weshalb bei \\(y=0\\) keine lokale Lipschitz-Konstante existiert, (3) konstruiere zwei verschiedene \\(C^1\\)-Lösungen mit denselben Anfangsdaten, (4) ordne das Ergebnis Peano und Picard-Lindelöf zu.",
+    "Antwort": "1. \\(f(y)=\\sqrt{|y|}\\) ist stetig.\n2. Für \\(y>0\\), \\(z=0\\) wäre \\(\\sqrt y\\le L y\\), also \\(1/\\sqrt y\\le L\\) für alle hinreichend kleinen \\(y\\). Widerspruch für \\(y\\downarrow0\\).\n3. \\(y_{\\mathrm{null}}(x)=0\\) löst das AWP. Außerdem \\(y_*(x)=0\\) für \\(x\\le0\\), \\(y_*(x)=x^2/4\\) für \\(x>0\\). Die einseitigen Ableitungen sind am Übergang beide null; \\(y_*\\in C^1\\). Für \\(x>0\\): \\(y_*\\prime=x/2=\\sqrt{x^2/4}\\); für \\(x\\le0\\) Null auf beiden Seiten. Beide besitzen \\(y(0)=0\\), sind verschieden.\n4. Peano ist erfüllt (Existenz). Picard-Lindelöf ist an dieser Stelle nicht anwendbar (keine lokale Lipschitz-Bedingung); Eindeutigkeit ist tatsächlich falsch."
   },
   {
-    "id": "hm3-v16-053",
-    "Frage": "Beweise die Äquivalenz von (i) \\(y'=f(x,y),\\ y(x_0)=y_0\\) und (ii) \\(y(x)=y_0+\\int_{x_0}^x f(t,y(t))\\,dt\\). Formuliere die nötige Regularität.",
-    "Antwort": "Seien \\(f\\) stetig und \\(y\\in C^1(I)\\). (i) \\(\\Rightarrow\\) (ii): Aus \\(y'=f(x,y)\\) folgt durch Integration \\(y(x)-y(x_0)=\\int_{x_0}^x f(t,y(t))dt\\); mit \\(y(x_0)=y_0\\) ergibt sich (ii). (ii) \\(\\Rightarrow\\) (i): Bei \\(x=x_0\\) ist das Integral null, somit \\(y(x_0)=y_0\\). Der Integrand \\(t\\mapsto f(t,y(t))\\) ist stetig, daher liefert der Hauptsatz \\(y'(x)=f(x,y(x))\\).",
-    "Quelle": "V02 S. 1",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-031",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V02; Ü01",
+    "Frage": "TESTAT · Numerische DGL. Für \\(y\\prime=x+y\\), \\(y(0)=1\\), \\(h=1/2\\): (1) formuliere expliziten Euler, impliziten Euler und Crank-Nicolson, (2) berechne jeweils \\(Y_1\\), (3) löse das AWP exakt, (4) vergleiche die Fehler in \\(x_1\\), (5) erläutere die prinzipiellen Ordnungsunterschiede.",
+    "Antwort": "Expliziter Euler: \\(Y_1=1+\\frac12(0+1)=3/2\\).\nImpliziter Euler: \\(Y_1=1+\\frac12(\\frac12+Y_1)\\), also \\(\\frac12Y_1=5/4\\), \\(Y_1=5/2\\).\nCrank-Nicolson: \\(Y_1=1+\\frac14[(0+1)+(\\frac12+Y_1)]\\), also \\(\\frac34Y_1=11/8\\), \\(Y_1=11/6\\).\nExakt: \\(y\\prime-y=x\\); mit Faktor \\(e^{-x}\\): \\(y(x)=2e^x-x-1\\), also \\(y(1/2)=2e^{1/2}-3/2\\approx1{,}79744\\). Die Absolutfehler sind entsprechend ca. \\(0{,}29744\\), \\(0{,}70256\\), \\(0{,}03589\\).\nDie globale Ordnung 1 bei beiden Euler-Verfahren und 2 bei CN setzt ausreichende Glattheit/Stabilität voraus; ein einzelner Schritt beweist keine asymptotische Fehlerordnung."
   },
   {
-    "id": "hm3-v16-054",
-    "Frage": "Beweise per vollständiger Induktion für die Picard-Iteration \\(y'=y,\\ y(1)=e\\), \\(\\varphi_0=e\\), dass \\(\\varphi_n(x)=e\\sum_{k=0}^{n}(x-1)^k/k!\\) gilt. Erläutere danach den Grenzwert.",
-    "Antwort": "IA \\(n=0\\): \\(e\\sum_{k=0}^0(x-1)^k/k!=e=\\varphi_0\\). IV: \\(\\varphi_n(t)=e\\sum_{k=0}^{n}(t-1)^k/k!\\). IS: \\(\\varphi_{n+1}(x)=e+\\int_1^x\\varphi_n(t)dt=e+e\\sum_{k=0}^{n}\\frac{(x-1)^{k+1}}{(k+1)!}=e\\sum_{j=0}^{n+1}\\frac{(x-1)^j}{j!}\\), mit Indexwechsel \\(j=k+1\\). Damit gilt die Formel für alle \\(n\\). Die Exponentialreihe konvergiert gegen \\(e\\,e^{x-1}=e^x\\).",
-    "Quelle": "V02 S. 7–8",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-032",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V02",
+    "Frage": "TESTAT · Picard. Für \\(y\\prime=y\\), \\(y(1)=e\\), beginne mit \\(\\varphi_0=e\\). (1) Stelle den Fixpunktoperator auf, (2) rechne drei Iterationen, (3) formuliere und beweise die allgemeine Summenform per Induktion, (4) erläutere, warum deren Grenzwert die DGL erfüllt, statt nur auf die Exponentialreihe zu verweisen.",
+    "Antwort": "Fixpunktoperator \\(T(\\varphi)(x)=e+\\int_1^x\\varphi(t)dt\\).\nDie drei Iterationen sind \\(e[1+(x-1)]\\), \\(e[1+(x-1)+(x-1)^2/2]\\), \\(e[1+(x-1)+(x-1)^2/2+(x-1)^3/6]\\).\nAllgemein \\(\\varphi_n=e\\sum_{k=0}^{n}(x-1)^k/k!\\). IA \\(n=0\\) trivial. IS: Einsetzen und gliedweise Integrieren liefert \\(e+e\\sum_{k=0}^n(x-1)^{k+1}/(k+1)!=e\\sum_{j=0}^{n+1}(x-1)^j/j!\\).\nAuf jedem kompakten \\(x\\)-Intervall konvergiert die Exponentialreihe gleichmäßig. Deshalb darf im Fixpunktintegral der Grenzübergang genommen werden; Grenzwert \\(y=e e^{x-1}=e^x\\) erfüllt \\(y=e+\\int_1^x y(t)dt\\). Differenzieren liefert \\(y\\prime=y\\), und \\(y(1)=e\\)."
   },
   {
-    "id": "hm3-v16-055",
-    "Frage": "Beweise beide Richtungen des Satzes: Sind \\(L\\) linear und \\(L(y_p)=s\\), dann sind alle Lösungen von \\(L(y)=s\\) genau \\(y_p+\\ker L\\).",
-    "Antwort": "„\\(\\Leftarrow\\)“: Für \\(h\\in\\ker L\\) gilt \\(L(y_p+h)=L(y_p)+L(h)=s+0=s\\). „\\(\\Rightarrow\\)“: Ist \\(L(y)=s\\), dann \\(L(y-y_p)=L(y)-L(y_p)=s-s=0\\). Also \\(h:=y-y_p\\in\\ker L\\) und \\(y=y_p+h\\). Beides zusammen zeigt die Gleichheit der Mengen.",
-    "Quelle": "V03 S. 2",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-033",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V03; Ü02",
+    "Frage": "TESTAT · Abel vollständig. Es seien \\(y_1,\\ldots,y_n\\) Lösungen derselben homogenen linearen DGL n-ter Ordnung. (1) Definiere die Wronski-Matrix. (2) Beweise die Zeilen-Ableitungsregel. (3) leite \\(W\\prime=-a_1W\\) mit dem Verschwinden von \\(a_2,\\ldots,a_n\\) her. (4) Löse für \\(W\\) ohne Division. (5) Leite Unabhängigkeitsfolgen für \\(W(x_0)=0\\) und \\(\ne0\\) ab.",
+    "Antwort": "Wronski-Matrix \\(V_{kj}=y_j^{(k-1)}\\). Die Ableitungsregel folgt aus Multilinearität bzw. der Leibniz-Formel: \\((\\det V)\\prime\\) ist die Summe mit je einer differenzierten Zeile.\nFür jede der ersten \\(n-1\\) Zeilen entsteht eine bereits vorhandene nächste Zeile; jeweilige Determinante null. In der verbleibenden letzten Zeile gilt wegen der DGL \\(y_j^{(n)}=-a_1y_j^{(n-1)}-\\cdots-a_n y_j\\); nur \\(-a_1\\) multipliziert die ursprüngliche letzte Zeile, die übrigen Terme erzeugen doppelte Zeilen. Damit \\(W\\prime=-a_1W\\).\nMit \\(\\mu=e^{\\int_{x_0}^x a_1}\\) gilt \\((\\mu W)\\prime=0\\), also \\(W=W(x_0)e^{-\\int_{x_0}^x a_1}\\). Bei \\(W(x_0)=0\\) ist \\(W\\equiv0\\) und die n gemeinsamen Lösungen sind wegen AWP-Eindeutigkeit abhängig; bei \\(W(x_0)\ne0\\) ist die Determinante überall ungleich null und sie bilden ein FS. Nirgends durch \\(W\\) teilen."
   },
   {
-    "id": "hm3-v16-056",
-    "Frage": "Du sollst \\(W'+a_1W=0\\) für Lösungen einer linearen DGL \\(n\\)-ter Ordnung beweisen. Welche Zeilenargumentation benötigst du, und an welcher Stelle verschwinden die Terme \\(a_2,\\ldots,a_n\\)?",
-    "Antwort": "(1) Für \\(\\det V\\) die Ableitung als Summe von \\(n\\) Determinanten mit jeweils genau einer differenzierten Zeile schreiben. (2) Die Ableitung einer der ersten \\(n-1\\) Zeilen erzeugt eine vorhandene Zeile: jeweilige Determinante null. (3) In der letzten Zeile \\(y_j^{(n)}=-a_1y_j^{(n-1)}-\\cdots-a_n y_j\\) einsetzen. (4) Nur der \\(a_1\\)-Term ist zur letzten ursprünglichen Zeile proportional; alle anderen erzeugen erneut identische Zeilen.",
-    "Quelle": "V03 S. 4–5",
-    "Bereich": "Beweise",
-    "Typ": "Beweisansatz"
+    "id": "hm3-v17-034",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V03–V04",
+    "Frage": "TESTAT · Fundamentalsystem. Für \\(L(y)=y\\prime\\prime\\prime-4y\\prime\\prime+5y\\prime-2y\\) werden \\(e^x,xe^x,e^{2x}\\) vorgeschlagen. (1) Weise für jede Funktion die homogene Lösungseigenschaft nach. (2) berechne \\(W(0)\\). (3) bestimme \\(W(x)\\) mit Abel. (4) stelle für beliebige Anfangsdaten \\(y(0),y\\prime(0),y\\prime\\prime(0)\\) das eindeutige LGS für die Koeffizienten auf.",
+    "Antwort": "\\(p(\\lambda)=\\lambda^3-4\\lambda^2+5\\lambda-2=(\\lambda-1)^2(\\lambda-2)\\), daher alle Funktionen homogene Lösungen (doppelte Wurzel \\(1\\)).\n\\(V(0)=\\begin{pmatrix}1&0&1\\\\1&1&2\\\\1&2&4\\end{pmatrix}\\), \\(W(0)=1\\). Nach Abel wegen \\(a_1=-4\\): \\(W(x)=e^{4x}\\).\nFür \\(y(0)=a_0,y\\prime(0)=a_1,y\\prime\\prime(0)=a_2\\) gilt \\(V(0)(c_1,c_2,c_3)^T=(a_0,a_1,a_2)^T\\), also \\(c_1+c_3=a_0\\), \\(c_1+c_2+2c_3=a_1\\), \\(c_1+2c_2+4c_3=a_2\\). Wegen \\(\\det V(0)=1\\) ist die Lösung eindeutig. Die Buchstaben \\(a_i\\) bezeichnen hier Anfangswerte, nicht DGL-Koeffizienten."
   },
   {
-    "id": "hm3-v16-057",
-    "Frage": "Beweise die Abelsche Identität \\(W'(x)+a_1(x)W(x)=0\\) für \\(n\\) Lösungen derselben linearen DGL. Behandle ausdrücklich den Fall \\(W(x_0)=0\\), ohne jemals durch \\(W\\) zu dividieren.",
-    "Antwort": "Sei \\(V\\) die Wronski-Matrix der Lösungen \\(y_j\\). Die Determinanten-Ableitungsregel ergibt \\(W'=\\sum_{i=1}^n\\det(V\\text{ mit differenzierter Zeile }i)\\). Für \\(i<n\\) stimmen dann die Zeilen \\(i\\) und \\(i+1\\) überein; diese Summanden sind null. In der verbleibenden Determinante lautet die letzte Zeile aufgrund \\(L(y_j)=0\\): \\((-a_1y_j^{(n-1)}-\\cdots-a_ny_j)_j\\). Nach Linearität in der letzten Zeile sind die Beiträge für \\(a_2,\\ldots,a_n\\) null (je eine doppelte Zeile). Übrig ist \\(W'=-a_1W\\). Die eindeutige Lösung dieses skalaren linearen AWPs lautet \\(W(x)=W(x_0)\\exp[-\\int_{x_0}^x a_1(t)dt]\\). Bei \\(W(x_0)=0\\) ist somit \\(W\\equiv0\\); bei \\(W(x_0)\\ne0\\) ist \\(W\\) überall ungleich null. Keine Division durch \\(W\\) war nötig.",
-    "Quelle": "V03 S. 4–6",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-035",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V04; Ü02",
+    "Frage": "TESTAT · Komplexes und mehrfaches FS. Bestimme für \\(p(\\lambda)=(\\lambda+1)(\\lambda^2+4)^2\\) ein reelles Fundamentalsystem. Begründe alle fünf Funktionen mittels Parameterableitungen/Euler-Formel, überprüfe die Dimension und erläutere die Bedeutung der Wronski-Determinante.",
+    "Antwort": "Das Polynom hat Grad 5. Wurzeln: \\(-1\\) einfach, \\(2i\\) doppelt und \\(-2i\\) doppelt. Komplexe Lösungen sind \\(e^{-x}\\), \\(e^{2ix}\\), \\(xe^{2ix}\\), \\(e^{-2ix}\\), \\(xe^{-2ix}\\).\nMit Euler und Real-/Imaginärteil entsteht das reelle FS \\(\\{e^{-x},\\cos2x,\\sin2x,x\\cos2x,x\\sin2x\\}\\). Für \\(r\\)-fache Wurzeln sind \\(x^ke^{\\lambda x}\\) mit \\(k<r\\) Lösungen (Parameterableitung von \\(p(\\lambda)e^{\\lambda x}\\)). Die zu unterschiedlichen Nullstellen gehörenden Vielfachheitsblöcke sind unabhängig; fünf Funktionen entsprechen \\(\\dim\\ker L=5\\). Nach dem FS-Kriterium ist ihre Wronski-Determinante auf dem gemeinsamen Intervall überall ungleich null."
   },
   {
-    "id": "hm3-v16-058",
-    "Frage": "Beweise für \\(n\\) Lösungen derselben homogenen linearen DGL mit stetigen Koeffizienten: Sie sind linear unabhängig genau dann, wenn es ein \\(x_0\\) mit \\(W(x_0)\\ne0\\) gibt.",
-    "Antwort": "„\\(\\Leftarrow\\)“: Bei \\(W(x_0)\\ne0\\) ist \\(V(x_0)\\) invertierbar. Eine Identität \\(\\sum c_jy_j\\equiv0\\) liefert durch \\(0,\\ldots,n-1\\)-maliges Ableiten \\(V(x_0)c=0\\), also \\(c=0\\). „\\(\\Rightarrow\\)“ per Kontraposition: Ist \\(W(x_0)=0\\), existiert \\(c\\ne0\\) mit \\(V(x_0)c=0\\). Die Funktion \\(z=\\sum c_j y_j\\) löst wegen Linearität die DGL und besitzt am Punkt \\(x_0\\) lauter Anfangswerte null. Wegen Eindeutigkeit des linearen AWPs gilt \\(z\\equiv0\\). Somit sind die \\(y_j\\) abhängig. Nach Abel ist die Wahl der Stelle unerheblich.",
-    "Quelle": "V03 S. 6–7",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-036",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V04–V06",
+    "Frage": "TESTAT · Resonanz und AWP. Löse \\(y\\prime\\prime-2y\\prime+y=e^x\\) mit \\(y(0)=0\\), \\(y\\prime(0)=1\\). (1) Bestimme FS und Wronski. (2) Ermittle eine partikuläre Lösung mit dem Resonanzansatz. (3) Baue die allgemeine Lösung. (4) Setze die Anfangsdaten ein und führe die direkte Differentialprobe durch.",
+    "Antwort": "\\(p(\\lambda)=(\\lambda-1)^2\\). FS \\(\\{e^x,xe^x\\}\\) mit \\(W=e^{2x}\ne0\\). Die Störung \\(e^x\\) resoniert zweifach, daher \\(y_p=Ax^2e^x\\). Weil \\((D-1)^2(x^2e^x)=2e^x\\), gilt \\(A=1/2\\). Allgemeine Lösung \\(y=e^x(c_1+c_2x+x^2/2)\\).\nAnfangsdaten: \\(y(0)=c_1=0\\); \\(y\\prime(0)=c_1+c_2=1\\) ergibt \\(c_2=1\\). Eindeutige Lösung \\(y=e^x(x+x^2/2)\\).\nProbe: \\((D-1)^2(e^xQ)=e^xQ\\prime\\prime\\) mit \\(Q=x+x^2/2\\) und \\(Q\\prime\\prime=1\\), also \\(L(y)=e^x\\); die Anfangswerte stimmen."
   },
   {
-    "id": "hm3-v16-059",
-    "Frage": "Zeige vollständig: Bei zwei verschiedenen reellen Nullstellen \\(\\lambda_1\\ne\\lambda_2\\) des charakteristischen Polynoms sind \\(e^{\\lambda_1x}\\) und \\(e^{\\lambda_2x}\\) unabhängig.",
-    "Antwort": "Beide sind Lösungen, weil \\(L(e^{\\lambda_jx})=p(\\lambda_j)e^{\\lambda_jx}=0\\). Ihre Wronski-Determinante ist \\(W=\\det\\begin{pmatrix}e^{\\lambda_1x}&e^{\\lambda_2x}\\\\\\lambda_1e^{\\lambda_1x}&\\lambda_2e^{\\lambda_2x}\\end{pmatrix}=(\\lambda_2-\\lambda_1)e^{(\\lambda_1+\\lambda_2)x}\\ne0\\), da \\(\\lambda_1\\ne\\lambda_2\\) und die Exponentialfunktion nie null ist. Also sind beide unabhängig.",
-    "Quelle": "V04 S. 2–3",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-037",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V05; Ü03",
+    "Frage": "TESTAT · Variation der Konstanten. Es gilt \\(y\\prime\\prime+2y\\prime+2y=1\\). (1) Bestimme ein reelles FS und überprüfe \\(W\ne0\\). (2) Stelle die Nebenbedingungen auf. (3) löse das \\(2\\times2\\)-System für \\(c\\prime\\) mit Cramer. (4) Integriere und überprüfe \\(y_p\\). (5) Erläutere, was bei einer nicht normierten DGL rechts im System steht.",
+    "Antwort": "FS \\(y_1=e^{-x}\\cos x,\\ y_2=e^{-x}\\sin x\\), \\(W=e^{-2x}\\). Nebenbedingungen \\(c_1\\prime y_1+c_2\\prime y_2=0\\), \\(c_1\\prime y_1\\prime+c_2\\prime y_2\\prime=1\\). Cramer: \\(c_1\\prime=-y_2/W=-e^x\\sin x\\), \\(c_2\\prime=y_1/W=e^x\\cos x\\).\nEine Wahl der Stammfunktionen: \\(c_1=-e^x(\\sin x-\\cos x)/2\\), \\(c_2=e^x(\\sin x+\\cos x)/2\\). Dann \\(y_p=c_1y_1+c_2y_2=1/2\\). Durch Einsetzen: \\(y_p\\prime\\prime+2y_p\\prime+2y_p=1\\).\nBei \\(b_0(x)y\\prime\\prime+\\cdots=s\\) zuerst durch \\(b_0(x)\ne0\\) teilen; das VoK-LGS hat rechts \\((0,s/b_0)^T\\)."
   },
   {
-    "id": "hm3-v16-060",
-    "Frage": "Für eine homogene DGL zweiter Ordnung mit charakteristischem Polynom \\(p(\\lambda)\\) sei \\(\\lambda\\) doppelte Nullstelle. Beweise, dass \\(y_1=e^{\\lambda x}\\), \\(y_2=xe^{\\lambda x}\\) ein Fundamentalsystem bilden.",
-    "Antwort": "Da \\(p(\\lambda)=0\\), gilt \\(L(e^{\\lambda x})=0\\). Wegen \\(p'(\\lambda)=0\\) gilt auch \\(L(xe^{\\lambda x})=\\partial_\\lambda L(e^{\\lambda x})=\\partial_\\lambda[p(\\lambda)e^{\\lambda x}]=[p'(\\lambda)+xp(\\lambda)]e^{\\lambda x}=0\\) (Operator \\(L\\) hängt nicht von \\(\\lambda\\) ab). Schließlich \\(W=\\det\\begin{pmatrix}e^{\\lambda x}&xe^{\\lambda x}\\\\\\lambda e^{\\lambda x}&(1+\\lambda x)e^{\\lambda x}\\end{pmatrix}=e^{2\\lambda x}\\ne0\\). Zwei unabhängige Lösungen einer DGL zweiter Ordnung bilden ein FS.",
-    "Quelle": "V04 S. 3",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-038",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V05",
+    "Frage": "TESTAT · Reduktion der Ordnung. Für \\(y\\prime\\prime+y\\prime-6y=-e^{-x}\\) ist \\(p(-3)=0\\). (1) Begründe die Wahl des Ansatzes. (2) Leite die Gleichung für \\(d=c\\prime\\) ohne ausgelassene Ableitungen her. (3) Löse die reduzierte Gleichung. (4) Bestimme \\(y_p\\). (5) Überprüfe die Lösung und erkläre die Rolle der Integrationskonstanten.",
+    "Antwort": "Ansatz \\(y_p=ce^{-3x}\\). \\(y_p\\prime=(c\\prime-3c)e^{-3x}\\), \\(y_p\\prime\\prime=(c\\prime\\prime-6c\\prime+9c)e^{-3x}\\). Daher \\(y_p\\prime\\prime+y_p\\prime-6y_p=(c\\prime\\prime-5c\\prime)e^{-3x}\\) (\\(c\\)-Terme heben sich auf).\nMit \\(d=c\\prime\\) folgt \\(d\\prime-5d=-e^{2x}\\). Wähle \\(d=Ae^{2x}\\), also \\(-3A=-1\\), \\(d=e^{2x}/3\\). Integrieren: \\(c=e^{2x}/6\\), daher \\(y_p=e^{-x}/6\\).\nProbe \\(y_p\\prime\\prime+y_p\\prime-6y_p=(1/6-1/6-1)e^{-x}=-e^{-x}\\). Beliebige zusätzliche Integrationskonstanten erzeugen homogene Lösungen und werden in \\(y_h\\) aufgenommen."
   },
   {
-    "id": "hm3-v16-061",
-    "Frage": "Beweise, dass bei einer DGL mit reellen Koeffizienten und komplexer Lösung \\(z=u+iv\\) auch \\(u=\\operatorname{Re}z\\) und \\(v=\\operatorname{Im}z\\) Lösungen der homogenen DGL sind.",
-    "Antwort": "Da die Koeffizienten reell sind, kommutiert \\(L\\) mit Real-/Imaginärteil: \\(L(u+iv)=L(u)+iL(v)\\). Aus \\(L(z)=0\\) folgt \\(L(u)+iL(v)=0\\). Weil \\(L(u),L(v)\\) reellwertig sind, müssen beide null sein. Daher sind \\(u\\) und \\(v\\) Lösungen. Diese Begründung setzt reale Koeffizienten voraus.",
-    "Quelle": "V04 S. 2, 5",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-039",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V06",
+    "Frage": "TESTAT · Unbestimmte Koeffizienten. Behandle \\(y\\prime\\prime\\prime-4y\\prime\\prime+5y\\prime-2y=2e^x+3x\\). (1) Faktorisierung von \\(p\\), (2) minimale Ansätze für beide Störanteile, (3) Koeffizienten bestimmen, (4) warum Superposition zulässig ist, (5) Probe.",
+    "Antwort": "\\(p(z)=(z-1)^2(z-2)\\), \\(r_1=2\\) bei \\(z=1\\), und \\(p(0)=-2\ne0\\). Wegen Linearität \\(y_p=y_{p,1}+y_{p,2}\\).\nFür \\(2e^x\\): \\(y_{p,1}=Ax^2e^x\\) und aus \\(p(D+1)=D^2(D-1)\\) folgt \\(L(y_{p,1})=-2Ae^x\\), also \\(A=-1\\).\nFür \\(3x\\): \\(y_{p,2}=Bx+C\\). Ableitungen \\(y\\prime=B\\), \\(y\\prime\\prime=y\\prime\\prime\\prime=0\\). Daraus \\(L(Bx+C)=5B-2(Bx+C)=-2Bx+(5B-2C)\\). Koeffizientenvergleich mit \\(3x\\): \\(B=-3/2\\), \\(5B-2C=0\\), also \\(C=-15/4\\).\nErgebnis \\(y_p=-x^2e^x-3x/2-15/4\\). Probe: \\(L(-x^2e^x)=2e^x\\) und \\(L(-3x/2-15/4)=3x\\)."
   },
   {
-    "id": "hm3-v16-062",
-    "Frage": "Beweise für die normierte inhomogene DGL \\(L(y)=s\\) mithilfe des Fundamentalsystems \\(y_1,\\ldots,y_n\\), warum der VoK-Ansatz \\(y_p=\\sum c_jy_j\\) mit \\(V c'=s e_n\\) eine partikuläre Lösung liefert.",
-    "Antwort": "Sei \\(c'\\) durch \\(V(x)c'(x)=s(x)e_n\\) bestimmt; das geht, weil \\(W(x)=\\det V(x)\\ne0\\). Die ersten \\(n-1\\) Zeilen besagen \\(\\sum c_j'y_j^{(k)}=0\\) für \\(k=0,\\ldots,n-2\\). Induktiv ergibt Differenzieren \\(y_p^{(k)}=\\sum c_jy_j^{(k)}\\) für \\(k<n\\). Für \\(k=n\\) gilt \\(y_p^{(n)}=\\sum c_jy_j^{(n)}+\\sum c_j'y_j^{(n-1)}=\\sum c_jy_j^{(n)}+s\\). Damit \\(L(y_p)=\\sum_jc_j L(y_j)+s=s\\), weil jede \\(y_j\\) die homogene Gleichung löst.",
-    "Quelle": "V05 S. 2–3",
-    "Bereich": "Beweise",
-    "Typ": "Vollständiger Beweis"
+    "id": "hm3-v17-040",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "V05–V06",
+    "Frage": "TESTAT · Methodenentscheidung. Untersuche die drei DGLs \\(y\\prime\\prime+(2/x)y\\prime=1/x\\) auf \\((0,\\infty)\\), \\(y\\prime\\prime+y=x\\) und \\(y\\prime\\prime-2y\\prime+2y=e^x\\cos x\\). Ordne für jede eine wirtschaftliche Methode zu, begründe die mathematischen Voraussetzungen, den Ansatz und die erwartete Form der Lösung. Bei der ersten zeige eine direkte partikuläre Probe.",
+    "Antwort": "(1) Variable Koeffizienten \\(2/x\\), auf \\(I=(0,\\infty)\\) stetig. Für die homogene Gleichung sind \\(y_1=1\\), \\(y_2=1/x\\) unabhängige Lösungen, \\(W=-1/x^2\ne0\\). VoK wäre möglich, ein direkter Ansatz \\(y_p=x/2\\) ist jedoch schneller: \\(y_p\\prime\\prime+(2/x)y_p\\prime=0+(2/x)(1/2)=1/x\\). Die konstante-Koeffizienten-Methoden sind nicht allgemein anwendbar.\n(2) \\(p(0)=1\ne0\\) und Störung \\(x\\); Ansatz \\(Ax+B\\), ergibt \\(y_p=x\\).\n(3) Konstante reelle Koeffizienten, \\(p(1+i)=1+2i\ne0\\), keine Resonanz. Hilfsgleichung mit \\(e^{(1+i)x}\\); \\(z_p=(1-2i)e^{(1+i)x}/5\\), damit \\(y_p=e^x(\\cos x+2\\sin x)/5\\)."
   },
   {
-    "id": "hm3-v16-063",
-    "Frage": "Erkläre über die Struktur des Differentialoperators, warum der Ansatz \\(y_p=c(x)e^{\\lambda x}\\) bei einer Nullstelle \\(p(\\lambda)=0\\) die Ordnung reduziert und weshalb beim Resonanzansatz \\(x^r\\) auftaucht.",
-    "Antwort": "Für konstanten Koeffizientenoperator \\(L=p(D)\\) gilt \\(p(D)(c e^{\\lambda x})=e^{\\lambda x}p(D+\\lambda)c\\). Die Entwicklung von \\(p(D+\\lambda)\\) beginnt mit \\(p(\\lambda)c+p'(\\lambda)c'+\\cdots\\). Ist \\(p(\\lambda)=0\\), entfällt der \\(c\\)-Term: Die Gleichung enthält erst Ableitungen von \\(c\\), also die Reduktion \\(d=c'\\). Ist \\(\\lambda\\) sogar \\(r\\)-fache Nullstelle, verschwinden auch \\(p'(\\lambda),\\ldots,p^{(r-1)}(\\lambda)\\); deshalb führt der passende partikuläre Ansatz bei \\(P_m e^{\\lambda x}\\) einen Faktor \\(x^r\\).",
-    "Quelle": "V05 S. 6; V06 S. 3",
-    "Bereich": "Beweise",
-    "Typ": "Beweisansatz"
+    "id": "hm3-v17-041",
+    "Bereich": "Testat",
+    "Typ": "Testat-Aufgabe",
+    "Quelle": "Ü00–Ü03",
+    "Frage": "TESTAT · Sonderlösungen und Umformungen. Vergleiche Variablentrennung bei \\(y\\prime=x y^2\\), Bernoulli bei \\(y\\prime+py=qy^\\gamma\\) und lineare DGL erster Ordnung \\(y\\prime+py=q\\). Für jede Methode: (1) zulässiger Definitionsbereich, (2) Umformung, (3) Gefahr verlorener Lösungen, (4) direkte Verifikation der gewonnenen allgemeinen Lösung.",
+    "Antwort": "Variablentrennung \\(y\\prime=x y^2\\): Für \\(y\ne0\\): \\(y^{-2}dy=x dx\\), \\(-1/y=x^2/2+C\\), also \\(y=-1/(x^2/2+C)\\) auf Intervallen ohne Nennernullstelle. Die Sonderlösung \\(y\\equiv0\\) wurde bei Division durch \\(y^2\\) verloren und muss separat ergänzt werden. Probe: \\(y\\prime=x/(x^2/2+C)^2=xy^2\\).\nBernoulli: \\(u=y^{1-\\gamma}\\) auf passendem Bereich \\(y\ne0\\), \\(u\\prime+(1-\\gamma)pu=(1-\\gamma)q\\). Eine mögliche Null-Lösung stets im Original prüfen.\nLinear: \\(Q\\prime=p\\), \\(y=e^{-Q}[C+\\int e^Qq]\\) (mit festem Integralbasispunkt); die Produktregel \\((e^Qy)\\prime=e^Qq\\) verifiziert. Bei Divisionen oder Wurzelpotenzen darf der Definitionsbereich nicht überschritten werden."
   }
 ]

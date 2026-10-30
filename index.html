@@ -24,6 +24,10 @@
 
   <div class="quiz-toolbar is-hidden" id="quizToolbar"><strong id="quizRoundLabel">Abfrage</strong><span id="quizProgress">0 / 0</span><button class="button" id="quizExitBtn">Abfrage beenden</button></div>
 
+  <div class="proof-toolbar is-hidden" id="proofToolbar">
+    <strong id="proofToolbarTitle">Beweis</strong><span id="proofToolbarProgress">1 / 5</span>
+    <button class="button" id="proofSwitchBtn">Anderer Beweis</button><button class="button" id="proofExitBtn">Beenden</button>
+  </div>
   <div class="sessionbar">
     <div class="ink-mode-dock" id="inkModeDock" role="group" aria-label="Stift und Seitennavigation">
       <div class="ink-mode-choices">
@@ -37,7 +41,7 @@
         <button class="button ink-nav-button" id="extendSheetBtn" type="button" title="400 Pixel Schreibfläche hinzufügen">+ Blatt</button>
       </div>
     </div>
-    <div class="sessionactions"><button class="button button-primary" id="quizStartBtn">Abfrage starten</button><span class="overline recording-live" id="recordingStatus" hidden>● Aufnahme läuft</span><button class="button button-primary" id="recordingStartBtn">● Aufnahme starten</button><button class="button recording-stop" id="recordingStopBtn" disabled>■ Stopp</button><button class="button" id="recordingsBtn">Aufnahmen</button><button class="button" id="exportSessionBtn" disabled>Letzte Aufnahme exportieren</button></div>
+    <div class="sessionactions"><button class="button button-primary" id="quizStartBtn">Abfrage starten</button><button class="button" id="proofStartBtn">Beweise lernen</button><span class="overline recording-live" id="recordingStatus" hidden>● Aufnahme läuft</span><button class="button button-primary" id="recordingStartBtn">● Aufnahme starten</button><button class="button recording-stop" id="recordingStopBtn" disabled>■ Stopp</button><button class="button" id="recordingsBtn">Aufnahmen</button><button class="button" id="exportSessionBtn" disabled>Letzte Aufnahme exportieren</button></div>
   </div>
 
   <section class="metrics" aria-label="Lernübersicht">
@@ -56,6 +60,18 @@
 
   <div class="workspace" id="workspace">
     <section class="flashcard" aria-label="Karteikarte">
+      <section class="proof-panel is-hidden" id="proofPanel" aria-label="Beweislernmodus">
+        <div class="proof-meta"><span id="proofSource"></span><span id="proofScope"></span></div>
+        <div class="proof-steps" id="proofSteps" aria-label="Beweisschritte"></div>
+        <h1 id="proofStepHeading" class="proof-step-title">Problem</h1>
+        <div id="proofStepTask" class="proof-task"></div>
+        <button class="button button-solution" id="proofRevealBtn" aria-expanded="false">Schritt aufdecken</button>
+        <div class="proof-step-answer is-hidden" id="proofStepAnswer"></div>
+        <div class="proof-nav">
+          <button class="button" id="proofPrevBtn">Zurück</button>
+          <button class="button button-primary" id="proofNextBtn">Weiter</button>
+        </div>
+      </section>
       <div class="card-eyebrow"><span id="cardTopic">V01</span><div class="card-context"><span id="cardSource">Quelle</span><button class="card-small-button" id="cardFavoriteBtn" aria-label="Als Favorit markieren" aria-pressed="false" title="Favorit">☆</button><button class="card-small-button" id="cardDisableBtn" title="Karte aus dem Lernen nehmen">Deaktivieren</button></div></div>
       <h1 class="card-question" id="cardQuestion">Die Karten werden geladen …</h1>
       <div class="card-buttons"><button class="button" id="prevBtn">Zurück</button><button class="button" id="skipBtn">Überspringen</button><button class="button button-quiet" id="cardEditBtn">Bearbeiten</button></div>
@@ -102,6 +118,13 @@
   <footer>Stand: V01–V06 · Beweise &nbsp;·&nbsp; Persönliche Daten bleiben lokal auf dem iPad &nbsp;·&nbsp; <span id="appVersion">App-Version</span> &nbsp;·&nbsp; <button class="text-button" id="footerExport">Letzte Aufnahme exportieren</button></footer>
 </div>
 
+<dialog id="proofSelectDialog" class="settings proof-select-dialog" aria-labelledby="proofSelectTitle">
+  <form id="proofSelectForm">
+    <div class="dialog-title"><h2 id="proofSelectTitle">Beweis lernen</h2><button class="button" type="button" id="proofSelectClose">Schließen</button></div>
+    <label class="editor-field">Beweis <select id="proofSelect" required></select></label>
+    <div class="editor-actions"><button class="button button-primary" type="submit">Starten</button></div>
+  </form>
+</dialog>
 <dialog id="quizSetupDialog" class="settings quiz-setup-dialog" aria-labelledby="quizSetupTitle">
   <form id="quizSetupForm">
     <div class="dialog-title"><h2 id="quizSetupTitle">Abfrage starten</h2><button class="button" type="button" id="quizSetupClose">Schließen</button></div>

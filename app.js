@@ -3,17 +3,17 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.16';
-  const OFFLINE_CACHE='hm3-stiftkarten-v16-20261030';
-  const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
+  const APP_VERSION='2026-10-30.17';
+  const OFFLINE_CACHE='hm3-stiftkarten-v17-20261030';
+  const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
   const clone = v => JSON.parse(JSON.stringify(v));
   const dateString = ts => new Date(ts).toLocaleDateString('de-DE');
   const safeText = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const now = () => Date.now();
-  let cards=[],originalCards=new Map(),byId=new Map(),db=null,storageError=false,version=0,editingCardId=null;
-  let data={progress:{},cardPrefs:{},settings:{pencilOnly:true,sheetStyle:'grid',sheetHeight:800},sessionId:null,recordingActive:false,lastRecordingId:null,recordingTouchedCards:[],quiz:null};
+  let cards=[],proofs=[],proofById=new Map(),originalCards=new Map(),byId=new Map(),db=null,storageError=false,version=0,editingCardId=null;
+  let data={progress:{},cardPrefs:{},settings:{pencilOnly:true,sheetStyle:'grid',sheetHeight:800},sessionId:null,recordingActive:false,lastRecordingId:null,recordingTouchedCards:[],quiz:null,proofStudy:null};
   let recordingTouchedCards=new Set(),recordingNamingId=null;
   let selected={mode:'due',topic:'all',type:'all',current:null,seen:new Set(),history:[],revealed:false};
   let ink={tool:'pen',color:'#182231',width:2.7,strokes:[],active:null,erasing:false,undo:[],redo:[],erasedBefore:null,pointerId:null,cardId:null};
@@ -77,6 +77,123 @@
   function updateStats(){const a=cards.filter(c=>!c.disabled).length,d=cards.filter(c=>!c.disabled&&due(c)).length;const rows=data.recordingActive?memory.attempts.filter(e=>e.sessionId===data.sessionId):[];
     $('statAll').textContent=a;$('statDue').textContent=d;$('statSession').textContent=rows.length;$('statWrong').textContent=rows.filter(e=>e.rating==='wrong').length;}
   function updateFilters(){for(const t of [...new Set(cards.map(c=>c.Bereich))])$('topicFilter').add(new Option(t,t));for(const t of [...new Set(cards.map(c=>c.Typ))])$('typeFilter').add(new Option(t,t));}
+  // V17: Five independent, rigorous proof stages, each with its own local ink sheet.
+  async function fetchProofs(){
+    let items;
+    try{
+      const response=await fetch('proofs.json',{cache:'no-store'});
+      if(!response.ok)throw Error('HTTP '+response.status);
+      items=await response.json();
+    }catch(e){console.warn('Proof catalog load',e);throw Error('Beweiskatalog konnte nicht geladen werden. Bitte App aktualisieren.');}
+    if(!Array.isArray(items)||items.length===0)throw Error('Ungültiger Beweiskatalog');
+    const seen=new Set(),parts=['Problem','Behauptung','Voraussetzungen','Ansatz','Durchführung'];
+    for(const p of items){
+      if(typeof p.id!=='string'||seen.has(p.id)||!p.title||!p.source||!p.scope||!Array.isArray(p.steps)||p.steps.length!==5||
+         p.steps.some((s,i)=>s.title!==parts[i]||typeof s.task!=='string'||typeof s.answer!=='string'||!s.answer.trim()))
+        throw Error('Ungültiger Beweiseintrag: '+p.id);
+      seen.add(p.id);
+    }
+    proofs=items;proofById=new Map(items.map(p=>[p.id,p]));
+  }
+  function proofNoteId(p,step){return 'hm3-proof-note-'+p.id+'-'+step;}
+  function chooseProof(){
+    if(data.quiz?.active){notice('Zuerst Abfrage beenden.');return;}
+    if(data.recordingActive){notice('Zuerst Aufnahme stoppen.');return;}
+    const select=$('proofSelect');select.replaceChildren();
+    for(const p of proofs){
+      const option=document.createElement('option');
+      option.value=p.id;
+      option.textContent=p.title+' · '+p.source;
+      select.append(option);
+    }
+    if(data.proofStudy?.active)select.value=data.proofStudy.id;
+    $('proofSelectDialog').showModal();
+  }
+  function proofMath(){
+    const nodes=[$('proofStepTask'),$('proofStepAnswer')];
+    mathQueue=mathQueue.catch(()=>{}).then(async()=>{
+      if(!window.MathJax?.typesetPromise)return;
+      try{window.MathJax.typesetClear?.(nodes);await window.MathJax.typesetPromise(nodes);}
+      catch(e){console.warn('Proof MathJax',e);}
+    });
+  }
+  function updateProofChrome(){
+    const s=data.proofStudy,active=!!s?.active;
+    document.body.classList.toggle('proof-active',active);
+    $('proofToolbar').classList.toggle('is-hidden',!active);
+    $('proofPanel').classList.toggle('is-hidden',!active);
+    if(active){
+      const p=proofById.get(s.id);
+      $('proofToolbarTitle').textContent=p?.title||'Beweis';
+      $('proofToolbarProgress').textContent=(s.step+1)+' / 5';
+    }
+  }
+  async function displayProof(){
+    const s=data.proofStudy;if(!s?.active)return;
+    const p=proofById.get(s.id);
+    if(!p){data.proofStudy=null;storeData();updateProofChrome();await advance();return;}
+    if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
+    await finishInk();await saveQueue.catch(()=>{});
+    updateProofChrome();
+    const step=p.steps[s.step],noteId=proofNoteId(p,s.step);
+    selected.current=noteId;selected.revealed=false;
+    $('workspace').classList.remove('is-hidden');
+    $('emptyState').classList.add('is-hidden');
+    $('quizSummary').classList.add('is-hidden');
+    $('proofSource').textContent=p.source;
+    $('proofScope').textContent=p.scope;
+    $('proofStepHeading').textContent=step.title;
+    $('proofStepTask').textContent=step.task;
+    $('proofStepAnswer').textContent=step.answer;
+    $('proofStepAnswer').classList.toggle('is-hidden',!s.revealed);
+    $('proofRevealBtn').textContent=s.revealed?'Antwort ausblenden':'Schritt aufdecken';
+    $('proofRevealBtn').setAttribute('aria-expanded',String(!!s.revealed));
+    $('proofPrevBtn').disabled=s.step===0;
+    $('proofNextBtn').textContent=s.step===4?'Beweis abschließen':'Weiter';
+    const chips=$('proofSteps');chips.replaceChildren();
+    for(let i=0;i<5;i++){
+      const el=document.createElement('div');el.className='proof-step-chip'+(i===s.step?' is-current':i<s.step?' is-done':'');
+      el.textContent=p.steps[i].title;chips.append(el);
+    }
+    configureSheet();await loadInk(noteId);proofMath();
+  }
+  async function beginProof(e){
+    e.preventDefault();
+    if(data.quiz?.active||data.recordingActive)return;
+    if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
+    const id=$('proofSelect').value;
+    if(!proofById.has(id))return;
+    await finishInk();await saveQueue.catch(()=>{});
+    data.proofStudy={active:true,id,step:0,revealed:false};
+    storeData();$('proofSelectDialog').close();
+    await displayProof();
+  }
+  function revealProof(){
+    const s=data.proofStudy;if(!s?.active)return;
+    s.revealed=!s.revealed;storeData();
+    $('proofStepAnswer').classList.toggle('is-hidden',!s.revealed);
+    $('proofRevealBtn').textContent=s.revealed?'Antwort ausblenden':'Schritt aufdecken';
+    $('proofRevealBtn').setAttribute('aria-expanded',String(!!s.revealed));
+    if(s.revealed)proofMath();
+  }
+  async function moveProof(delta){
+    const s=data.proofStudy;if(!s?.active)return;
+    if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
+    if(delta===1&&s.step===4){await exitProof();return;}
+    const next=Math.min(4,Math.max(0,s.step+delta));
+    if(next===s.step)return;
+    await finishInk();await saveQueue.catch(()=>{});
+    s.step=next;s.revealed=false;storeData();
+    await displayProof();
+  }
+  async function exitProof(){
+    if(!data.proofStudy?.active)return;
+    if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
+    await finishInk();await saveQueue.catch(()=>{});
+    data.proofStudy=null;storeData();selected.current=null;
+    updateProofChrome();selected.seen.clear();selected.history=[];
+    await advance();
+  }
   // V16: independent randomized quiz with immutable initial pool.
   // Cumulative results belong to original question IDs, never to the current review batch.
   function quizCount(){
@@ -106,6 +223,7 @@
   }
   async function beginQuiz(e){
     e.preventDefault();
+    if(data.proofStudy?.active)return;
     if(data.quiz?.active)return;
     if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
     const topics=[...document.querySelectorAll('[data-quiz-topic]:checked')].map(x=>x.value);
@@ -179,7 +297,7 @@
     $('cardTopic').textContent=`${card.Bereich} · ${card.Typ}`;$('cardSource').textContent=card.Quelle?`Quelle: ${card.Quelle}`:'';$('cardQuestion').textContent=card.Frage;$('cardAnswer').textContent=card.Antwort;
     $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!!data.quiz?.active||!selected.history.length;quickActions();configureSheet();await loadInk(id);math();}
   function showEmpty(){selected.current=null;$('workspace').classList.add('is-hidden');$('emptyState').classList.remove('is-hidden');updateStats();}
-  async function advance(){if(data.quiz?.active){
+  async function advance(){if(data.proofStudy?.active){await displayProof();return;}if(data.quiz?.active){
       const q=data.quiz;
       if(q.stage==='results'||q.index>=q.queue.length){await quizFinish();return;}
       updateQuizChrome();await showCard(q.queue[q.index]);return;
@@ -832,7 +950,7 @@
         const keys=await caches.keys();
         for(const key of keys.filter(k=>k.startsWith('hm3-stiftkarten-'))){
           const cache=await caches.open(key);
-          await Promise.all(['./','./index.html','./app.js','./style.css','./cards.json','./manifest.webmanifest'].map(p=>cache.delete(new URL(p,location.href),{ignoreSearch:true})));
+          await Promise.all(['./','./index.html','./app.js','./style.css','./cards.json','./proofs.json','./manifest.webmanifest'].map(p=>cache.delete(new URL(p,location.href),{ignoreSearch:true})));
         }
       }
       const url=new URL(location.href);url.searchParams.set('updated',String(Date.now()));window.location.replace(url.href);
@@ -840,6 +958,14 @@
     finally{appRefreshing=false;button.disabled=false;button.textContent='App aktualisieren';}
   }
   function listeners(){
+    $('proofStartBtn').onclick=chooseProof;
+    $('proofSwitchBtn').onclick=chooseProof;
+    $('proofExitBtn').onclick=exitProof;
+    $('proofSelectClose').onclick=()=>$('proofSelectDialog').close();
+    $('proofSelectForm').onsubmit=beginProof;
+    $('proofRevealBtn').onclick=revealProof;
+    $('proofPrevBtn').onclick=()=>moveProof(-1);
+    $('proofNextBtn').onclick=()=>moveProof(1);
     $('quizStartBtn').onclick=()=>{quizSelectUI();$('quizSetupDialog').showModal();};
     $('quizSetupClose').onclick=()=>$('quizSetupDialog').close();
     $('quizSetupForm').onsubmit=beginQuiz;
@@ -862,14 +988,20 @@
     window.addEventListener('resize',resizeInk);document.addEventListener('visibilitychange',()=>{if(document.hidden)finishInk();});document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();e.shiftKey?redo():undo();}});
   }
   async function init(){try{$('appVersion').textContent='App V'+APP_VERSION.split('.').at(-1);status('Lade Karten …');loadData();db=await openDB();if(!db){storageError=true;status('Speicher eingeschränkt – Backup wichtig',true);try{memory.attempts=JSON.parse(localStorage.getItem('hm3-fallback-attempts')||'[]');memory.sessions=JSON.parse(localStorage.getItem('hm3-fallback-sessions')||'[]');}catch{}}
-    await fetchCards();memory.attempts=await listRecords('attempts');if(data.recordingActive&&data.sessionId){const old=await readRecord('sessions',data.sessionId);if(!old||old.endedAt){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];storeData();}}updateFilters();listeners();configureSheet();
+    await fetchCards();await fetchProofs();memory.attempts=await listRecords('attempts');if(data.recordingActive&&data.sessionId){const old=await readRecord('sessions',data.sessionId);if(!old||old.endedAt){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];storeData();}}updateFilters();listeners();configureSheet();
      if(data.quiz?.active){
        const q=data.quiz;
        if(!Array.isArray(q.initialIds)||!Array.isArray(q.queue)||q.queue.some(id=>!byId.has(id))){
          data.quiz=null;storeData();
        }
      }
-     updateQuizChrome();await advance();await updateSessionInfo();if(!storageError)status('');
+     if(data.proofStudy?.active){
+       if(!proofById.has(data.proofStudy.id)||!Number.isInteger(data.proofStudy.step)||
+          data.proofStudy.step<0||data.proofStudy.step>4||data.quiz?.active||data.recordingActive){
+         data.proofStudy=null;storeData();
+       }
+     }
+     updateQuizChrome();updateProofChrome();await advance();await updateSessionInfo();if(!storageError)status('');
   }catch(e){console.error(e);status('Start fehlgeschlagen',true);$('cardQuestion').textContent=e.message;}}
   init();
   // Automatische Hintergrund-Prüfung, sobald die PWA geöffnet oder wieder online ist.

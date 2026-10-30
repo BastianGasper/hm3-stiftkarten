@@ -220,3 +220,36 @@ body.quiz-active .sessionbar,body.quiz-active .metrics,body.quiz-active .study-f
 body.quiz-active:not(.quiz-results) .sessionbar{display:flex!important}
 body.quiz-active .sessionbar .sessionactions{display:none!important}
 body.quiz-results .sessionbar{display:none!important}
+
+/* V17: Proof study is a separate mathematical five-stage learning flow. */
+.proof-toolbar{display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.proof-toolbar strong{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:58%}
+.proof-toolbar span{font-size:13px;color:var(--muted);margin-right:auto;font-variant-numeric:tabular-nums}
+.proof-toolbar button{white-space:nowrap}
+body.proof-active .sessionbar .sessionactions{display:none!important}
+body.proof-active .metrics,body.proof-active .study-filters{display:none!important}
+body.proof-active .flashcard>.card-eyebrow,body.proof-active .flashcard>.card-question,
+body.proof-active .flashcard>.card-buttons,body.proof-active .flashcard>.solution-section{display:none!important}
+body.proof-active .proof-panel{display:flex!important}
+body.proof-active .flashcard{height:fit-content;min-height:400px}
+.proof-panel{flex-direction:column;align-items:stretch;gap:14px;min-width:0;max-height:calc(100vh - 185px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;padding:3px 1px 16px}
+.proof-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;color:var(--muted);font-size:11px}
+.proof-meta span:last-child{color:#335774;font-weight:600}
+.proof-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.proof-step-chip{border-bottom:3px solid var(--line);padding:7px 1px;font-size:10px;color:var(--muted);text-align:center;overflow-wrap:anywhere}
+.proof-step-chip.is-current{border-color:#28527a;font-weight:700;color:#1d3d59}
+.proof-step-chip.is-done{border-color:#6d889b;color:#36556c}
+.proof-step-title{font-size:24px;line-height:1.22;margin:12px 0 2px}
+.proof-task{font-size:15px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere}
+.proof-step-answer{border:1px solid var(--line);border-radius:8px;background:#f6f8fa;padding:15px;font-size:14px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere}
+.proof-step-answer mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+.proof-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:3px}
+.proof-nav button{min-width:97px}
+.proof-select-dialog select{width:100%;max-width:100%;font-size:15px;min-height:42px}
+body.proof-active .workspace{grid-template-columns:minmax(0,2fr) minmax(0,3fr)!important}
+@media(max-width:850px){body.proof-active .workspace{grid-template-columns:1fr!important}.proof-panel{max-height:none}}
+@media(max-width:610px){.proof-toolbar{flex-wrap:wrap}.proof-toolbar strong{max-width:100%;width:100%}.proof-step-chip{font-size:9px}}
+/* Longer answers should preserve their mathematical steps, not literal newline escapes. */
+.answer-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.78}
+.card-question{overflow-wrap:anywhere;line-height:1.38}
+.flashcard,.notes{min-width:0}

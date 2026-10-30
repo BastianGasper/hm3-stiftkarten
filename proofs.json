@@ -1,0 +1,959 @@
+[
+  {
+    "id": "hm3-proof-001",
+    "title": "Äquivalenz: DGL n-ter Ordnung und System",
+    "source": "V01 S. 5–7",
+    "scope": "Vorlesungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Aus einer einzelnen Gleichung \\(y^{(n)}=f(x,y,\\ldots,y^{(n-1)})\\) soll ein AWP für einen Vektor gewonnen werden. Eine Richtung alleine genügt nicht."
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(y\\in C^n(I)\\) ist die skalare DGL mit Anfangsdaten \\(y^{(k)}(x_0)=a_k\\) für \\(k=0,\\ldots,n-1\\) äquivalent zu \\(Y\\prime=F(x,Y)\\), \\(Y(x_0)=(a_0,\\ldots,a_{n-1})^T\\), mit \\(F=(Y_2,\\ldots,Y_n,f(x,Y))^T\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Explizite Normalform, gemeinsame Anfangsstelle \\(x_0\\in I\\), passende Differenzierbarkeit; die Umformung behauptet keine zusätzliche Existenz."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Definiere \\(Y_k=y^{(k-1)}\\). Beweise erst die Vorwärtsrichtung durch Differenzieren, dann die Rückrichtung durch die Kettengleichungen \\(Y_k\\prime=Y_{k+1}\\)."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Sei \\(y\\) eine skalare Lösung. Mit \\(Y_k=y^{(k-1)}\\) gilt für \\(k<n\\): \\(Y_k\\prime=y^{(k)}=Y_{k+1}\\). Außerdem \\(Y_n\\prime=y^{(n)}=f(x,Y_1,\\ldots,Y_n)\\); die Anfangswerte übertragen sich. Umgekehrt erfülle \\(Y\\) das System. Aus \\(Y_1\\prime=Y_2\\), \\(Y_2\\prime=Y_3\\), … folgt induktiv \\(Y_k=Y_1^{(k-1)}\\). Die letzte Systemgleichung ergibt \\(Y_1^{(n)}=f(x,Y_1,\\ldots,Y_1^{(n-1)})\\), und \\(Y_1^{(k)}(x_0)=a_k\\). Somit ist \\(y:=Y_1\\) die gesuchte skalare Lösung."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-002",
+    "title": "Integraldarstellung eines AWP: Äquivalenz",
+    "source": "V02 S. 1",
+    "scope": "Vorlesungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie wird aus \\(y\\prime=f(x,y)\\) ein Fixpunktproblem für eine Funktion? Beide Richtungen müssen gezeigt werden."
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "\\(y\\in C^1(I)\\) löst \\(y\\prime=f(x,y),\\ y(x_0)=y_0\\) genau dann, wenn \\(y(x)=y_0+\\int_{x_0}^{x} f(t,y(t))\\,dt\\) für jedes \\(x\\in I\\) gilt."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(f\\) stetig auf geeignetem Definitionsgebiet, \\(y\\) mit Graph darin, Intervall \\(I\\) enthält \\(x_0\\); Hauptsatz der Differential- und Integralrechnung."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "In Hinrichtung integrieren; in Rückrichtung an \\(x_0\\) einsetzen und die rechte Seite ableiten."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Aus \\(y\\prime(t)=f(t,y(t))\\) folgt \\(\\int_{x_0}^{x} y\\prime(t)\\,dt=\\int_{x_0}^{x}f(t,y(t))\\,dt\\), also \\(y(x)-y(x_0)=\\int_{x_0}^{x}f(t,y(t))\\,dt\\). Die Anfangsbedingung liefert die Integralform. Umgekehrt ergibt Einsetzen von \\(x=x_0\\) unmittelbar \\(y(x_0)=y_0\\). Da \\(t\\mapsto f(t,y(t))\\) stetig ist, folgt durch Ableiten nach dem Hauptsatz \\(y\\prime(x)=f(x,y(x))\\). Beide Richtungen sind bewiesen."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-003",
+    "title": "Ableitungsschranke impliziert Lipschitz",
+    "source": "V02 S. 1–2; Ü01",
+    "scope": "Vorlesungs- und Übungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Die Lipschitz-Bedingung ist für Picard-Lindelöf entscheidend. Wie lässt sie sich im skalaren Fall aus \\(f_y\\) nachweisen?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Wenn \\(|\\partial_y f(x,u)|\\le L\\) für alle \\((x,u)\\) im Rechteck gilt, dann \\(|f(x,z)-f(x,y)|\\le L|z-y|\\) für jedes feste \\(x\\) und alle zulässigen \\(y,z\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Für festes \\(x\\) stetige Differenzierbarkeit im zweiten Argument; der ganze Abschnitt zwischen \\(y\\) und \\(z\\) bleibt im Rechteck; eine einheitliche Schranke \\(L\\)."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Halte \\(x\\) fest und wende den Mittelwertsatz auf die Funktion \\(u\\mapsto f(x,u)\\) an."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Für \\(y\\neq z\\) gibt es nach dem Mittelwertsatz \\(\\xi\\) zwischen \\(y\\) und \\(z\\), sodass \\(f(x,z)-f(x,y)=\\partial_y f(x,\\xi)(z-y)\\). Daher \\(|f(x,z)-f(x,y)|\\le L|z-y|\\). Für \\(y=z\\) ist die Aussage trivial. Die Konstante \\(L\\) ist unabhängig von \\(x,y,z\\) im Rechteck; genau das wird benötigt."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-004",
+    "title": "Peano: konstruktive Beweisidee der Vorlesung",
+    "source": "V02 S. 2–4",
+    "scope": "Vorlesung: Beweisskizze",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Stetigkeit von \\(f\\) soll lokale Existenz einer Lösung liefern, ohne Lipschitz vorauszusetzen. Die Vorlesung skizziert das Polygonzugverfahren; der Kompaktheitsschritt wird dort nicht vollständig ausgeführt."
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für auf \\(R=\\{|x-x_0|\\le a,|y-y_0|\\le b\\}\\) stetiges \\(f\\) existiert mindestens eine Lösung auf \\([x_0-\\alpha,x_0+\\alpha]\\), \\(\\alpha=\\min(a,b/M)\\), \\(M=\\max_R|f|>0\\). Für \\(M=0\\) gilt \\(\\alpha=a\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(R\\) kompakt, \\(f\\) stetig und deshalb beschränkt und gleichmäßig stetig; Euler-Polygonzüge und ein Grenzübergang werden verwendet. Eindeutigkeit ist nicht behauptet."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Erzeuge Polygonzüge aus den expliziten Euler-Schritten; verwende \\(|f|\\le M\\), um den Aufenthalt im Rechteck und einheitliche Lipschitzschranken zu gewährleisten; suche einen gleichmäßig konvergenten Teilzug."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Die Vorlesungsargumentation: Für Schrittweite \\(h\\) konstruiere stückweise lineare Näherungen mit Steigungen \\(f(x_k,y_k)\\). Wegen \\(|f|\\le M\\) gilt \\(|y_h(x)-y_0|\\le M|x-x_0|\\le b\\), wenn \\(|x-x_0|\\le\\alpha\\). Alle Polygonzüge sind somit gleichmäßig beschränkt und \\(M\\)-Lipschitz. Der letzte Schritt – Existenz eines gleichmäßig konvergenten Teilzugs und Identifikation seines Grenzwerts als Integralgleichungslösung – wird in V02 nur skizziert; er wird im nächsten, ausdrücklich ergänzenden Beweis vollständig geführt."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-005",
+    "title": "Peano: vollständige Ergänzung über Polygonzüge",
+    "source": "V02 S. 2–4; mathematische Ergänzung (Arzelà–Ascoli)",
+    "scope": "Ergänzender Vollbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie beweist man den im Kurs skizzierten Grenzübergang bei stetigem, aber möglicherweise nicht Lipschitz-stetigem \\(f\\)?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Unter den Peano-Voraussetzungen besitzt das skalare AWP \\(y\\prime=f(x,y),\\ y(x_0)=y_0\\) mindestens eine Lösung auf \\(I=[x_0-\\alpha,x_0+\\alpha]\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(f\\in C(R)\\) auf kompaktem Rechteck, \\(M=\\max_R|f|\\), \\(\\alpha=\\min(a,b/M)\\) bei \\(M>0\\); Arzelà–Ascoli und gleichmäßige Stetigkeit auf kompakten Mengen. Das Kompaktheitsargument ist eine Ergänzung, nicht im Wortlaut von V02."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Polygonzüge vorwärts und rückwärts konstruieren; einheitlich beschränkt/equi-Lipschitz; Arzelà–Ascoli; Eulergleichung mit gestuftem Argument in Integralform; Grenzübergang über gleichmäßige Stetigkeit."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Für \\(M=0\\) ist \\(y\\equiv y_0\\) eine Lösung. Sei \\(M>0\\). Wähle Gitterweiten \\(h_m=\\alpha/m\\) und konstruiere vorwärts \\(y_m(x_{k+1})=y_m(x_k)+h_m f(x_k,y_m(x_k))\\), entsprechend rückwärts, mit linearer Interpolation. Induktiv \\(|y_m(x)-y_0|\\le M|x-x_0|\\le b\\); alle Stützstellen bleiben in \\(R\\). Die interpolierten Kurven sind \\(M\\)-Lipschitz und gleichmäßig beschränkt. Nach Arzelà–Ascoli besitzt eine Teilfolge \\(y_{m_j}\\) einen auf \\(I\\) gleichmäßig konvergenten Grenzwert \\(y\\). Schreibe \\(\\tau_m(t)\\) für den jeweils benutzten linken bzw. rechten Gitterpunkt. Dann gilt exakt \\(y_m(x)=y_0+\\int_{x_0}^{x} f(\\tau_m(t),y_m(\\tau_m(t)))\\,dt\\). Da \\(|t-\\tau_m(t)|\\le h_m\\) und \\(|y_m(t)-y_m(\\tau_m(t))|\\le Mh_m\\), folgt aus gleichmäßiger Stetigkeit von \\(f\\) und gleichmäßiger Konvergenz \\(f(\\tau_{m_j}(t),y_{m_j}(\\tau_{m_j}(t)))\\to f(t,y(t))\\) gleichmäßig. Der Grenzübergang unter dem Integral ergibt \\(y(x)=y_0+\\int_{x_0}^{x}f(t,y(t))\\,dt\\). Der Hauptsatz liefert \\(y\\prime=f(x,y)\\) und \\(y(x_0)=y_0\\). Damit ist Existenz bewiesen; Eindeutigkeit folgt daraus nicht."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-006",
+    "title": "Picard-Lindelöf: Eindeutigkeit sauber beweisen",
+    "source": "V02 S. 3; mathematische Ergänzung",
+    "scope": "Ergänzender Vollbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Peano garantiert keine Eindeutigkeit. Warum schließen zwei Lösungen bei zusätzlicher Lipschitz-Bedingung einander aus?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Sind \\(y,z\\) zwei Lösungen desselben AWPs auf einem gemeinsamen kompakten Teilintervall und ist \\(f\\) in \\(y\\) Lipschitz mit Konstante \\(L\\), dann gilt \\(y\\equiv z\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Integralform beider Lösungen, gemeinsamer Anfangswert, gleichmäßiges Lipschitz-\\(L\\) auf dem betrachteten Rechteck; beide Lösungen sind beschränkt."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Differenz der Integraldarstellungen abschätzen. Die integrierte Ungleichung iterieren; wegen des Faktors \\(1/n!\\) verschwindet jede Differenz."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Sei zunächst \\(x\\ge x_0\\) und \\(u(x)=|y(x)-z(x)|\\). Aus den Integralgleichungen und der Lipschitz-Bedingung folgt \\(u(x)\\le L\\int_{x_0}^x u(t)dt\\). Auf \\([x_0,x_0+a]\\) sei \\(u\\le C\\). Durch Induktion ergibt sich \\(u(x)\\le C L^n(x-x_0)^n/n!\\) für jedes \\(n\\in\\mathbb N_0\\): aus der Schranke für \\(n\\) folgt nach Einsetzen \\(u(x)\\le CL^{n+1}(x-x_0)^{n+1}/(n+1)!\\). Für \\(n\\to\\infty\\) geht die rechte Seite gegen null. Also \\(u(x)=0\\). Für \\(x\\le x_0\\) argumentiert man über Integrale mit umgekehrter Grenze bzw. durch Zeitumkehr identisch. Damit \\(y\\equiv z\\). Dieser Beweis zeigt Eindeutigkeit; die Existenz benötigt ein zusätzliches Argument."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-007",
+    "title": "Picard-Iteration: Existenz über Konvergenz",
+    "source": "V02 S. 3; mathematische Ergänzung",
+    "scope": "Ergänzender Vollbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie wird aus der Iterationsvorschrift \\(\\varphi_{n+1}=T(\\varphi_n)\\) tatsächlich eine Lösung? Eine Formel allein ist kein Konvergenzbeweis."
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für stetiges, im zweiten Argument Lipschitz-stetiges \\(f\\) auf dem Peano-Rechteck konvergiert die Picard-Iteration auf einem hinreichend kleinen Intervall gleichmäßig gegen eine Lösung des AWPs."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Rechteck mit \\(M=\\max|f|\\), \\(L\\) Lipschitz; Intervall \\(J=[x_0-h,x_0+h]\\), \\(h\\le\\min(a,b/M)\\); Start \\(\\varphi_0\\equiv y_0\\). Vollständigkeit von \\(C(J)\\) in Supremumsnorm."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Iterierte Differenzen mit Fakultätsabschätzung begrenzen. Über Weierstraß-Majorante Konvergenz; Fixpunktgleichung durch Grenzübergang."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Setze \\(\\varphi_0=y_0\\), \\(\\varphi_{n+1}(x)=y_0+\\int_{x_0}^x f(t,\\varphi_n(t))dt\\). Aus \\(|f|\\le M\\) folgt \\(|\\varphi_{n+1}(x)-y_0|\\le Mh\\le b\\), sodass die Iterierten im Rechteck bleiben. Außerdem \\(|\\varphi_1-\\varphi_0|\\le M|x-x_0|\\). Induktiv folgt \\(|\\varphi_{n+1}(x)-\\varphi_n(x)|\\le ML^n|x-x_0|^{n+1}/(n+1)!\\). Die Reihe der Supremumsnormen ist durch \\(\\sum_{n\\ge0}ML^n h^{n+1}/(n+1)!<\\infty\\) majorisiert. Also konvergiert \\(\\varphi_n\\) gleichmäßig gegen stetiges \\(y\\). Die Lipschitz-Bedingung liefert \\(f(t,\\varphi_n(t))\\to f(t,y(t))\\) gleichmäßig, also \\(y(x)=y_0+\\int_{x_0}^x f(t,y(t))dt\\). Daraus folgt per Hauptsatz \\(y\\prime=f(x,y)\\), \\(y(x_0)=y_0\\). Die Eindeutigkeit ist im vorherigen Beweis nachgewiesen."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-008",
+    "title": "Induktionsbeweis einer Picard-Folge",
+    "source": "V02 S. 6–8; Ü01",
+    "scope": "Vorlesungs- und Übungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Bei \\(y\\prime=y\\), \\(y(1)=e\\) sollen die sukzessiven Approximationen exakt identifiziert werden."
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(\\varphi_0=e\\) und \\(\\varphi_{n+1}(x)=e+\\int_1^x\\varphi_n(t)dt\\) gilt \\(\\varphi_n(x)=e\\sum_{k=0}^{n}(x-1)^k/k!\\) für alle \\(n\\in\\mathbb N_0\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Picard-Rekursion, Integral einer Potenzfunktion und endliche Summen; vollständige Induktion mit sauberem Indexwechsel."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Induktionsanfang \\(n=0\\); Induktionsannahme einsetzen; summenweise integrieren; mit \\(j=k+1\\) umnummerieren."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Für \\(n=0\\) ist die Behauptung \\(\\varphi_0(x)=e\\cdot1=e\\) richtig. Sei sie für \\(n\\) gültig. Dann \\(\\varphi_{n+1}(x)=e+e\\int_1^x\\sum_{k=0}^n(t-1)^k/k!\\,dt=e+e\\sum_{k=0}^n(x-1)^{k+1}/(k+1)!\\). Mit \\(j=k+1\\) folgt \\(\\varphi_{n+1}(x)=e\\sum_{j=0}^{n+1}(x-1)^j/j!\\). Somit gilt die Formel für alle \\(n\\ge0\\). Mit der Exponentialreihe \\(\\varphi_n(x)\\to e\\,e^{x-1}=e^x\\)."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-009",
+    "title": "Expliziter Euler: Herleitung und lokale Abweichung",
+    "source": "V02 S. 4–5",
+    "scope": "Vorlesungsableitung",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie wird aus einer DGL eine numerische Rekursion, und welche Näherung wird dabei gemacht?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(y\\prime=f(x,y)\\) und Schrittweite \\(h>0\\) lautet Euler explizit \\(x_{k+1}=x_k+h\\), \\(Y_{k+1}=Y_k+h f(x_k,Y_k)\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Glatt genug, damit Taylor bzw. Differenzenquotient eingesetzt werden kann. Der methodische Ansatz ist eine Approximation, kein exakter Identitätsbeweis für endliches \\(h\\)."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Ersetze \\(y\\prime(x_k)\\) durch den Vorwärtsdifferenzenquotienten. Bestimme die Auswertung der rechten Seite am bekannten alten Punkt."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Aus Taylor für die exakte Lösung: \\(y(x_k+h)=y(x_k)+h y\\prime(x_k)+\\frac{h^2}{2}y\\prime\\prime(\\xi_k)\\) (bei hinreichender Glattheit). Mit \\(y\\prime(x_k)=f(x_k,y(x_k))\\) erhält man \\(y(x_k+h)=y(x_k)+h f(x_k,y(x_k))+O(h^2)\\). Lässt man den Term \\(O(h^2)\\) weg und ersetzt die exakte Lösung am Stützpunkt durch \\(Y_k\\), entsteht \\(Y_{k+1}=Y_k+h f(x_k,Y_k)\\). Die lokale Ein-Schritt-Abweichung ist bei ausreichender Glattheit \\(O(h^2)\\); daraus allein folgt ohne Stabilitätsargument keine globale Fehlerordnung."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-010",
+    "title": "Linearer Differentialoperator: Linearität",
+    "source": "V03 S. 1–2",
+    "scope": "Vorlesungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wieso ist der homogene Lösungsraum unter Addition und skalarer Multiplikation abgeschlossen?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(L:C^n(I)\\to C(I)\\), \\(L(y)=y^{(n)}+\\sum_{k=1}^n a_k(x)y^{(n-k)}\\), gilt \\(L(\\alpha y+\\beta z)=\\alpha L(y)+\\beta L(z)\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Koeffizienten \\(a_k\\) hängen nur von \\(x\\) ab; Ableitungen sind linear; die Aussage gilt über \\(\\mathbb R\\) bzw. \\(\\mathbb C\\) entsprechend."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Operatoren-Definition ausmultiplizieren und lineare Ableitung anwenden. Danach Kerneigenschaft folgern."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\(L(\\alpha y+\\beta z)=(\\alpha y+\\beta z)^{(n)}+\\sum_{k=1}^n a_k(x)(\\alpha y+\\beta z)^{(n-k)}=\\alpha[y^{(n)}+\\sum_{k=1}^n a_k y^{(n-k)}]+\\beta[z^{(n)}+\\sum_{k=1}^n a_k z^{(n-k)}]=\\alpha L(y)+\\beta L(z)\\). Sind \\(L(y)=L(z)=0\\), so folgt \\(L(\\alpha y+\\beta z)=0\\); \\(\\ker L\\) ist daher ein Vektorraum."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-011",
+    "title": "Inhomogene Lösungsmenge als Verschiebung des Kerns",
+    "source": "V03 S. 2",
+    "scope": "Vorlesungsbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Warum ist das allgemeine Lösungsschema \\(y=y_p+y_h\\) vollständig und nicht bloß ein Weg, neue Lösungen zu erzeugen?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für lineares \\(L\\) und bekannte partikuläre Lösung \\(L(y_p)=s\\) gilt \\(\\{y:L(y)=s\\}=y_p+\\ker L\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Linearität von \\(L\\), Existenz einer bestimmten partikulären Lösung \\(y_p\\); keine weiteren Strukturannahmen nötig."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Beide Inklusionen beweisen. Insbesondere jede beliebige inhomogene Lösung mit \\(y_p\\) vergleichen."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Ist \\(h\\in\\ker L\\), so gilt \\(L(y_p+h)=L(y_p)+L(h)=s+0=s\\); damit \\(y_p+\\ker L\\subseteq\\{L=s\\}\\). Ist umgekehrt \\(L(y)=s\\), folgt \\(L(y-y_p)=L(y)-L(y_p)=s-s=0\\). Also \\(h=y-y_p\\in\\ker L\\) und \\(y=y_p+h\\). Somit auch die umgekehrte Inklusion und die Mengenidentität."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-012",
+    "title": "Dimensionssatz für den homogenen Lösungsraum",
+    "source": "V03 S. 3; mathematische Erläuterung",
+    "scope": "Ausgearbeiteter Nachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Warum braucht ein Fundamentalsystem genau \\(n\\) Lösungen und warum bestimmen \\(n\\) Anfangswerte die Lösung?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für eine normierte homogene lineare DGL der Ordnung \\(n\\) mit stetigen Koeffizienten ist \\(\\dim\\ker L=n\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Das lineare AWP mit \\(n\\) Anfangswerten ist auf \\(I\\) eindeutig lösbar (linearer Existenz- und Eindeutigkeitssatz)."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Betrachte die Anfangsdatenabbildung \\(T:\\ker L\\to\\mathbb K^n\\), \\(T(y)=(y(x_0),\\ldots,y^{(n-1)}(x_0))\\), und beweise Bijektivität."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\(T\\) ist linear. Ist \\(T(y)=0\\), dann ist \\(y\\) eine Lösung des homogenen AWPs mit Null-Anfangswerten; wegen Eindeutigkeit ist \\(y\\equiv0\\). Also ist \\(T\\) injektiv. Umgekehrt liefert der Existenzsatz für jedes \\((a_0,\\ldots,a_{n-1})\\in\\mathbb K^n\\) eine Lösung des AWPs und damit \\(T(y)=a\\); also ist \\(T\\) surjektiv. Somit ist \\(T\\) ein Vektorraumisomorphismus, und \\(\\dim\\ker L=\\dim\\mathbb K^n=n\\)."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-013",
+    "title": "Determinanten-Ableitungsregel",
+    "source": "V03 S. 4; Ü02",
+    "scope": "Vorlesungs- und Übungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Die Wronski-Determinante enthält nach \\(x\\) differenzierbare Zeilen. Warum darf man jeweils eine Zeile ableiten und dann die Determinanten addieren?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für eine differenzierbare Matrixfunktion \\(A(x)\\in\\mathbb K^{n\\times n}\\) gilt \\(\\frac d{dx}\\det A(x)=\\sum_{j=1}^n\\det(A(x)\\text{ mit nur Zeile }j\\text{ abgeleitet})\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Determinante ist multilinear in jeder Zeile; für jedes Matrixelement existiert die Ableitung. Alternativ Leibniz-Formel mit Produktregel."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Leibniz-Formel aufschreiben; jedes Produkt genau einmal an jeder Position differenzieren; nach differenzierter Zeile zusammenfassen."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Schreibe \\(\\det A(x)=\\sum_{\\sigma\\in S_n}\\operatorname{sgn}(\\sigma)\\prod_{i=1}^n a_{i,\\sigma(i)}(x)\\). Ableiten und Produktregel liefert \\((\\det A)\\prime=\\sum_{\\sigma}\\operatorname{sgn}(\\sigma)\\sum_{j=1}^n a_{j,\\sigma(j)}\\prime\\prod_{i\\ne j}a_{i,\\sigma(i)}\\). Wegen endlicher Summen vertauschen wir die Reihenfolge: \\(=\\sum_{j=1}^n\\sum_{\\sigma}\\operatorname{sgn}(\\sigma)a_{j,\\sigma(j)}\\prime\\prod_{i\\ne j}a_{i,\\sigma(i)}\\). Die innere Summe ist die Determinante mit genau der Zeile \\(j\\) abgeleitet. Q.e.d."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-014",
+    "title": "Abelsche Identität ohne Division durch W",
+    "source": "V03 S. 4–6; Ü02",
+    "scope": "Vorlesungsbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie hängt die Wronski-Determinante eines Systems linearer DGL-Lösungen von \\(a_1(x)\\) ab? Was passiert bei \\(W(x_0)=0\\)?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(y^{(n)}+a_1y^{(n-1)}+\\cdots+a_n y=0\\) und \\(n\\) Lösungen \\(y_1,\\ldots,y_n\\) gilt \\(W\\prime+a_1W=0\\) und \\(W(x)=W(x_0)\\exp(-\\int_{x_0}^x a_1(t)dt)\\), auch wenn \\(W(x_0)=0\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(a_j\\) stetig auf Intervall \\(I\\); alle \\(y_j\\) lösen dieselbe DGL und sind \\(C^n\\); Zeilen-Ableitungsregel für Determinanten."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Leite \\(W\\) zeilenweise ab; die ersten \\(n-1\\) Summanden haben doppelte Zeilen. Ersetze die letzte Zeile durch die DGL, eliminiere \\(a_2,\\ldots,a_n\\) durch gleiche Zeilen, löse lineare DGL für \\(W\\) mittels Integrationsfaktor."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Die Zeilen von \\(V\\) heißen \\(R_0=(y_j)_j,\\ldots,R_{n-1}=(y_j^{(n-1)})_j\\), \\(W=\\det V\\). Nach der Ableitungsregel ist \\(W\\prime\\) Summe der Determinanten, in denen je eine Zeile abgeleitet wurde. Für \\(R_k\\) mit \\(k<n-1\\) ist \\(R_k\\prime=R_{k+1}\\), also besitzt die entsprechende Determinante doppelte Zeilen und ist null. Übrig ist \\(\\det(R_0,\\ldots,R_{n-2},R_{n-1}\\prime)\\). Die DGL liefert \\(R_{n-1}\\prime=-a_1R_{n-1}-a_2R_{n-2}-\\cdots-a_nR_0\\). Wegen Linearität der Determinante in der letzten Zeile verschwinden alle Terme mit \\(R_k\\), \\(k<n-1\\), da sich die betreffende Zeile wiederholt. Somit \\(W\\prime=-a_1W\\). Multipliziere mit \\(\\mu(x)=\\exp(\\int_{x_0}^x a_1(t)dt)\\): \\((\\mu W)\\prime=\\mu(W\\prime+a_1W)=0\\), also \\(\\mu(x)W(x)=\\mu(x_0)W(x_0)=W(x_0)\\). Daher \\(W(x)=W(x_0)e^{-\\int_{x_0}^x a_1}\\). Für \\(W(x_0)=0\\) folgt \\(W\\equiv0\\), ohne je durch \\(W\\) zu teilen."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-015",
+    "title": "Wronski-Kriterium und Fall W(x₀)=0",
+    "source": "V03 S. 6–7; Ü02",
+    "scope": "Vorlesungsbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Eine verschwindende Wronski-Determinante zeigt für beliebige Funktionen nicht immer Abhängigkeit. Warum ist das für gemeinsame Lösungen einer linearen DGL anders?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(n\\) Lösungen derselben normierten homogenen DGL \\(n\\)-ter Ordnung mit stetigen Koeffizienten gilt: linear unabhängig \\(\\Leftrightarrow W(x_0)\\ne0\\) für irgendein (gleichwertig jedes) \\(x_0\\in I\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Selbe lineare DGL und gemeinsames Intervall; Eindeutigkeit des linearen AWPs; Abel-Identität bzw. Invertierbarkeit von \\(V(x_0)\\)."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Rückrichtung durch invertierbare Anfangsdatenmatrix; Hinrichtung über Kontraposition mit singulärer Wronski-Matrix und AWP-Eindeutigkeit."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Bei \\(W(x_0)\\ne0\\) ist \\(V(x_0)\\) invertierbar. Erfüllt \\(\\sum_j c_jy_j\\equiv0\\), so liefert Ableiten bis Ordnung \\(n-1\\) an \\(x_0\\) die Gleichung \\(V(x_0)c=0\\); folglich \\(c=0\\) und Unabhängigkeit. Ist umgekehrt \\(W(x_0)=0\\), existiert \\(c\\ne0\\) mit \\(V(x_0)c=0\\). Setze \\(z=\\sum_j c_jy_j\\). Wegen Linearität ist \\(z\\) eine Lösung der homogenen DGL, und \\(z^{(k)}(x_0)=0\\) für alle \\(k=0,\\ldots,n-1\\). Die Nullfunktion erfüllt dasselbe AWP. Aus Eindeutigkeit folgt \\(z\\equiv0\\); die \\(y_j\\) sind abhängig. Aus Abel folgt, dass die Alternative \\(W\\equiv0\\) oder \\(W\\ne0\\) auf ganz \\(I\\) gilt."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-016",
+    "title": "Exponentialansatz, charakteristisches Polynom",
+    "source": "V04 S. 1, 4",
+    "scope": "Vorlesungsableitung",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wieso wird bei einer DGL mit konstanten Koeffizienten die Suche nach Exponentiallösungen auf ein Polynom reduziert?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(L=p(D)=D^n+a_1D^{n-1}+\\cdots+a_n\\), \\(D=d/dx\\), gilt \\(L(e^{\\lambda x})=p(\\lambda)e^{\\lambda x}\\), also \\(e^{\\lambda x}\\in\\ker L\\Leftrightarrow p(\\lambda)=0\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Alle \\(a_k\\) konstant; \\(e^{\\lambda x}\\ne0\\) für jedes endliche \\(x\\) und \\(\\lambda\\in\\mathbb C\\)."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Differenziere den Exponentialansatz mehrfach und ziehe den stets von null verschiedenen Faktor heraus."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\(D^k(e^{\\lambda x})=\\lambda^k e^{\\lambda x}\\). Daher \\(L(e^{\\lambda x})=[\\lambda^n+a_1\\lambda^{n-1}+\\cdots+a_n]e^{\\lambda x}=p(\\lambda)e^{\\lambda x}\\). Die Exponentialfunktion verschwindet nie; somit gilt \\(L(e^{\\lambda x})=0\\) genau für \\(p(\\lambda)=0\\). Die Wurzeln mit ihren Vielfachheiten erzeugen das homogene Fundamentalsystem."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-017",
+    "title": "Verschiedene Nullstellen: Wronski-Beweis",
+    "source": "V04 S. 2",
+    "scope": "Vorlesungsbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Warum sind zwei aus unterschiedlichen reellen Nullstellen konstruierte Exponentiallösungen unabhängig?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(\\lambda_1\\ne\\lambda_2\\) gilt \\(W(e^{\\lambda_1x},e^{\\lambda_2x})=(\\lambda_2-\\lambda_1)e^{(\\lambda_1+\\lambda_2)x}\\ne0\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Die Nullstellen gehören zur selben DGL zweiter Ordnung; Differenzierbarkeit und Standardformel für 2×2-Determinante."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Zwei Exponentiallösungen ableiten und die Wronski-Determinante faktorisieren."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\(W(x)=\\det\\begin{pmatrix}e^{\\lambda_1x}&e^{\\lambda_2x}\\\\\\lambda_1e^{\\lambda_1x}&\\lambda_2e^{\\lambda_2x}\\end{pmatrix}=\\lambda_2e^{(\\lambda_1+\\lambda_2)x}-\\lambda_1e^{(\\lambda_1+\\lambda_2)x}=(\\lambda_2-\\lambda_1)e^{(\\lambda_1+\\lambda_2)x}\\). Der zweite Faktor ist nie null, der erste ist nach Voraussetzung von null verschieden. Also sind die Funktionen unabhängig. Zusammen mit der DGL-Eigenschaft bilden sie ein FS der Ordnung 2."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-018",
+    "title": "Mehrfache Nullstelle: xᵏe^(λx)",
+    "source": "V04 S. 3–4",
+    "scope": "Vorlesungsnachweis mit Ergänzung",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Eine \\(r\\)-fache Nullstelle liefert nicht nur \\(e^{\\lambda x}\\), sondern einen Block von \\(r\\) unabhängigen Lösungen. Wieso?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Ist \\(p\\) das charakteristische Polynom und \\(\\lambda\\) Nullstelle der Vielfachheit \\(r\\), so lösen \\(x^k e^{\\lambda x}\\) für \\(k=0,\\ldots,r-1\\) die homogene Gleichung."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Konstante Koeffizienten; \\(p(\\lambda)=p\\prime(\\lambda)=\\cdots=p^{(r-1)}(\\lambda)=0\\); Ableitung nach Parameter \\(\\lambda\\) darf mit \\(L\\) vertauscht werden."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Leite \\(L(e^{\\lambda x})=p(\\lambda)e^{\\lambda x}\\) wiederholt nach \\(\\lambda\\) ab und nutze die Mehrfachnullstellenbedingungen. Unabhängigkeit über Polynomfaktor."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Für \\(k<r\\) gilt wegen Konstanz von \\(L\\) bezüglich \\(\\lambda\\): \\(L(x^k e^{\\lambda x})=L(\\partial_\\lambda^k e^{\\lambda x})=\\partial_\\lambda^k[p(\\lambda)e^{\\lambda x}]=\\sum_{j=0}^k\\binom{k}{j}p^{(j)}(\\lambda)x^{k-j}e^{\\lambda x}=0\\), weil \\(p^{(j)}(\\lambda)=0\\) für \\(j<r\\). Für Unabhängigkeit sei \\(\\sum_{k=0}^{r-1}c_kx^k e^{\\lambda x}=0\\). Division durch \\(e^{\\lambda x}\\ne0\\) ergibt \\(\\sum c_kx^k=0\\) auf einem Intervall. Ein Polynom, das auf einem Intervall verschwindet, hat alle Koeffizienten null. Deshalb sind die \\(r\\) Lösungen unabhängig."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-019",
+    "title": "Reelle Lösungen aus komplexem Paar",
+    "source": "V04 S. 2–3; V06 S. 1–2",
+    "scope": "Vorlesungsbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Warum darf bei einer reellen DGL von einer komplexen Lösung zu Real- und Imaginärteil übergegangen werden?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Ist \\(L\\) ein linearer Differentialoperator mit reellen Koeffizienten und \\(z=u+iv\\) eine komplexe homogene Lösung, dann gilt \\(L(u)=L(v)=0\\). Für \\(\\alpha\\pm i\\beta\\), \\(\\beta\\ne0\\), erhält man \\(e^{\\alpha x}\\cos\\beta x\\) und \\(e^{\\alpha x}\\sin\\beta x\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Alle Koeffizienten von \\(L\\) reell; Linearität über \\(\\mathbb C\\); Eulersche Formel."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Spalte die Gleichung \\(L(z)=0\\) in reellen und imaginären Teil auf; setze \\(z=e^{(\\alpha+i\\beta)x}\\) ein."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\(L(u+iv)=L(u)+iL(v)\\), da \\(L\\) reelle Koeffizienten besitzt. Ist \\(L(z)=0\\), so sind beide reellwertigen Summanden null, also \\(L(u)=L(v)=0\\). Für \\(z=e^{(\\alpha+i\\beta)x}=e^{\\alpha x}(\\cos\\beta x+i\\sin\\beta x)\\) folgt die genannte Lösungspaarung. Unabhängigkeit: \\(W=\\det\\begin{pmatrix}e^{\\alpha x}\\cos\\beta x&e^{\\alpha x}\\sin\\beta x\\\\(\\alpha\\cos\\beta x-\\beta\\sin\\beta x)e^{\\alpha x}&(\\alpha\\sin\\beta x+\\beta\\cos\\beta x)e^{\\alpha x}\\end{pmatrix}=\\beta e^{2\\alpha x}\\ne0\\)."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-020",
+    "title": "Variation der Konstanten n-ter Ordnung",
+    "source": "V05 S. 2–3; Ü03",
+    "scope": "Vorlesungsbeweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Ein vollständiges FS ist bekannt; warum ergibt das Ersetzen der Konstanten durch Funktionen eine partikuläre Lösung, und welche Nebenbedingungen sind nötig?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für ein FS \\(y_1,\\ldots,y_n\\) von \\(L(y)=0\\), \\(L\\) normiert, liefert \\(y_p=\\sum_j c_j(x)y_j(x)\\) eine partikuläre Lösung von \\(L(y)=s\\), wenn \\(V(x)c\\prime(x)=s(x)e_n\\) erfüllt ist."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Stetige Koeffizienten und Störfunktion, normierte höchste Ableitung, bekanntes FS mit \\(W=\\det V\\ne0\\). Bei unnormierter DGL steht rechts \\(s/b_0\\)."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Setze die Zusatzgleichungen \\(\\sum_j c_j\\prime y_j^{(k)}=0\\) für \\(k=0,\\ldots,n-2\\) und \\(\\sum_j c_j\\prime y_j^{(n-1)}=s\\). Dann fällt beim Einsetzen der Ansatzteile mit \\(c_j\\) wegen \\(L(y_j)=0\\) weg."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Definiere \\(y_p=\\sum_j c_jy_j\\). Die ersten \\(n-1\\) Zeilen von \\(Vc\\prime=s e_n\\) lauten \\(\\sum_jc_j\\prime y_j^{(k)}=0\\) für \\(k=0,\\ldots,n-2\\). Induktiv folgt \\(y_p^{(k)}=\\sum_jc_jy_j^{(k)}\\) für \\(k=0,\\ldots,n-1\\). Differenzieren der letzten Gleichung ergibt \\(y_p^{(n)}=\\sum_jc_jy_j^{(n)}+\\sum_jc_j\\prime y_j^{(n-1)}=\\sum_jc_jy_j^{(n)}+s\\). Daher \\(L(y_p)=\\sum_jc_jL(y_j)+s=s\\). Das LGS besitzt wegen \\(\\det V=W\\ne0\\) für jedes \\(x\\) eine eindeutige Lösung \\(c\\prime\\), die integriert werden kann; Integrationskonstanten gehen in \\(y_h\\) auf."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-021",
+    "title": "Cramers Regel im VoK-System",
+    "source": "V05 S. 4; Ü03",
+    "scope": "Vorlesungsableitung",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie kann ein VoK-System ohne manuelles Gauß-Verfahren vollständig symbolisch dargestellt werden?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(V(x)c\\prime(x)=s(x)e_n\\) mit \\(\\det V(x)\\ne0\\) gilt \\(c_j\\prime(x)=\\det V_j(x)/\\det V(x)\\), wobei \\(V_j\\) aus \\(V\\) durch Ersetzen der Spalte \\(j\\) mit \\(s e_n\\) entsteht."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(V\\in\\mathbb K^{n\\times n}\\) quadratisch und invertierbar; Cramersche Regel der linearen Algebra."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Identifiziere die unbekannten \\(c_j\\prime\\), konstruiere für jedes \\(j\\) die Ersatzspalte und wende Cramer an."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Da \\(W=\\det V\\ne0\\), ist das System eindeutig lösbar. Nach Cramers Regel erhält man für die \\(j\\)-te Komponente \\(c_j\\prime=\\det[y_1,\\ldots,y_{j-1},s e_n,y_{j+1},\\ldots,y_n]/W\\), wobei die Schreibweise hier die Spalten der Wronski-Matrix meint. Durch Integration \\(c_j(x)=\\int c_j\\prime(x)dx\\) und Einsetzen in \\(y_p=\\sum_j c_j y_j\\) entsteht die partikuläre Lösung. Ohne \\(W\\ne0\\) darf Cramer nicht eingesetzt werden."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-022",
+    "title": "Reduktion der Ordnung mit exponentieller Lösung",
+    "source": "V05 S. 5–6; V06 S. 1–2",
+    "scope": "Vorlesungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie lässt sich bei konstanten Koeffizienten und einer bekannten Nullstelle \\(\\lambda\\) die Ordnung der inhomogenen Gleichung reduzieren?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(L=p(D)\\), \\(p(\\lambda)=0\\), führt \\(y_p=c(x)e^{\\lambda x}\\) zu einer Gleichung, in der \\(c\\) ohne Ableitung nicht mehr vorkommt. Mit \\(d=c\\prime\\) sinkt die Ordnung um eins."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Konstante Koeffizienten, \\(\\lambda\\in\\mathbb C\\) Nullstelle von \\(p\\), hinreichend glattes \\(c\\); für reelle DGL kann am Schluss Real-/Imaginärteil genommen werden."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Nutze \\(D(c e^{\\lambda x})=e^{\\lambda x}(D+\\lambda)c\\), also \\(p(D)(c e^{\\lambda x})=e^{\\lambda x}p(D+\\lambda)c\\)."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Zuerst \\(D(c e^{\\lambda x})=e^{\\lambda x}(c\\prime+\\lambda c)\\). Durch wiederholtes Anwenden folgt \\(p(D)(c e^{\\lambda x})=e^{\\lambda x}p(D+\\lambda)c\\), wobei \\(p(D+\\lambda)=p(\\lambda)+p\\prime(\\lambda)D+\\frac{p\\prime\\prime(\\lambda)}{2!}D^2+\\cdots+\\frac{p^{(n)}(\\lambda)}{n!}D^n\\). Weil \\(p(\\lambda)=0\\), verschwindet der Term mit \\(c\\) ohne Ableitung. Die verbleibende Gleichung ist \\(\\sum_{j=1}^n\\frac{p^{(j)}(\\lambda)}{j!}c^{(j)}=e^{-\\lambda x}s(x)\\). Mit \\(d=c\\prime\\) entsteht eine Gleichung höchstens der Ordnung \\(n-1\\) für \\(d\\). Nach deren Lösung integriere \\(d\\), setze \\(c\\) in \\(y_p=c e^{\\lambda x}\\) ein und prüfe \\(L(y_p)=s\\)."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-023",
+    "title": "Resonanzfaktor xʳ bei unbestimmten Koeffizienten",
+    "source": "V06 S. 3–5",
+    "scope": "Vorlesungsnachweis mit Ergänzung",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Warum benötigt die Störfunktion \\(P_m(x)e^{\\lambda x}\\) bei einer \\(r\\)-fachen Nullstelle von \\(p\\) den Faktor \\(x^r\\) im partikulären Ansatz?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Bei konstanten Koeffizienten und \\(s=P_m(x)e^{\\lambda x}\\) kann \\(y_p=x^r Q_m(x)e^{\\lambda x}\\) gewählt werden, \\(r\\) Nullstellenvielfachheit von \\(\\lambda\\) in \\(p\\), \\(\\deg Q_m\\le m\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(p\\) charakteristisches Polynom, \\(\\lambda\\in\\mathbb C\\), \\(P_m\\) Polynom von Grad \\(m\\); Koeffizienten konstant. \\(r=0\\) falls \\(p(\\lambda)\\ne0\\)."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Verwende die Operatorverschiebung \\(p(D)(e^{\\lambda x}q)=e^{\\lambda x}p(D+\\lambda)q\\). Bei r-facher Nullstelle hat \\(p(D+\\lambda)\\) einen Faktor \\(D^r\\). Die Polynomauswahl muss dessen Kern verlassen."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Schreibe \\(p(z)=(z-\\lambda)^r q(z)\\) mit \\(q(\\lambda)\\ne0\\). Dann \\(p(D+\\lambda)=D^r q(D+\\lambda)\\). Für ein Polynom \\(Q_m\\) hat \\(x^rQ_m\\) Grad höchstens \\(m+r\\); nach \\(D^r\\) besitzt die resultierende Funktion Grad höchstens \\(m\\), genau passend zu \\(P_m\\). Der Operator \\(q(D+\\lambda)\\) ist auf Polynomen bis Grad \\(m\\) bezüglich der Monombasis dreieckig mit Diagonale \\(q(\\lambda)\\ne0\\), somit invertierbar. Auch \\(D^r:\\{x^rQ_m\\}\\to\\{P_m\\}\\) ist bijektiv (auf diesen endlichdimensionalen Räumen). Deshalb existiert ein eindeutig bestimmtes \\(Q_m\\), das \\(p(D+\\lambda)(x^rQ_m)=P_m\\) erfüllt. Ohne \\(x^r\\) läge ein Teil des Ansatzes im homogenen Kern \\(\\{e^{\\lambda x},xe^{\\lambda x},\\ldots,x^{r-1}e^{\\lambda x}\\}\\)."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-024",
+    "title": "Integrierender Faktor: lineare DGL erster Ordnung",
+    "source": "Ü00; Methodenatlas S. 16",
+    "scope": "Übungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wieso darf eine lineare DGL erster Ordnung nach Multiplikation mit einem bestimmten Faktor als Produktableitung integriert werden?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(y\\prime+q(x)y=s(x)\\) und \\(Q\\prime=q\\) gilt \\((e^{Q}y)\\prime=e^Q s\\). Folglich \\(y=e^{-Q}(C+\\int e^Q s)\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(q,s\\) stetig auf einem Intervall \\(I\\); \\(Q\\) Stammfunktion von \\(q\\)."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Faktor \\(\\mu=e^Q\\) so wählen, dass \\(\\mu\\prime=q\\mu\\). Produktregel durchführen, dann integrieren."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\((e^Qy)\\prime=e^Q Q\\prime y+e^Qy\\prime=e^Q(qy+y\\prime)=e^Q s\\). Integration liefert \\(e^{Q(x)}y(x)=C+\\int_{x_*}^{x}e^{Q(t)}s(t)dt\\). Multiplikation mit \\(e^{-Q(x)}\\) ergibt die allgemeine Lösung. Umgekehrt liefert Differentiation der Lösung unmittelbar die Ausgangsgleichung."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-025",
+    "title": "Bernoulli-Substitution mit Sonderlösungen",
+    "source": "Ü00; Methodenatlas S. 17",
+    "scope": "Übungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie wird aus einer Bernoulli-DGL eine lineare DGL? Warum können durch Division Lösungen verloren gehen?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(y\\prime+p(x)y=q(x)y^\\gamma\\), \\(\\gamma\\ne1\\), gilt auf einem geeigneten Bereich mit \\(y\\ne0\\) unter \\(u=y^{1-\\gamma}\\): \\(u\\prime+(1-\\gamma)p(x)u=(1-\\gamma)q(x)\\)."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(y^{1-\\gamma}\\) auf dem betrachteten Bereich reell definierbar und differenzierbar; \\(y\\ne0\\) zur Division; Sonderlösung \\(y=0\\) falls zulässig getrennt prüfen."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Originalgleichung mit \\((1-\\gamma)y^{-\\gamma}\\) multiplizieren, Kettenregel identifizieren."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\(u=y^{1-\\gamma}\\) liefert \\(u\\prime=(1-\\gamma)y^{-\\gamma}y\\prime\\). Multipliziere \\(y\\prime+p y=q y^\\gamma\\) mit \\((1-\\gamma)y^{-\\gamma}\\): \\((1-\\gamma)y^{-\\gamma}y\\prime+(1-\\gamma)p y^{1-\\gamma}=(1-\\gamma)q\\). Somit \\(u\\prime+(1-\\gamma)pu=(1-\\gamma)q\\), eine lineare DGL. Die Umformung verlangt \\(y\\ne0\\); daher anschließend prüfen, ob \\(y\\equiv0\\) eine Lösung der Originalgleichung ist, die beim Umformen verloren ging."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-026",
+    "title": "System-Lipschitz: Produktterm korrekt abschätzen",
+    "source": "Ü01 Aufgabe 1.2; Methodenatlas",
+    "scope": "Übungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Warum ist eine auf einem Rechteck polynomielle rechte Seite zwar lokal, aber nicht notwendig global Lipschitz-stetig?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Zum Beispiel gilt für \\(F(Y)=(Y_1Y_2,Y_1-Y_2)^T\\) auf \\(|Y_i|\\le R\\) die Lipschitz-Abschätzung \\(\\|F(Y)-F(Z)\\|_\\infty\\le (2R+2)\\|Y-Z\\|_\\infty\\). Globales Lipschitz ist nicht behauptet."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "\\(Y,Z\\in[-R,R]^2\\), Maximumsnorm; Algebraische Zerlegung des Produktunterschieds."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Produkt \\(Y_1Y_2-Z_1Z_2=Y_1(Y_2-Z_2)+Z_2(Y_1-Z_1)\\) schreiben und beide Faktoren abschätzen."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "Sei \\(\\delta=\\|Y-Z\\|_\\infty\\). Dann \\(|Y_1Y_2-Z_1Z_2|\\le |Y_1|\\cdot|Y_2-Z_2|+|Z_2|\\cdot|Y_1-Z_1|\\le2R\\delta\\). Für die zweite Komponente gilt \\(|(Y_1-Z_1)-(Y_2-Z_2)|\\le2\\delta\\). Somit \\(\\|F(Y)-F(Z)\\|_\\infty\\le\\max(2R,2)\\delta\\), insbesondere die angegebene schwächere Schranke \\((2R+2)\\delta\\). Bei \\(Y=(t,t)\\), \\(Z=(0,t)\\) wächst der Quotient \\(|t^2|/|t|=|t|\\) unbeschränkt, daher ist \\(F\\) nicht global Lipschitz."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-027",
+    "title": "Mehrfache Nullstelle im FS und Wronski-Probe",
+    "source": "Ü02 Aufgaben 2.4; V04",
+    "scope": "Übungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie beweist du an einer dreifachen reellen Nullstelle ein vollständiges Fundamentalsystem, statt nur die Basisfunktionen zu behaupten?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(p(\\lambda)=(\\lambda-a)^3\\) sind \\(y_1=e^{ax},y_2=xe^{ax},y_3=x^2e^{ax}\\) Lösungen und bilden ein FS."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Differentialoperator \\(L=(D-a)^3\\) mit konstanten Koeffizienten; Wronski-Kriterium."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Für jedes \\(k\\le2\\) gilt \\((D-a)(x^k e^{ax})=k x^{k-1}e^{ax}\\); dreimaliger Operatorgebrauch ergibt null. Unabhängigkeit an \\(x=0\\) nachweisen."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\((D-a)(P(x)e^{ax})=P\\prime(x)e^{ax}\\); somit \\((D-a)^3(x^k e^{ax})=(d^3/dx^3)x^k\\cdot e^{ax}=0\\) für \\(k=0,1,2\\). Die Wronski-Matrix bei \\(x=0\\) ist \\(\\begin{pmatrix}1&0&0\\\\a&1&0\\\\a^2&2a&2\\end{pmatrix}\\); ihre Determinante ist \\(2\\ne0\\). Die drei Lösungen sind unabhängig. Da die DGL Ordnung 3 hat, ist das ein FS."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-028",
+    "title": "Komplexes und reelles FS: Übung 03",
+    "source": "Ü03 Aufgabe 3.2(a); V04",
+    "scope": "Übungsnachweis",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie wird aus \\(y_1=e^{-x},z_2=e^{2ix},z_3=e^{-2ix}\\) ein reelles Fundamentalsystem, und wie prüft man es an einer Stelle?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Für \\(p(\\lambda)=(\\lambda+1)(\\lambda^2+4)\\) bilden \\(\\{e^{-x},\\cos 2x,\\sin 2x\\}\\) ein reelles FS der homogenen DGL dritter Ordnung."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Reelle konstante Koeffizienten; Euler-Formel; Wronski-Kriterium für drei gemeinsame Lösungen."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Wandle die konjugierten Exponentiallösungen in cos/sin um. Berechne \\(W(0)\\) der reellen Funktionen."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\(p(\\lambda)=\\lambda^3+\\lambda^2+4\\lambda+4=(\\lambda+1)(\\lambda^2+4)\\), also lösen \\(e^{-x}\\), \\(e^{\\pm2ix}\\) die DGL. Reell daraus \\(u_2=\\cos2x\\), \\(u_3=\\sin2x\\). Bei \\(x=0\\) ist \\(V(0)=\\begin{pmatrix}1&1&0\\\\-1&0&2\\\\1&-4&0\\end{pmatrix}\\); \\(W(0)=\\det V(0)=10\\ne0\\). Folglich sind die drei Lösungen unabhängig und wegen Ordnung 3 ein FS."
+      }
+    ]
+  },
+  {
+    "id": "hm3-proof-029",
+    "title": "Peano allein erzwingt keine Eindeutigkeit",
+    "source": "V02 Satzdiskussion; mathematische Ergänzung",
+    "scope": "Beweisgegenbeispiel",
+    "steps": [
+      {
+        "title": "Problem",
+        "task": "Ordne das mathematische Problem ein. Was ist gegeben, und wo liegt die Schwierigkeit?",
+        "answer": "Wie widerlegt man die Behauptung „Stetige rechte Seite genügt für Eindeutigkeit“ durch ein korrektes AWP?"
+      },
+      {
+        "title": "Behauptung",
+        "task": "Formuliere die zu beweisende Aussage mit Quantoren und Geltungsbereich.",
+        "answer": "Es gibt eine auf einem Rechteck stetige Funktion \\(f\\), für die das AWP \\(y\\prime=f(y),\\ y(0)=0\\) mindestens zwei verschiedene Lösungen besitzt."
+      },
+      {
+        "title": "Voraussetzungen",
+        "task": "Nenne alle Voraussetzungen, benötigten Definitionen und bekannten Hilfssätze.",
+        "answer": "Wähle \\(f(y)=\\sqrt{|y|}\\), stetig aber bei \\(y=0\\) nicht lokal Lipschitz; direkte Differentialprobe."
+      },
+      {
+        "title": "Ansatz",
+        "task": "Beschreibe die entscheidende Beweisidee und die logische Reihenfolge.",
+        "answer": "Konstruiere die Nullfunktion sowie eine Funktion, die zunächst null bleibt und später positiv wird; überprüfe die Ableitung auch am Übergang."
+      },
+      {
+        "title": "Durchführung",
+        "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
+        "answer": "\\(f(y)=\\sqrt{|y|}\\) ist überall stetig. Die Nullfunktion \\(y_{\\mathrm{null}}(x)=0\\) löst \\(y\\prime=\\sqrt{|y|}\\), \\(y(0)=0\\). Für jedes \\(c\\ge0\\) setze \\(y_c(x)=0\\) für \\(x\\le c\\), \\(y_c(x)=(x-c)^2/4\\) für \\(x>c\\). Bei \\(x=c\\) stimmen die einseitigen Ableitungen überein und sind null; die Funktion ist \\(C^1\\). Für \\(x>c\\) ist \\(y_c\\prime=(x-c)/2=\\sqrt{(x-c)^2/4}=\\sqrt{|y_c|}\\), für \\(x\\le c\\) sind beide Seiten null. Für \\(c\\ge0\\) gilt \\(y_c(0)=0\\). Insbesondere \\(y_{\\mathrm{null}}\\equiv0\\) und \\(y_{c=0}\\) sind verschiedene Lösungen. Daher kann Stetigkeit allein Eindeutigkeit nicht garantieren."
+      }
+    ]
+  }
+]
