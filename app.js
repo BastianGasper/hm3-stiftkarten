@@ -253,14 +253,6 @@
     const minX=Math.min(from.x,to.x)-reach,maxX=Math.max(from.x,to.x)+reach;
     const minY=Math.min(from.y,to.y)-reach,maxY=Math.max(from.y,to.y)+reach;
     // Ignore strokes whose bounding boxes never reach the current eraser path.
-    let candidate=false;
-    for(const p of points){
-      if(p.x>=minX&&p.x<=maxX&&p.y>=minY&&p.y<=maxY){candidate=true;break;}
-    }
-    if(!candidate){
-      // A long stroke may cross the eraser corridor although both endpoints
-      // lie beyond it: use segment bounding boxes below regardless.
-    }
     if(points.length===1)return distPointSegment(points[0],from,to)<=reach;
     for(let i=1;i<points.length;i++){
       const a=points[i-1],b=points[i];
@@ -381,7 +373,7 @@
     if(ink.erasing){
       const prev=ink.lastEraserPoint||point;
       eraseSweep(prev,point);
-      ink.eraserTrail.push(point);ink.eraserTip=point;ink.lastEraserPoint=point;
+      ink.eraserTrail.push(point);if(ink.eraserTrail.length>500)ink.eraserTrail.shift();ink.eraserTip=point;ink.lastEraserPoint=point;
       renderEraserOverlay();return;
     }
     if(!ink.active)return;
@@ -480,7 +472,13 @@
     if(!finger)return;
     const delta=railTouch.lastY-finger.clientY;
     railTouch.lastY=finger.clientY;
-    if(delta)window.scrollBy(0,delta);
+    if(delta){
+      const doc=document.scrollingElement||document.documentElement;
+      const max=Math.max(0,doc.scrollHeight-(window.innerHeight||700));
+      const top=Math.max(0,Math.min(max,(doc.scrollTop||0)+delta));
+      doc.scrollTop=top;
+      if(typeof window.scrollTo==='function')window.scrollTo(0,top);
+    }
     updateScrollRail();
   },{passive:false});
   for(const name of ['touchend','touchcancel'])rail.addEventListener(name,e=>{
