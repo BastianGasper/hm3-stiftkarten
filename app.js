@@ -43,7 +43,7 @@
     try{return await idb(store,'getAll');}catch(e){storageError=true;status('Datenbankproblem – Backup erstellen',true);return [];}}
   async function getAllSketches(){const result={};if(db){try{const [keys,all]=await Promise.all([idb('sketches','keys'),idb('sketches','getAll')]);keys.forEach((k,i)=>result[k]=all[i]);}catch(e){console.warn(e)}}else{for(const [id,strokes] of memory.sketches)result[id]=strokes;for(const c of cards){if(!result[c.id]){try{const x=JSON.parse(localStorage.getItem('hm3-note-'+c.id)||'null');if(Array.isArray(x))result[c.id]=x;}catch{}}}}return result;}
   // Ensure every edit is serialized before changing cards or creating a snapshot.
-  function saveInk(){const id=ink.cardId;if(!id)return Promise.resolve();const snapshot=clone(ink.strokes);$('noteStatus').textContent='Speichert …';
+  function saveInk(){const id=ink.cardId;if(!id)return Promise.resolve();const snapshot=ink.strokes.slice();$('noteStatus').textContent='Speichert …';
     saveQueue=saveQueue.catch(()=>{}).then(async()=>{const ok=await writeRecord('sketches',id,snapshot);if(ink.cardId===id)$('noteStatus').textContent=ok?'Gespeichert':'Speichern fehlgeschlagen';if(!ok){storageError=true;status('Notiz nicht gespeichert – exportieren!',true);}});return saveQueue;
   }
   async function loadInk(cardId){const token=++noteLoads;ink.cardId=cardId;ink.strokes=[];ink.active=null;ink.erasing=false;ink.undo=[];ink.redo=[];renderInk();$('noteStatus').textContent='Lade Notizen …';await saveQueue.catch(()=>{});const strokes=await readRecord('sketches',cardId);if(noteLoads!==token)return;ink.strokes=Array.isArray(strokes)?strokes:[];renderInk();$('noteStatus').textContent=ink.strokes.length?'Gespeichert':'Leeres Blatt';}
@@ -190,11 +190,11 @@
     if(!selected.current||inkMode==='scroll'||ink.pointerId!==null)return false;
     if(inkMode!=='write')lockPage();
     ink.pointerId=id;ink.inputSource=source;
-    ink.undo.push(clone(ink.strokes));
+    ink.undo.push(ink.strokes.slice());
     if(ink.undo.length>35)ink.undo.shift();
     ink.redo=[];
     if(ink.tool==='eraser'){
-      ink.erasing=true;ink.erasedBefore=clone(ink.strokes);erase(point);
+      ink.erasing=true;ink.erasedBefore=ink.strokes.slice();erase(point);
     }else{
       ink.active={color:ink.color,width:ink.width/scale,points:[point]};
       ctx.fillStyle=ink.color;
@@ -271,8 +271,8 @@
   $('inkModeBtn').addEventListener('click',toggleInkMode);
   refreshInkModeUI();
   function tool(t){ink.tool=t;for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}}
-  function undo(){if(!ink.undo.length)return;ink.redo.push(clone(ink.strokes));ink.strokes=ink.undo.pop();renderInk();saveInk();}
-  function redo(){if(!ink.redo.length)return;ink.undo.push(clone(ink.strokes));ink.strokes=ink.redo.pop();renderInk();saveInk();}
+  function undo(){if(!ink.undo.length)return;ink.redo.push(ink.strokes.slice());ink.strokes=ink.undo.pop();renderInk();saveInk();}
+  function redo(){if(!ink.redo.length)return;ink.undo.push(ink.strokes.slice());ink.strokes=ink.redo.pop();renderInk();saveInk();}
 
   function imageForAttempt(a){const strokes=a.strokes||[];if(!strokes.length)return Promise.resolve(null);
     // Höhere Exportauflösung, dieselben geglätteten Vektorkurven wie auf dem iPad.
@@ -408,7 +408,7 @@
     $('showSolutionBtn').onclick=()=>{selected.revealed=!selected.revealed;$('solutionContent').classList.toggle('is-hidden',!selected.revealed);$('showSolutionBtn').textContent=selected.revealed?'Musterlösung ausblenden':'Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded',String(selected.revealed));if(selected.revealed)math();};
     document.querySelectorAll('[data-rating]').forEach(b=>b.onclick=()=>grade(b.dataset.rating));$('newSessionBtn').onclick=startSession;$('exportSessionBtn').onclick=()=>exportSession();$('exportSessionBtn2').onclick=()=>exportSession();$('footerExport').onclick=()=>exportSession();
     $('penBtn').onclick=()=>tool('pen');$('eraserBtn').onclick=()=>tool('eraser');document.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{ink.color=b.dataset.color;document.querySelectorAll('[data-color]').forEach(x=>x.classList.toggle('is-active',x===b));tool('pen');});$('strokeWidth').onchange=e=>ink.width=Number(e.target.value);$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;
-    $('clearBtn').onclick=()=>{if(!ink.strokes.length)return;if(!confirm('Alle Striche auf diesem Blatt löschen? Frühere exportierte Versuche bleiben bestehen.'))return;ink.undo.push(clone(ink.strokes));ink.strokes=[];ink.redo=[];renderInk();saveInk();};
+    $('clearBtn').onclick=()=>{if(!ink.strokes.length)return;if(!confirm('Alle Striche auf diesem Blatt löschen? Frühere exportierte Versuche bleiben bestehen.'))return;ink.undo.push(ink.strokes.slice());ink.strokes=[];ink.redo=[];renderInk();saveInk();};
     $('offlineSaveBtn').onclick=async()=>{const b=$('offlineSaveBtn');b.disabled=true;try{await prepareOffline(true);}finally{b.disabled=false;}};
     $('sheetStyle').onchange=e=>{data.settings.sheetStyle=e.target.value;storeData();configureSheet();};$('sheetHeight').onchange=e=>{const h=Number(e.target.value);if(Number.isFinite(h))setCardSheetHeight(h);};$('extendSheetBtn').onclick=()=>setCardSheetHeight(cardSheetHeight()+400);$('updateAppBtn').onclick=refreshApp;
     $('cardFavoriteBtn').onclick=()=>selected.current&&changeFavorite(selected.current);$('cardDisableBtn').onclick=()=>selected.current&&changeDisabled(selected.current);$('cardEditBtn').onclick=()=>selected.current&&openEditor(selected.current);
