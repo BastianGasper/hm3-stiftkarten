@@ -8,11 +8,20 @@ Kostenlose, schlichte, offlinefähige iPad-Web-App für Höhere Mathematik III (
 - Auf dem iPad in Safari öffnen und über **Teilen → Zum Home-Bildschirm** installieren.
 - **Auto (Standard):** Apple Pencil zeichnet; die Seite wird nur während eines tatsächlichen Stiftkontakts fixiert. Danach sind Finger-Scrollen und Buttons sofort wieder möglich. Auf dem Zeichenblatt übernimmt die App das Finger-Scrollen, damit Safari den Pencil nicht als Scrollgeste deutet. **Schreiben** und **Scrollen** bleiben als manuelle Notfall-Modi erhalten.
 
+## Freiwillige Aufnahmen für die mathematische Kontrolle (V10)
+
+- **● Aufnahme starten:** Nur ab diesem Zeitpunkt werden neue Lösungsversuche als Kontrollmaterial archiviert. Im freien Lernmodus werden aktuelle Notizblätter und Fortschritt lokal gespeichert, aber keine neuen auswertbaren Versuchsarchive angelegt.
+- Während einer Aufnahme werden Selbstbewertungen als Versuche gespeichert. Neu mit dem Pencil gezeichnete Striche sind mit der laufenden Aufnahme markiert und gelangen beim Bewertungs- oder Kartenwechsel in deren Archiv. Ein nicht bewertetes Lösungsblatt wird als Entwurf gesichert.
+- **■ Stopp:** Aufnahme beenden, anschließend benennen. **Speichern** lässt sie lokal auf dem iPad, **Speichern und ZIP exportieren** erstellt zusätzlich den Bericht mit handschriftlichen PNGs für ChatGPT.
+- **Aufnahmen:** Liste der bisherigen Aufnahmen und Download jeder Aufnahme. Frühere, bereits unter V1–V9 aufgezeichnete Durchgänge bleiben aus Kompatibilitätsgründen erhalten.
+- Es erfolgt **kein GitHub-Upload**: Das aktuelle Repository ist öffentlich, während handschriftliche Lerndaten privat bleiben sollen. GitHub wird nur für den Programmcode und den allgemeinen Kartensatz verwendet.
+- Gesamtbackup (JSON) umfasst weiterhin sämtliche lokalen Daten. Aufnahmen benötigen keinen Internetzugang.
+
 ## Lernablauf und Auswertung
 
 1. Frage öffnen, mit Apple Pencil auf das Lösungsblatt schreiben (ohne Texterkennung).
-2. Musterantwort aufdecken und **Nicht gewusst / Teilweise / Gewusst** wählen.
-3. Jede Bewertung speichert den *damaligen* handschriftlichen Stand als separaten **Versuch** im **Durchgang**. Späteres Überschreiben des Notizblatts entfernt keine bereits archivierten Versuche.
+2. Für eine spätere Kontrolle zunächst **Aufnahme starten**. Danach Musterantwort aufdecken und **Nicht gewusst / Teilweise / Gewusst** wählen. Ohne Aufnahme wird nur der Lernfortschritt gespeichert, kein auswertbarer Versuch.
+3. Während einer Aufnahme speichert jede Bewertung den *damaligen* handschriftlichen Stand als separaten **Versuch**. Späteres Überschreiben des Notizblatts entfernt keine bereits archivierten Versuche.
 4. **Durchgang exportieren** lädt eine ZIP-Datei herunter. Enthalten sind:
    - `LERNDURCHGANG.html`: geordneter Bericht mit Fragen, Selbsteinschätzung, Skizzen, Musterantworten;
    - `lerndurchgang.json`: strukturierte Daten inkl. Stiftstrichen und Karteikartentexten;
