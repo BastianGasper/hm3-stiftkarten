@@ -47,7 +47,7 @@
   async function getAllSketches(){const result={};if(db){try{const [keys,all]=await Promise.all([idb('sketches','keys'),idb('sketches','getAll')]);keys.forEach((k,i)=>result[k]=all[i]);}catch(e){console.warn(e)}}else{for(const [id,strokes] of memory.sketches)result[id]=strokes;for(const c of cards){if(!result[c.id]){try{const x=JSON.parse(localStorage.getItem('hm3-note-'+c.id)||'null');if(Array.isArray(x))result[c.id]=x;}catch{}}}}return result;}
   // Ensure every edit is serialized before changing cards or creating a snapshot.
   function saveInk(){const id=ink.cardId;if(!id)return Promise.resolve();
-    if(data.recordingActive&&data.sessionId){recordingTouchedCards.add(id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();}
+    if(data.recordingActive&&data.sessionId&&ink.strokes.some(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId)){recordingTouchedCards.add(id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();}
     const snapshot=ink.strokes.slice();$('noteStatus').textContent='Speichert …';
     saveQueue=saveQueue.catch(()=>{}).then(async()=>{const ok=await writeRecord('sketches',id,snapshot);if(ink.cardId===id)$('noteStatus').textContent=ok?'Gespeichert':'Speichern fehlgeschlagen';if(!ok){storageError=true;status('Notiz nicht gespeichert – exportieren!',true);}});return saveQueue;
   }
@@ -92,11 +92,14 @@
   async function snapshotAttempt(rating){
     if(!data.recordingActive||!data.sessionId)return true;
     const c=byId.get(selected.current);if(!c)return false;
-    const currentStrokes=ink.strokes.filter(stroke=>stroke.recordingId===data.sessionId);
+    const currentStrokes=ink.strokes.filter(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId);
     const rec={id:uuid('attempt'),sessionId:data.sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating,at:new Date().toISOString(),strokes:clone(currentStrokes),height:cardSheetHeight(c.id)};
     const saved=await writeRecord('attempts',rec.id,rec);
     if(saved){
       if(db)memory.attempts.push(rec);
+      for(const stroke of currentStrokes)stroke.archivedAttemptId=rec.id;
+      if(currentStrokes.length)await saveInk();
+      await saveQueue.catch(()=>{});
       recordingTouchedCards.delete(c.id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();
     }
     return saved;
@@ -104,7 +107,7 @@
   async function archiveDraftIfNeeded(){
     if(!data.recordingActive||!data.sessionId||!selected.current||!recordingTouchedCards.has(selected.current))return;
     await finishInk();await saveQueue.catch(()=>{});
-    if(ink.strokes.some(stroke=>stroke.recordingId===data.sessionId))return snapshotAttempt('draft');
+    if(ink.strokes.some(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId))return snapshotAttempt('draft');
     recordingTouchedCards.delete(selected.current);data.recordingTouchedCards=[...recordingTouchedCards];storeData();
   }
   async function archivePendingDrafts(){
@@ -115,11 +118,13 @@
       const card=byId.get(cardId);
       if(!card)continue;
       const strokes=(await readRecord('sketches',cardId))||[];
-      const fresh=Array.isArray(strokes)?strokes.filter(stroke=>stroke.recordingId===data.sessionId):[];
+      const fresh=Array.isArray(strokes)?strokes.filter(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId):[];
       if(fresh.length){
         const rec={id:uuid('attempt'),sessionId:data.sessionId,cardId:card.id,Frage:card.Frage,Antwort:card.Antwort,Bereich:card.Bereich,Typ:card.Typ,Quelle:card.Quelle,rating:'draft',at:new Date().toISOString(),strokes:clone(fresh),height:cardSheetHeight(cardId)};
         if(!await writeRecord('attempts',rec.id,rec))return false;
         if(db)memory.attempts.push(rec);
+        for(const stroke of fresh)stroke.archivedAttemptId=rec.id;
+        if(!await writeRecord('sketches',cardId,strokes))return false;
       }
       recordingTouchedCards.delete(cardId);
       data.recordingTouchedCards=[...recordingTouchedCards];storeData();
@@ -526,7 +531,7 @@
   function reportHTML(attempts,images,session){const rows=attempts.map((a,i)=>`<section><header><strong>${i+1}. ${safeText(a.Bereich)} · ${safeText(a.Typ)}</strong><span>${safeText(ratingLabel(a.rating))} · ${safeText(new Date(a.at).toLocaleString('de-DE'))}</span></header><h2>${safeText(a.Frage)}</h2><p class="source">${safeText(a.Quelle)}</p>${images[i]?`<img src="${safeText(images[i])}" alt="Handschriftliche Lösung ${i+1}">`:'<p class="none">Keine Handschrift zu diesem Versuch gespeichert.</p>'}<details><summary>Musterantwort (als LaTeX-Text)</summary><pre>${safeText(a.Antwort)}</pre></details></section>`).join('');return `<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>HM3 – Aufnahme</title><style>body{font:15px/1.6 system-ui,Arial;color:#1c2b3a;max-width:900px;margin:36px auto;padding:0 16px}h1{margin-bottom:4px}small,.source,.none{color:#657387}section{page-break-inside:avoid;border:1px solid #ddd;border-radius:8px;margin:22px 0;padding:20px}section header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}section header span{color:#536577}h2{font-size:18px}img{max-width:100%;border:1px solid #eee}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}details{margin-top:15px}</style><h1>${safeText(session.name||'HM3-Aufnahme')}</h1><small>Beginn: ${safeText(new Date(session.startedAt).toLocaleString('de-DE'))} · ${attempts.length} Versuche · Einschätzung durch Lernenden</small><p>Die folgenden Skizzen sind unveränderte handschriftliche Antworten. Die Musterlösung wurde nicht automatisch bewertet.</p>${rows}</html>`;}
   let exporting=false;
   async function exportSession(sessionId=data.lastRecordingId){if(exporting)return;if(!sessionId){notice('Es gibt noch keine gespeicherte Aufnahme.');return;}exporting=true;$('exportSessionBtn').disabled=true;try{await finishInk();await saveQueue.catch(()=>{});const ses=await readRecord('sessions',sessionId);if(!ses)throw Error('Aufnahme nicht gefunden');const attempts=(await listRecords('attempts')).filter(x=>x.sessionId===sessionId).sort((a,b)=>a.at.localeCompare(b.at));
-    if(data.recordingActive&&sessionId===data.sessionId&&selected.current){const c=byId.get(selected.current),fresh=ink.strokes.filter(stroke=>stroke.recordingId===sessionId);if(fresh.length)attempts.push({id:'draft',sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating:'draft',at:new Date().toISOString(),strokes:clone(fresh),height:cardSheetHeight(c.id)});}
+    if(data.recordingActive&&sessionId===data.sessionId&&selected.current){const c=byId.get(selected.current),fresh=ink.strokes.filter(stroke=>stroke.recordingId===sessionId&&!stroke.archivedAttemptId);if(fresh.length)attempts.push({id:'draft',sessionId,cardId:c.id,Frage:c.Frage,Antwort:c.Antwort,Bereich:c.Bereich,Typ:c.Typ,Quelle:c.Quelle,rating:'draft',at:new Date().toISOString(),strokes:clone(fresh),height:cardSheetHeight(c.id)});}
     if(!attempts.length){notice('In dieser Aufnahme sind noch keine Lösungen vorhanden.');return;}const files=[],images=[];
     for(let i=0;i<attempts.length;i++){const b=await imageForAttempt(attempts[i]);if(b){const path=filenameFor(attempts[i],i);files.push([path,b]);images.push(path);}else images.push(null);}
     const result={format:'hm3-study-session',version:2,exportedAt:new Date().toISOString(),session:ses,attempts:attempts.map((a,i)=>({...a,sketchImage:images[i]})),cardsInDeck:cards.length,notesIncluded:'Als PNG-Bilder und editierbare Strichdaten in JSON'};
