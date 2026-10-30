@@ -136,3 +136,12 @@ footer{padding-bottom:132px}
 @media(max-width:700px){.finger-scroll-rail{width:34px;top:max(65px,env(safe-area-inset-top))}.ink-mode-dock{left:39px!important;right:auto!important}}
 /* Das Textlabel in der Radier-Info beansprucht keinen Schreibplatz. */
 .eraser-hint{margin:0;padding:8px 16px;font-size:11px;color:#8c4a22;background:#fff8f2;border-bottom:1px solid #ead7c9}
+
+/* Final V14 – compact controls stay entirely on the left; avoid covering the sheet. */
+.layout{padding-left:54px}
+.ink-mode-dock{width:min(282px,calc(100vw - 55px))!important;max-width:min(282px,calc(100vw - 55px))!important;left:max(45px,env(safe-area-inset-left))!important}
+.ink-mode-dock .ink-mode-choices,.ink-mode-dock .ink-navigation{flex-wrap:nowrap}
+.ink-mode-dock .ink-mode-choice,.ink-mode-dock .ink-nav-button{min-width:0;flex:1 1 0;padding:7px 4px;font-size:12px;white-space:nowrap}
+.ink-mode-dock .ink-navigation .ink-nav-button{min-height:42px}
+.recording-delete{color:#91413d;border-color:#e2c5c3;background:#fff9f8}
+@media(max-width:700px){.layout{padding-left:46px}.ink-mode-dock{left:39px!important;max-width:calc(100vw - 52px)!important}}

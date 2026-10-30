@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-30.13",
+  "version": "2026-10-30.14",
   "released": "2026-10-30",
   "features": [
     "Glatte Stiftkurven",
@@ -12,6 +12,7 @@
     "Präziser Ganzstrich-Radierer: nur ein Pencil-Zug pro Kontakt",
     "75 Prozent Lösungsblatt im Querformat",
     "Finger-Scrollstreifen links",
-    "Fortlaufender Ganzstrich-Radierer mit orangener visueller Spur"
+    "Fortlaufender Ganzstrich-Radierer mit orangener visueller Spur",
+    "Abschlussrevision: gesicherter Datenexport, effiziente Zeichenflächen und Aufnahmeverwaltung"
   ]
 }
