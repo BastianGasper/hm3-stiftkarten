@@ -19,7 +19,7 @@
 <div class="layout">
   <header class="topbar">
     <div class="brand"><div class="brandmark" aria-hidden="true">∫</div><div><strong>HM3 Stiftkarten</strong><span>Höhere Mathematik III · TU Dortmund</span></div></div>
-    <div class="top-actions"><span class="save-status" id="saveStatus" role="status">Speicher wird geprüft …</span><button class="button" id="updateAppBtn" title="Auf neue Version prüfen und neu laden">App aktualisieren</button><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
+    <div class="top-actions"><span class="save-status" id="saveStatus" role="status">Speicher wird geprüft …</span><span class="network-status" id="networkStatus" role="status">Offline-Modus wird geprüft …</span><button class="button" id="updateAppBtn" title="Auf neue Version prüfen und neu laden">App aktualisieren</button><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
   </header>
 
   <div class="sessionbar">
@@ -90,6 +90,11 @@
   <div class="dialog-title"><h2>Einstellungen und Sicherung</h2><button class="button button-quiet" id="closeSettingsBtn">Schließen</button></div>
   <p>Die Zeichnungen werden als Stiftstriche gespeichert. Du kannst den aktuellen Durchgang inklusive einzelner PNG-Bilder exportieren, damit ich anschließend deine Lösungen prüfen kann.</p>
   <label class="checkrow"><input type="checkbox" id="pencilOnly" checked> Nur mit Apple Pencil zeichnen (Finger zeichnet nicht; Scrollen über den Modus-Umschalter)</label>
+  <section class="offline-settings"><h3>Offline lernen</h3>
+    <p>Fragen, Formeln und App-Dateien werden auf diesem iPad zwischengespeichert. Skizzen und Lernstand bleiben lokal – auch ohne Internet. Bei der nächsten Verbindung prüft die App auf neue Versionen.</p>
+    <button class="button" type="button" id="offlineSaveBtn">Alle Offline-Dateien sichern</button>
+    <span id="offlineSaveStatus" role="status"></span>
+  </section>
   <div class="dialog-actions"><button class="button button-primary" id="exportSessionBtn2">Durchgang mit Skizzen als ZIP</button><button class="button" id="exportBackupBtn">Gesamtes Backup (JSON)</button><label class="button file-label">Backup wiederherstellen <input type="file" id="importBackup" accept=".json,application/json" hidden></label></div>
   <h3>Gespeicherte Durchgänge</h3><div id="sessionList" class="session-list"><p>Wird geladen …</p></div>
   <p class="small-note">Sicherung ist wichtig: Safari kann lokale Websitedaten löschen. Ein Export lädt keine Daten automatisch hoch. Erst wenn du die ZIP hier im Chat hochlädst, kann ich deine Skizzen ansehen.</p>
