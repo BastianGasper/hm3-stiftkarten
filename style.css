@@ -81,3 +81,14 @@ body.ink-locked #inkCanvas,body.ink-locked .sheet{touch-action:none!important}
 @media(max-width:700px){.ink-mode-dock{flex-direction:column;align-items:stretch;gap:5px}.ink-mode-dock span{font-size:11px;white-space:normal}.ink-mode-choices{justify-content:space-between}.ink-mode-choice{flex:1}}
 body:not(.ink-locked) #inkCanvas,body:not(.ink-locked) .sheet{touch-action:none!important}
 body.ink-scroll #inkCanvas,body.ink-scroll .sheet{touch-action:pan-y!important}
+
+/* Freiwillige Aufnahme statt dauerhafter Versuchsarchivierung. */
+.sessionactions{flex-wrap:wrap;justify-content:flex-end}
+.recording-stop{border-color:#cf8c86;background:#fff9f8;color:#993b34;font-weight:650}
+#recordingStatus.recording-live{color:#a33c35;font-weight:800}
+.recording-name-dialog{max-width:550px}
+.recording-name-dialog input{width:100%;padding:12px;border:1px solid #bac8d4;border-radius:8px;font:inherit;background:#fff;color:var(--text)}
+.recording-name-dialog .editor-actions{margin:18px 0 3px}
+.session-list .recording-row-info{flex:1;min-width:0}
+.session-list .recording-row-actions{display:flex;gap:6px;flex-wrap:wrap}
+@media(max-width:600px){.sessionactions{justify-content:flex-start}.sessionactions .button{flex:1 1 auto}.session-list>div{flex-wrap:wrap}.session-list .recording-row-actions{width:100%}}
