@@ -89,7 +89,7 @@
 
   // Das Schreibblatt gehört zur Karte; das Ändern einer Karte verändert keine andere.
   function cardSheetHeight(id=selected.current){const n=Number(data.cardPrefs?.[id]?.sheetHeight);return Number.isFinite(n)&&n>=520?Math.min(n,4000):(Number(data.settings.sheetHeight)||800);}
-  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';resizeInk();}
+  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';$('sheet').style.touchAction=inkMode==='scroll'?'pan-y':'none';resizeInk();}
   async function setCardSheetHeight(height){if(!selected.current)return;const h=Math.min(4000,Math.max(520,Math.round(height)));await finishInk();await saveQueue.catch(()=>{});const id=selected.current;data.cardPrefs[id]={...prefFor(id),sheetHeight:h};storeData();configureSheet();notice('Blattlänge gespeichert – deine bisherigen Skizzen bleiben erhalten.');}
   function resizeInk(){const r=pen.getBoundingClientRect();if(!r.width||!r.height)return;cssWidth=r.width;cssHeight=r.height;scale=cssWidth/1000;logicalHeight=cssHeight/scale;const dpr=Math.min(devicePixelRatio||1,2,Math.sqrt(10000000/(cssWidth*cssHeight)));pen.width=Math.round(cssWidth*dpr);pen.height=Math.round(cssHeight*dpr);ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);renderInk();}
   function coord(e,r=pen.getBoundingClientRect()){return {x:Math.max(0,Math.min(1000,(e.clientX-r.left)/scale)),y:Math.max(0,Math.min(logicalHeight,(e.clientY-r.top)/scale))};}
@@ -111,6 +111,7 @@
     btn.classList.toggle('is-writing',writing);
     $('inkModeHint').textContent=writing?'Seite gesperrt · Pencil zeichnet':'Scrollmodus · Tippe Schreiben';
     pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';
+    $('sheet').style.touchAction=inkMode==='scroll'?'pan-y':'none';
   }
   function lockPage(){
     if(inkMode==='write')return;
