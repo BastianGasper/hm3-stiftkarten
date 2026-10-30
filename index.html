@@ -61,7 +61,7 @@
     </section>
 
     <section class="notes" aria-label="Notizblatt">
-      <div class="notes-heading"><div><h2>Dein Lösungsblatt</h2><p>Nur du bewertest deine Lösung. Keine Handschrifterkennung.</p></div><span class="paper-save" id="noteStatus">–</span></div>
+      <div class="notes-heading"><div><h2>Dein Lösungsblatt</h2><p>Schreiben sperrt die Seite vollständig. Zum Navigieren bewusst auf „Scrollen“ tippen.</p></div><span class="paper-save" id="noteStatus">–</span></div>
       <div class="pen-toolbar" role="toolbar" aria-label="Stiftwerkzeuge">
         <div class="toolset"><button class="tool is-active" id="penBtn" aria-pressed="true">Stift</button><button class="tool" id="eraserBtn" aria-pressed="false">Radierer</button></div>
         <div class="toolset" aria-label="Farben"><button class="color is-active" data-color="#182231" style="--ink:#182231" aria-label="Schwarz" title="Schwarz"></button><button class="color" data-color="#245b9c" style="--ink:#245b9c" aria-label="Blau" title="Blau"></button><button class="color" data-color="#aa3d3d" style="--ink:#aa3d3d" aria-label="Rot" title="Rot"></button></div>
@@ -89,11 +89,15 @@
 <dialog id="settingsDialog" class="settings">
   <div class="dialog-title"><h2>Einstellungen und Sicherung</h2><button class="button button-quiet" id="closeSettingsBtn">Schließen</button></div>
   <p>Die Zeichnungen werden als Stiftstriche gespeichert. Du kannst den aktuellen Durchgang inklusive einzelner PNG-Bilder exportieren, damit ich anschließend deine Lösungen prüfen kann.</p>
-  <label class="checkrow"><input type="checkbox" id="pencilOnly" checked> Nur mit Apple Pencil zeichnen (Finger zum Scrollen)</label>
+  <label class="checkrow"><input type="checkbox" id="pencilOnly" checked> Nur mit Apple Pencil zeichnen (Finger zeichnet nicht; Scrollen über den Modus-Umschalter)</label>
   <div class="dialog-actions"><button class="button button-primary" id="exportSessionBtn2">Durchgang mit Skizzen als ZIP</button><button class="button" id="exportBackupBtn">Gesamtes Backup (JSON)</button><label class="button file-label">Backup wiederherstellen <input type="file" id="importBackup" accept=".json,application/json" hidden></label></div>
   <h3>Gespeicherte Durchgänge</h3><div id="sessionList" class="session-list"><p>Wird geladen …</p></div>
   <p class="small-note">Sicherung ist wichtig: Safari kann lokale Websitedaten löschen. Ein Export lädt keine Daten automatisch hoch. Erst wenn du die ZIP hier im Chat hochlädst, kann ich deine Skizzen ansehen.</p>
 </dialog>
+<div class="ink-mode-dock" id="inkModeDock" role="group" aria-label="Schreiben und Seiten-Navigation">
+  <span id="inkModeHint">Mit Apple Pencil beginnen</span>
+  <button class="button ink-mode-button" id="inkModeBtn" type="button" aria-pressed="false">Schreiben</button>
+</div>
 <div class="notice" id="notice" role="status" aria-live="polite"></div>
 <script>if('serviceWorker' in navigator && location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(console.warn);</script>
 </body>
