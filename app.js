@@ -3,6 +3,10 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
+  const APP_VERSION='2026-10-30.8';
+  const OFFLINE_CACHE='hm3-stiftkarten-v8-20261030';
+  const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
+  let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
   const clone = v => JSON.parse(JSON.stringify(v));
   const dateString = ts => new Date(ts).toLocaleDateString('de-DE');
@@ -91,11 +95,47 @@
   function cardSheetHeight(id=selected.current){const n=Number(data.cardPrefs?.[id]?.sheetHeight);return Number.isFinite(n)&&n>=520?Math.min(n,4000):(Number(data.settings.sheetHeight)||800);}
   function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';$('sheet').style.touchAction=inkMode==='scroll'?'pan-y':'none';resizeInk();}
   async function setCardSheetHeight(height){if(!selected.current)return;const h=Math.min(4000,Math.max(520,Math.round(height)));await finishInk();await saveQueue.catch(()=>{});const id=selected.current;data.cardPrefs[id]={...prefFor(id),sheetHeight:h};storeData();configureSheet();notice('Blattlänge gespeichert – deine bisherigen Skizzen bleiben erhalten.');}
-  function resizeInk(){const r=pen.getBoundingClientRect();if(!r.width||!r.height)return;cssWidth=r.width;cssHeight=r.height;scale=cssWidth/1000;logicalHeight=cssHeight/scale;const dpr=Math.min(devicePixelRatio||1,2,Math.sqrt(10000000/(cssWidth*cssHeight)));pen.width=Math.round(cssWidth*dpr);pen.height=Math.round(cssHeight*dpr);ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);renderInk();}
+  function resizeInk(){const r=pen.getBoundingClientRect();if(!r.width||!r.height)return;cssWidth=r.width;cssHeight=r.height;scale=cssWidth/1000;logicalHeight=cssHeight/scale;
+    // Supersampling: deutlich feinere Kantenglättung als das bisherige DPR-Limit 2.
+    // Auf sehr langen Blättern wird die Pixeldichte begrenzt, damit iPadOS
+    // die Canvas-Speichergrenze nicht erreicht.
+    const target=Math.max(devicePixelRatio||1,3);
+    const density=Math.min(target,Math.sqrt(16000000/(cssWidth*cssHeight)));
+    const dpr=Math.max(1,density);
+    pen.width=Math.round(cssWidth*dpr);pen.height=Math.round(cssHeight*dpr);
+    ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);renderInk();
+  }
   function coord(e,r=pen.getBoundingClientRect()){return {x:Math.max(0,Math.min(1000,(e.clientX-r.left)/scale)),y:Math.max(0,Math.min(logicalHeight,(e.clientY-r.top)/scale))};}
-  function strokePath(c,s){const p=s.points||[];if(!p.length)return;c.lineWidth=s.width||2;c.strokeStyle=s.color||'#182231';c.fillStyle=c.strokeStyle;c.lineJoin='round';c.lineCap='round';if(p.length===1){c.beginPath();c.arc(p[0].x,p[0].y,(s.width||2)/2,0,Math.PI*2);c.fill();return;}c.beginPath();c.moveTo(p[0].x,p[0].y);for(let i=1;i<p.length;i++)c.lineTo(p[i].x,p[i].y);c.stroke();}
+  const mid=(a,b)=>({x:(a.x+b.x)*0.5,y:(a.y+b.y)*0.5});
+  function strokePath(c,s){
+    const p=s.points||[];if(!p.length)return;
+    c.lineWidth=s.width||2;c.strokeStyle=s.color||'#182231';c.fillStyle=c.strokeStyle;
+    c.lineJoin='round';c.lineCap='round';
+    if(p.length===1){c.beginPath();c.arc(p[0].x,p[0].y,(s.width||2)/2,0,Math.PI*2);c.fill();return;}
+    c.beginPath();c.moveTo(p[0].x,p[0].y);
+    const start=mid(p[0],p[1]);c.lineTo(start.x,start.y);
+    for(let i=1;i<p.length-1;i++){
+      const next=mid(p[i],p[i+1]);
+      c.quadraticCurveTo(p[i].x,p[i].y,next.x,next.y);
+    }
+    c.lineTo(p[p.length-1].x,p[p.length-1].y);
+    c.stroke();
+  }
   function renderInk(){ctx.clearRect(0,0,1000,logicalHeight);for(const s of ink.strokes)strokePath(ctx,s);if(ink.active)strokePath(ctx,ink.active);}
-  function drawSegment(a,b,s){ctx.strokeStyle=s.color;ctx.lineWidth=s.width;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+  // Nur den neuen Teil der geglätteten Kurve zeichnen (keine vollständige
+  // Neuberechnung aller vorherigen Stiftstriche pro Apple-Pencil-Bewegung).
+  function drawSmoothSegment(points,s){
+    const n=points.length;if(n<2)return;
+    ctx.strokeStyle=s.color;ctx.lineWidth=s.width;ctx.lineCap='round';ctx.lineJoin='round';
+    ctx.beginPath();
+    if(n===2){const m=mid(points[0],points[1]);ctx.moveTo(points[0].x,points[0].y);ctx.lineTo(m.x,m.y);}
+    else{
+      const a=points[n-3],b=points[n-2],d=points[n-1];
+      const m=mid(a,b),next=mid(b,d);
+      ctx.moveTo(m.x,m.y);ctx.quadraticCurveTo(b.x,b.y,next.x,next.y);
+    }
+    ctx.stroke();
+  }
   function distPointSegment(p,a,b){const dx=b.x-a.x,dy=b.y-a.y,den=dx*dx+dy*dy,t=den?Math.min(1,Math.max(0,((p.x-a.x)*dx+(p.y-a.y)*dy)/den)):0;return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));}
   function erase(pt){let changed=false;const radius=18/scale;for(let i=ink.strokes.length-1;i>=0;i--){const s=ink.strokes[i],a=s.points||[];let hit=false;for(let j=0;j<a.length;j++){if(Math.hypot(a[j].x-pt.x,a[j].y-pt.y)<radius+(s.width||2)||j>0&&distPointSegment(pt,a[j-1],a[j])<radius+(s.width||2)){hit=true;break;}}if(hit){ink.strokes.splice(i,1);changed=true;}}if(changed)renderInk();}
   function finishInk(){if(!ink.active&&!ink.erasing)return Promise.resolve();let changed=false;if(ink.active){ink.strokes.push(ink.active);ink.active=null;changed=true;}
@@ -168,7 +208,7 @@
     if(!ink.active)return;
     const last=ink.active.points[ink.active.points.length-1];
     if(last.x===point.x&&last.y===point.y)return;
-    ink.active.points.push(point);drawSegment(last,point,ink.active);
+    ink.active.points.push(point);drawSmoothSegment(ink.active.points,ink.active);
   }
   function endStroke(id,source){
     if(ink.pointerId!==id||ink.inputSource!==source)return;
@@ -234,7 +274,18 @@
   function undo(){if(!ink.undo.length)return;ink.redo.push(clone(ink.strokes));ink.strokes=ink.undo.pop();renderInk();saveInk();}
   function redo(){if(!ink.redo.length)return;ink.undo.push(clone(ink.strokes));ink.strokes=ink.redo.pop();renderInk();saveInk();}
 
-  function imageForAttempt(a){const strokes=a.strokes||[];if(!strokes.length)return Promise.resolve(null);const w=1200,sc=w/1000;let maxY=0;for(const stroke of strokes){for(const p of stroke.points||[]){if(p.y>maxY)maxY=p.y;}}const height=Math.max(550,Math.min(7200,Math.ceil(Math.max(maxY+80,(a.height||800)*1000/Math.max(cssWidth,400))*sc)));const c=document.createElement('canvas');c.width=w;c.height=height;const x=c.getContext('2d');x.fillStyle='white';x.fillRect(0,0,w,height);x.strokeStyle='#e9edf1';x.lineWidth=1;for(let i=0;i<w;i+=27){x.beginPath();x.moveTo(i,0);x.lineTo(i,height);x.stroke();}for(let i=0;i<height;i+=27){x.beginPath();x.moveTo(0,i);x.lineTo(w,i);x.stroke();}x.scale(sc,sc);for(const s of strokes)strokePath(x,s);return new Promise(resolve=>c.toBlob(resolve,'image/png'));}
+  function imageForAttempt(a){const strokes=a.strokes||[];if(!strokes.length)return Promise.resolve(null);
+    // Höhere Exportauflösung, dieselben geglätteten Vektorkurven wie auf dem iPad.
+    const w=1600,sc=w/1000;let maxY=0;
+    for(const stroke of strokes)for(const p of stroke.points||[])if(p.y>maxY)maxY=p.y;
+    const h=Math.max(750,Math.min(9500,Math.ceil(Math.max(maxY+80,(a.height||800)*1000/Math.max(cssWidth,400))*sc)));
+    const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
+    x.fillStyle='#fff';x.fillRect(0,0,w,h);x.strokeStyle='#e9edf1';x.lineWidth=1;
+    for(let i=0;i<w;i+=35){x.beginPath();x.moveTo(i,0);x.lineTo(i,h);x.stroke();}
+    for(let i=0;i<h;i+=35){x.beginPath();x.moveTo(0,i);x.lineTo(w,i);x.stroke();}
+    x.scale(sc,sc);for(const stroke of strokes)strokePath(x,stroke);
+    return new Promise(resolve=>c.toBlob(resolve,'image/png'));
+  }
   function filenameFor(a,i){return `skizzen/${String(i+1).padStart(3,'0')}_${a.cardId.replace(/[^a-zA-Z0-9_-]/g,'_')}.png`;}
   function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);}
   const encoder=new TextEncoder();const crcTable=Array.from({length:256},(_,n)=>{let c=n;for(let j=0;j<8;j++)c=c&1?(c>>>1)^0xedb88320:c>>>1;return c>>>0;});
