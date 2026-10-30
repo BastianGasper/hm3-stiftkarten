@@ -22,6 +22,8 @@
     <div class="top-actions"><span class="save-status" id="saveStatus" role="alert" hidden></span><span class="network-status" id="networkStatus" role="status">Offline-Modus wird geprüft …</span><button class="button" id="updateAppBtn" title="Auf neue Version prüfen und neu laden">App aktualisieren</button><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
   </header>
 
+  <div class="quiz-toolbar is-hidden" id="quizToolbar"><strong id="quizRoundLabel">Abfrage</strong><span id="quizProgress">0 / 0</span><button class="button" id="quizExitBtn">Abfrage beenden</button></div>
+
   <div class="sessionbar">
     <div class="ink-mode-dock" id="inkModeDock" role="group" aria-label="Stift und Seitennavigation">
       <div class="ink-mode-choices">
@@ -35,7 +37,7 @@
         <button class="button ink-nav-button" id="extendSheetBtn" type="button" title="400 Pixel Schreibfläche hinzufügen">+ Blatt</button>
       </div>
     </div>
-    <div class="sessionactions"><span class="overline recording-live" id="recordingStatus" hidden>● Aufnahme läuft</span><button class="button button-primary" id="recordingStartBtn">● Aufnahme starten</button><button class="button recording-stop" id="recordingStopBtn" disabled>■ Stopp</button><button class="button" id="recordingsBtn">Aufnahmen</button><button class="button" id="exportSessionBtn" disabled>Letzte Aufnahme exportieren</button></div>
+    <div class="sessionactions"><button class="button button-primary" id="quizStartBtn">Abfrage starten</button><span class="overline recording-live" id="recordingStatus" hidden>● Aufnahme läuft</span><button class="button button-primary" id="recordingStartBtn">● Aufnahme starten</button><button class="button recording-stop" id="recordingStopBtn" disabled>■ Stopp</button><button class="button" id="recordingsBtn">Aufnahmen</button><button class="button" id="exportSessionBtn" disabled>Letzte Aufnahme exportieren</button></div>
   </div>
 
   <section class="metrics" aria-label="Lernübersicht">
@@ -82,10 +84,34 @@
       <div class="sheet-foot"><label>Vorlage <select id="sheetStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="blank">Blanko</option></select></label><label>Blattlänge <select id="sheetHeight"><option value="520">Kurz</option><option value="800">Normal</option><option value="1250">Lang</option><option value="1850">Sehr lang</option><option value="custom">Individuell</option></select></label><span id="sheetLengthInfo" aria-live="polite">800 px · pro Karte</span><span>Notizen je Karte gespeichert</span></div>
     </section>
   </div>
+  <section id="quizSummary" class="quiz-summary is-hidden" aria-label="Abfrageergebnis">
+    <h2 id="quizSummaryTitle">Abfrage</h2>
+    <div class="quiz-summary-counts">
+      <div><span>Richtig</span><strong id="quizGood">0</strong></div>
+      <div><span>Teilweise</span><strong id="quizPartial">0</strong></div>
+      <div><span>Falsch</span><strong id="quizWrong">0</strong></div>
+    </div>
+    <div class="quiz-summary-actions">
+      <button class="button button-primary" id="quizRepeatWrong">Falsche wiederholen</button>
+      <button class="button" id="quizRepeatPartial">Teilweise wiederholen</button>
+      <button class="button" id="quizRepeatAll">Alle wiederholen</button>
+      <button class="button" id="quizSummaryExit">Abfrage beenden</button>
+    </div>
+  </section>
   <section id="emptyState" class="empty is-hidden"><h2>Keine Karte in dieser Auswahl</h2><p>Du kannst zu „Alle Karten“ wechseln oder deine Filter ändern.</p><button class="button button-primary" id="showAllBtn">Alle Karten anzeigen</button></section>
   <footer>Stand: V01–V06 · Ü00–03 &nbsp;·&nbsp; Persönliche Daten bleiben lokal auf dem iPad &nbsp;·&nbsp; <span id="appVersion">App-Version</span> &nbsp;·&nbsp; <button class="text-button" id="footerExport">Letzte Aufnahme exportieren</button></footer>
 </div>
 
+<dialog id="quizSetupDialog" class="settings quiz-setup-dialog" aria-labelledby="quizSetupTitle">
+  <form id="quizSetupForm">
+    <div class="dialog-title"><h2 id="quizSetupTitle">Abfrage starten</h2><button class="button" type="button" id="quizSetupClose">Schließen</button></div>
+    <h3>Vorlesungen / Kategorien</h3>
+    <div class="quiz-checks" id="quizTopics"></div>
+    <h3>Fragetypen</h3>
+    <div class="quiz-checks" id="quizTypes"></div>
+    <div class="quiz-start-actions"><strong id="quizSetupCount">0 Fragen</strong><button class="button button-primary" id="quizBeginBtn" type="submit">Starten</button></div>
+  </form>
+</dialog>
 <dialog id="libraryDialog" class="settings card-library" aria-labelledby="libraryTitle">
   <div class="dialog-title"><div><h2 id="libraryTitle">Alle Karteikarten</h2><p>Durchsuchen, favorisieren, deaktivieren oder bearbeiten.</p></div><button class="button button-quiet" id="closeLibraryBtn">Schließen</button></div>
   <div class="library-controls"><label class="library-search">Suche <input id="librarySearch" type="search" placeholder="Frage, Antwort, Thema oder Quelle …" autocomplete="off"></label><label>Status <select id="libraryFilter"><option value="all">Alle Karten</option><option value="active">Aktiv</option><option value="favorite">Favoriten</option><option value="disabled">Deaktiviert</option></select></label></div>
