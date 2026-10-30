@@ -1,1 +1,26 @@
-{"name":"HM3 Stiftkarten – Lernen mit Apple Pencil","short_name":"HM3 Karten","description":"Mathematik lernen, frei zeichnen und Lerndurchgänge mit Skizzen sichern","lang":"de","id":"./index.html","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#f7f8fa","theme_color":"#f7f8fa","icons":[{"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{
+  "name": "HM3 Theorie Basti",
+  "short_name": "HM3 Theorie Basti",
+  "description": "Höhere Mathematik III mit Apple Pencil lernen, Karten verwalten und Lernaufnahmen sichern",
+  "lang": "de",
+  "id": "./index.html",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f8fa",
+  "theme_color": "#f7f8fa",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

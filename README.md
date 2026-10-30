@@ -105,3 +105,11 @@ Keine Telemetrie, keine Konten. ZIP wird im Browser erstellt; kein Netztransfer 
 - **Bedienung:** Das Scrollen über den linken Fingerstreifen pausiert während eines laufenden Pencil-Kontakts, um Koordinatensprünge auszuschließen. Während des Schreibens lässt sich weder die App neu laden noch eine Aufnahme stoppen. Das feststehende Bedienfeld ist jetzt kompakter und bleibt links.
 - Die Anzeige in der Fußzeile nennt die aktuelle App-Version. Keine CSS-Animationen, keine automatische Handschrifterkennung, keine Cloud-Übertragung deiner Skizzen.
 - **Grenze der Tests:** Die Kernlogik wurde mit automatisierten Browser-/Ereignis-Mocks geprüft; tatsächliche iPadOS-Pencil-Hardware, Safari-Cache-Lebensdauer und GitHub-Pages-Auslieferung benötigen eine Prüfung auf dem Gerät.
+
+## UI-Bereinigung V15
+
+- Die App heißt in Titelleiste und Web-App-Manifest **HM3 Theorie Basti**. Das bestehende Repository, die PWA-Start-URL und die internen Backupkennungen bleiben aus Kompatibilitätsgründen unverändert.
+- Der linke Finger-Scrollstreifen hat keinen sichtbaren Text und bekommt im Seitenlayout eine reservierte Randspalte. Alle Modus-, Pfeil- und Blatt-Buttons sind in die normale obere Bedienzeile verlegt, statt über Karteikarten oder Schreibblatt zu schweben.
+- Der lange orange Erklärungstext des Radierers, die Hinweise unter Karte und Lösungsblatt sowie die Leerzustands-Texte zur Aufnahme sind entfernt. Bei aktiver Aufnahme erscheint weiterhin eine kompakte Statusanzeige.
+- Die normale Bestätigung „Auf diesem Gerät gespeichert“ ist ausgeblendet. **Echte Speicherfehler bleiben ausdrücklich sichtbar.**
+- Wer die Web-App schon auf dem iPad installiert hat, kann für die sichtbare Umbenennung des Home-Bildschirm-Icons gegebenenfalls neu hinzufügen müssen. Vor einem Entfernen der alten Installation unbedingt ein Gesamtbackup anlegen.

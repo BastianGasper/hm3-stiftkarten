@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-30.14",
+  "version": "2026-10-30.15",
   "released": "2026-10-30",
   "features": [
     "Glatte Stiftkurven",
@@ -13,6 +13,7 @@
     "75 Prozent Lösungsblatt im Querformat",
     "Finger-Scrollstreifen links",
     "Fortlaufender Ganzstrich-Radierer mit orangener visueller Spur",
-    "Abschlussrevision: gesicherter Datenexport, effiziente Zeichenflächen und Aufnahmeverwaltung"
+    "Abschlussrevision: gesicherter Datenexport, effiziente Zeichenflächen und Aufnahmeverwaltung",
+    "Schlankes Layout ohne erklärende Texte und ohne überlagernde Bedienelemente; neuer App-Name"
   ]
 }

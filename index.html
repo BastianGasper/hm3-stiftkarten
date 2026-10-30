@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f7f8fa">
-  <meta name="description" content="HM3-Karteikarten: mit Apple Pencil arbeiten, selbst bewerten und Lerndurchgänge mit Skizzen exportieren.">
+  <meta name="description" content="HM3 Theorie Basti: mit Apple Pencil lernen, Karten verwalten und Aufnahmen mit Skizzen exportieren.">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="HM3 Stiftkarten">
+  <meta name="apple-mobile-web-app-title" content="HM3 Theorie Basti">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets/icon-180.png">
   <link rel="stylesheet" href="style.css">
-  <title>HM3 Stiftkarten</title>
+  <title>HM3 Theorie Basti</title>
   <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']}};</script>
   <script defer src="assets/mathjax-tex-svg.js"></script>
   <script defer src="app.js"></script>
@@ -18,13 +18,24 @@
 <body>
 <div class="layout">
   <header class="topbar">
-    <div class="brand"><div class="brandmark" aria-hidden="true">∫</div><div><strong>HM3 Stiftkarten</strong><span>Höhere Mathematik III · TU Dortmund</span></div></div>
-    <div class="top-actions"><span class="save-status" id="saveStatus" role="status">Speicher wird geprüft …</span><span class="network-status" id="networkStatus" role="status">Offline-Modus wird geprüft …</span><button class="button" id="updateAppBtn" title="Auf neue Version prüfen und neu laden">App aktualisieren</button><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
+    <div class="brand"><div class="brandmark" aria-hidden="true">∫</div><div><strong>HM3 Theorie Basti</strong><span>Höhere Mathematik III · TU Dortmund</span></div></div>
+    <div class="top-actions"><span class="save-status" id="saveStatus" role="alert" hidden></span><span class="network-status" id="networkStatus" role="status">Offline-Modus wird geprüft …</span><button class="button" id="updateAppBtn" title="Auf neue Version prüfen und neu laden">App aktualisieren</button><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
   </header>
 
   <div class="sessionbar">
-    <div class="sessioninfo"><span class="overline" id="recordingStatus">KEINE AUFNAHME</span><strong id="sessionTitle">Freies Lernen</strong><span class="meta" id="sessionMeta">Nur während einer Aufnahme werden Lösungen für die Auswertung archiviert.</span></div>
-    <div class="sessionactions"><button class="button button-primary" id="recordingStartBtn">● Aufnahme starten</button><button class="button recording-stop" id="recordingStopBtn" disabled>■ Stopp</button><button class="button" id="recordingsBtn">Aufnahmen</button><button class="button" id="exportSessionBtn" disabled>Letzte Aufnahme exportieren</button></div>
+    <div class="ink-mode-dock" id="inkModeDock" role="group" aria-label="Stift und Seitennavigation">
+      <div class="ink-mode-choices">
+        <button class="button ink-mode-choice is-selected" id="inkAutoBtn" type="button" aria-pressed="true">Auto</button>
+        <button class="button ink-mode-choice" id="inkModeBtn" type="button" aria-pressed="false">Schreiben</button>
+        <button class="button ink-mode-choice" id="inkScrollBtn" type="button" aria-pressed="false">Scrollen</button>
+      </div>
+      <div class="ink-navigation" role="group" aria-label="Seite und Blatt steuern">
+        <button class="button ink-nav-button" id="scrollUpBtn" type="button" title="Seite nach oben">↑ Hoch</button>
+        <button class="button ink-nav-button" id="scrollDownBtn" type="button" title="Seite nach unten">↓ Runter</button>
+        <button class="button ink-nav-button" id="extendSheetBtn" type="button" title="400 Pixel Schreibfläche hinzufügen">+ Blatt</button>
+      </div>
+    </div>
+    <div class="sessionactions"><span class="overline recording-live" id="recordingStatus" hidden>● Aufnahme läuft</span><button class="button button-primary" id="recordingStartBtn">● Aufnahme starten</button><button class="button recording-stop" id="recordingStopBtn" disabled>■ Stopp</button><button class="button" id="recordingsBtn">Aufnahmen</button><button class="button" id="exportSessionBtn" disabled>Letzte Aufnahme exportieren</button></div>
   </div>
 
   <section class="metrics" aria-label="Lernübersicht">
@@ -57,18 +68,16 @@
           </div></div>
         </div>
       </div>
-      <div class="card-footer" id="cardFooter">Freie handschriftliche Antwort auf dem Notizblatt.</div>
     </section>
 
     <section class="notes" aria-label="Notizblatt">
-      <div class="notes-heading"><div><h2>Dein Lösungsblatt</h2><p>Apple Pencil zeichnet, der Finger scrollt über den schmalen Streifen ganz links. Das Blatt selbst bleibt gegen Handballen geschützt.</p></div><span class="paper-save" id="noteStatus">–</span></div>
+      <div class="notes-heading"><h2>Dein Lösungsblatt</h2><span class="paper-save" id="noteStatus">–</span></div>
       <div class="pen-toolbar" role="toolbar" aria-label="Stiftwerkzeuge">
         <div class="toolset"><button class="tool is-active" id="penBtn" aria-pressed="true">Stift</button><button class="tool" id="eraserBtn" aria-pressed="false" title="Ganzer Pencil-Zug – jeweils nur ein Strich pro Kontakt">Radierer · Strich</button></div>
         <div class="toolset" aria-label="Farben"><button class="color is-active" data-color="#182231" style="--ink:#182231" aria-label="Schwarz" title="Schwarz"></button><button class="color" data-color="#245b9c" style="--ink:#245b9c" aria-label="Blau" title="Blau"></button><button class="color" data-color="#aa3d3d" style="--ink:#aa3d3d" aria-label="Rot" title="Rot"></button></div>
         <label class="compact-label">Stärke <select id="strokeWidth"><option value="1.6">Fein</option><option value="2.7" selected>Normal</option><option value="4.3">Breit</option></select></label>
         <div class="toolset toolbar-end"><button class="tool" id="undoBtn" aria-label="Rückgängig">Rückgängig</button><button class="tool" id="redoBtn" aria-label="Wiederholen">Wiederholen</button><button class="tool" id="clearBtn">Löschen</button></div>
       </div>
-      <p class="eraser-hint is-hidden" id="eraserHint">Ganzstrich-Radierer: Führe den Pencil über die Linien. Eine orange Radier-Spur zeigt den Weg; alle berührten Pencil-Züge verschwinden einzeln und vollständig. Ein erneutes Aufsetzen ist nicht erforderlich.</p>
       <div class="sheet sheet-grid" id="sheet"><canvas id="inkCanvas" aria-label="Freie Schreibfläche für Apple Pencil"></canvas><canvas id="eraserOverlay" aria-hidden="true"></canvas></div>
       <div class="sheet-foot"><label>Vorlage <select id="sheetStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="blank">Blanko</option></select></label><label>Blattlänge <select id="sheetHeight"><option value="520">Kurz</option><option value="800">Normal</option><option value="1250">Lang</option><option value="1850">Sehr lang</option><option value="custom">Individuell</option></select></label><span id="sheetLengthInfo" aria-live="polite">800 px · pro Karte</span><span>Notizen je Karte gespeichert</span></div>
     </section>
@@ -108,19 +117,8 @@
     <div class="editor-actions"><button class="button button-primary" type="submit" id="saveRecordingNameBtn">Speichern</button><button class="button" type="button" id="saveAndExportRecordingBtn">Speichern und ZIP exportieren</button></div>
   </form>
 </dialog>
-<div id="fingerScrollRail" class="finger-scroll-rail" aria-label="Mit dem Finger hier nach oben und unten scrollen" role="scrollbar" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><span class="rail-arrow">↑</span><span class="rail-label">FINGER-SCROLLEN</span><span class="rail-arrow">↓</span></div>
-<div class="ink-mode-dock" id="inkModeDock" role="group" aria-label="Stift und Seitennavigation">
-  <span id="inkModeHint" aria-live="polite">Pencil-only · Scrollen per Pfeiltaste</span>
-  <div class="ink-mode-choices">
-    <button class="button ink-mode-choice is-selected" id="inkAutoBtn" type="button" aria-pressed="true">Auto</button>
-    <button class="button ink-mode-choice" id="inkModeBtn" type="button" aria-pressed="false">Schreiben</button>
-    <button class="button ink-mode-choice" id="inkScrollBtn" type="button" aria-pressed="false">Scrollen</button>
-  </div>
-  <div class="ink-navigation" role="group" aria-label="Seite und Blatt steuern">
-    <button class="button ink-nav-button" id="scrollUpBtn" type="button" title="Seite nach oben">↑ Hoch</button>
-    <button class="button ink-nav-button" id="scrollDownBtn" type="button" title="Seite nach unten">↓ Runter</button>
-    <button class="button ink-nav-button" id="extendSheetBtn" type="button" title="400 Pixel Schreibfläche hinzufügen">+ Blatt</button>
-  </div>
+<div id="fingerScrollRail" class="finger-scroll-rail" aria-label="Finger-Scrollbereich am linken Bildschirmrand" title="Hier mit dem Finger scrollen" role="scrollbar" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+  <span class="rail-grip" aria-hidden="true"></span>
 </div>
 <div class="notice" id="notice" role="status" aria-live="polite"></div>
 <script>if('serviceWorker' in navigator && location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(console.warn);</script>

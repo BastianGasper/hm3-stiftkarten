@@ -145,3 +145,50 @@ footer{padding-bottom:132px}
 .ink-mode-dock .ink-navigation .ink-nav-button{min-height:42px}
 .recording-delete{color:#91413d;border-color:#e2c5c3;background:#fff9f8}
 @media(max-width:700px){.layout{padding-left:46px}.ink-mode-dock{left:39px!important;max-width:calc(100vw - 52px)!important}}
+
+/* V15 – Bedienelemente ohne überlagernde Flächen. */
+/* Der Scrollstreifen bekommt einen eigenen reservierten Bereich links. */
+body{padding-left:44px!important}
+.layout{padding:0 20px!important;max-width:1570px}
+.finger-scroll-rail{
+  left:0!important;top:0!important;bottom:0!important;width:38px!important;
+  z-index:18;background:#edf2f6;border-right:1px solid #c6d2dc;
+  justify-content:center;touch-action:none!important
+}
+.finger-scroll-rail .rail-label,.finger-scroll-rail .rail-arrow{display:none!important}
+.finger-scroll-rail .rail-grip{
+  display:block;width:5px;height:88px;border-radius:5px;
+  background:repeating-linear-gradient(to bottom,#96adbd 0 10px,transparent 10px 17px);
+  opacity:.85;pointer-events:none
+}
+/* Statt einer schwebenden Leiste nun eine normale Werkzeugzeile oben. */
+.sessionbar{flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;padding:13px 0 12px}
+.ink-mode-dock{
+  position:static!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+  width:auto!important;max-width:100%!important;min-height:0!important;
+  display:flex!important;flex-direction:row!important;align-items:center!important;
+  border:0!important;box-shadow:none!important;background:transparent!important;
+  padding:0!important;margin:0!important;gap:10px!important;z-index:auto!important
+}
+.ink-mode-choices,.ink-navigation,.ink-mode-dock .ink-mode-choices,.ink-mode-dock .ink-navigation{
+  width:auto!important;flex:0 0 auto;gap:3px;flex-wrap:nowrap!important;
+  margin:0;padding:3px;border:1px solid var(--line);border-radius:8px
+}
+.ink-navigation{border-top:1px solid var(--line)!important}
+.ink-mode-dock .ink-mode-choice,.ink-mode-dock .ink-nav-button{
+  flex:0 0 auto!important;min-width:0!important;min-height:36px!important;
+  padding:7px 10px!important;font-size:12px;white-space:nowrap
+}
+.ink-mode-dock .ink-nav-button{background:#f4f7fa}
+.sessionactions{justify-content:flex-start;align-items:center;gap:8px}
+#recordingStatus[hidden],#saveStatus[hidden]{display:none!important}
+#recordingStatus{color:#a33c35;font-size:11px;font-weight:750;letter-spacing:.04em}
+.notes-heading h2{margin:0}
+@media(max-width:900px){.layout{padding:0 13px!important}.sessionbar{align-items:flex-start;flex-direction:column}}
+@media(max-width:700px){
+  body{padding-left:39px!important}
+  .finger-scroll-rail{width:34px!important}
+  .layout{padding:0 10px!important}
+  .ink-mode-dock{flex-wrap:wrap!important;gap:7px!important}
+  .ink-mode-dock .ink-mode-choice,.ink-mode-dock .ink-nav-button{padding:7px 8px!important}
+}

@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.14';
-  const OFFLINE_CACHE='hm3-stiftkarten-v14-20261030';
+  const APP_VERSION='2026-10-30.15';
+  const OFFLINE_CACHE='hm3-stiftkarten-v15-20261030';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
@@ -24,7 +24,7 @@
   let inkMode='auto';
   let logicalWidth=1000,logicalHeight=1000,cssWidth=800,cssHeight=800,scale=1;
   let noteLoads=0,saveQueue=Promise.resolve(),noticeTimeout=null,mathQueue=Promise.resolve();
-  const status=(msg,error=false)=>{$('saveStatus').textContent=msg;$('saveStatus').classList.toggle('is-warning',error);};
+  const status=(msg,error=false)=>{const el=$('saveStatus');el.textContent=error?msg:'';el.hidden=!error;el.classList.toggle('is-warning',error);};
   function notice(msg){const el=$('notice');el.textContent=msg;el.classList.add('is-visible');clearTimeout(noticeTimeout);noticeTimeout=setTimeout(()=>el.classList.remove('is-visible'),2600);}
 
   function loadData(){try{const current=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');const old=JSON.parse(localStorage.getItem(LEGACY)||'null');if(current){data={...data,...current,settings:{...data.settings,...current.settings},cardPrefs:current.cardPrefs||{}};if(current.recordingActive===undefined){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];}recordingTouchedCards=new Set(data.recordingTouchedCards||[]);}else if(old){data.progress=old.progress||{};data.settings.sheetStyle=old.settings?.paperStyle||'grid';data.settings.sheetHeight=old.settings?.paperHeight||800;data.settings.pencilOnly=old.settings?.penOnly??true;}}
@@ -145,13 +145,12 @@
     const active=!!data.recordingActive;
     $('recordingStartBtn').disabled=active;
     $('recordingStopBtn').disabled=!active;
-    $('recordingStatus').textContent=active?'● AUFNAHME LÄUFT':'KEINE AUFNAHME';
-    $('recordingStatus').classList.toggle('recording-live',active);
+    const rec=$('recordingStatus');
+    rec.hidden=!active;
+    rec.textContent=active?'● Aufnahme läuft':'';
     $('exportSessionBtn').disabled=active||!data.lastRecordingId;
     $('exportSessionBtn2').disabled=active||!data.lastRecordingId;
     $('exportSessionBtn').textContent=active?'Aufnahme läuft …':'Letzte Aufnahme exportieren';
-    $('sessionTitle').textContent=active?'Lösungen werden aufgezeichnet':data.lastRecordingId?'Aufnahme gespeichert':'Freies Lernen';
-    $('sessionMeta').textContent=active?'Nur während dieser Aufnahme neu gezeichnete Striche und bewertete Lösungen werden archiviert.':'Freies Lernen: Es werden keine neuen Kontrollversuche archiviert.';
   }
   async function startRecording(){
     if(data.recordingActive)return;
@@ -351,7 +350,7 @@
       btn.classList.toggle('is-selected',active);btn.setAttribute('aria-pressed',String(active));
     }
     document.body.classList.toggle('ink-scroll',inkMode==='scroll');
-    $('inkModeHint').textContent=inkMode==='scroll'?'Freies Scrollen · Stift pausiert':inkMode==='auto'?'Pencil-only · Scrollen per Pfeiltaste':'Schreibsperre · Scrollen per Pfeiltaste';
+
     const action=inkMode==='scroll'?'pan-y':'none';
     pen.style.touchAction=action;$('sheet').style.touchAction=action;
   }
@@ -522,7 +521,7 @@
   window.addEventListener('scroll',updateScrollRail,{passive:true});
   // Startet mit dauerhaftem Pencil-only-Lock. Keine Layoutverschiebung!
   inkMode='auto';lockPage();refreshInkModeUI();
-  function tool(t){ink.tool=t;ink.eraserTip=null;ink.eraserTrail=[];renderEraserOverlay();for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}$('eraserHint').classList.toggle('is-hidden',t!=='eraser');}
+  function tool(t){ink.tool=t;ink.eraserTip=null;ink.eraserTrail=[];renderEraserOverlay();for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}}
   function undo(){if(!ink.undo.length)return;ink.redo.push(ink.strokes.slice());ink.strokes=ink.undo.pop();renderInk();saveInk();}
   function redo(){if(!ink.redo.length)return;ink.undo.push(ink.strokes.slice());ink.strokes=ink.redo.pop();renderInk();saveInk();}
 
