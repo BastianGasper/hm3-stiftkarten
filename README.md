@@ -6,7 +6,7 @@ Kostenlose, schlichte, offlinefähige iPad-Web-App für Höhere Mathematik III (
 
 - Website: https://bastiangasper.github.io/hm3-stiftkarten/
 - Auf dem iPad in Safari öffnen und über **Teilen → Zum Home-Bildschirm** installieren.
-- Bei Apple-Pencil-Nutzung in *Einstellungen* **Nur mit Apple Pencil zeichnen** aktiv lassen. Finger können dann über die Schreibfläche scrollen. Falls das Schreiben auf einem konkreten iPad Probleme macht, diese Option testweise ausschalten.
+- **Schreiben / Scrollen:** Bei Pencil-Kontakt bleibt die Seite dauerhaft gesperrt, auch zwischen Strichen. Über den fixierten Button **Scrollen** navigieren und danach wieder **Schreiben** wählen. „Nur mit Apple Pencil zeichnen“ verhindert Fingerstriche.
 
 ## Lernablauf und Auswertung
 
@@ -50,6 +50,15 @@ Die äußere Datei enthält ein Array dieser Kartenobjekte. **ID dauerhaft einde
 
 Die App hat keinen serverseitigen Schreibzugriff, sodass lokal hinzugefügte Fragen nicht automatisch auf GitHub landen. Für regelmäßige Erweiterungen können die Karten über den GitHub-Connector direkt ergänzt werden.
 
+## Feinere Handschrift und Offline-Paket (V8)
+
+- Die Stiftlinien werden als geglättete quadratische Kurven gerendert. Normale Blätter nutzen bis zu **3x Pixeldichte pro CSS-Achse**, lange Blätter erhalten ein adaptives Limit von insgesamt höchstens ca. 16 Mio. Canvas-Pixeln.
+- Die handschriftlichen Skizzen bleiben als Strichdaten in IndexedDB gespeichert; nach dem nächsten Öffnen werden sie mit der neuen Glättung erneut gezeichnet. Exportbilder werden mit 1600 px Breite erzeugt.
+- **Einstellungen → Alle Offline-Dateien sichern:** lädt Oberfläche, Programmcode, Formeldarstellung, Karten und Icons in den Cache. Bei erfolgreicher Meldung mit ausgeschaltetem WLAN auf dem installierten iPad testen.
+- **Online-/Offline-Anzeige** in der Kopfzeile. Beim Wiederverbinden oder Öffnen werden Updates anhand von `version.json` geprüft und der neue Service Worker lädt Ressourcen im Hintergrund. Bei Änderungen erscheint **Neue Version laden**. Kein erzwungener Reload mitten im Schreiben.
+- Für neue Releases gemeinsam die Versionskennung in `app.js` (`APP_VERSION`) und `version.json` erhöhen sowie den Cache-Namen in `sw.js` ändern, damit Offline-Nutzer die Änderung sicher erkennen und herunterladen können.
+- **Wichtig:** Offline-Karten und lokale Bewertungen/Skizzen synchronisieren sich **nicht in die Cloud**. Für Gerätewechsel und Schutz vor iPadOS-Speicherbereinigung regelmäßig das **Gesamtbackup (JSON)** exportieren.
+
 ## Technische Architektur
 
 - `index.html` – semantische Oberfläche, unveränderliche Steuerelement-IDs
@@ -57,7 +66,8 @@ Die App hat keinen serverseitigen Schreibzugriff, sodass lokal hinzugefügte Fra
 - `app.js` – Kartenauswahl, Canvas, Versuchsspeicher, Exporte
 - `cards.json` – eigenständig pflegbarer Kartensatz (95 Startkarten)
 - `assets/mathjax-tex-svg.js` – lokale Formelsetzung, keine externen CDN-Abhängigkeiten
-- `sw.js` – Offline-Cache, Online-first für `cards.json`
+- `sw.js` – Offline-Cache für alle App-Dateien, Online-first für aktualisierbare Inhalte
+- `version.json` – Versionssignal für Prüfung nach Wiederverbindung
 - `manifest.webmanifest`, `assets/icon-*.png` – Homescreen-Unterstützung
 
 Lokale Daten: `IndexedDB`-Datenbank `hm3-stiftkarten-notes` (Version 2) mit Stores `sketches`, `attempts`, `sessions`. Lernstatus und Einstellungen liegen in `localStorage` (`hm3-stiftkarten-v2`). Bestehende Zeichenblätter aus Version 1 werden weitergelesen und nicht gelöscht. JSON-Backup der Version 1 kann ebenfalls importiert werden. Bei fehlendem IndexedDB wird auf eine eingeschränkte localStorage-Sicherung zurückgegriffen; in diesem Fall unbedingt frühzeitig ein Backup erstellen.
