@@ -316,6 +316,60 @@
     storeData();rebuildCards();renderLibraryIfOpen();await ensureSession();selected.seen.clear();selected.history=[];configureSheet();await advance();await updateSessionInfo();$('settingsDialog').close();notice('Backup wiederhergestellt.');
   }catch(e){console.error(e);notice('Import fehlgeschlagen: '+e.message);}}
   async function sessionList(){const list=(await listRecords('sessions')).sort((a,b)=>b.startedAt.localeCompare(a.startedAt));$('sessionList').replaceChildren();for(const s of list){const entries=memory.attempts.filter(a=>a.sessionId===s.id);const el=document.createElement('div'),info=document.createElement('div'),button=document.createElement('button');info.innerHTML=`<strong>${safeText(dateString(s.startedAt))}${s.id===data.sessionId?' · aktuell':''}</strong><small>${entries.length} bewertete/übersprungene Karten</small>`;button.className='button';button.textContent='ZIP exportieren';button.addEventListener('click',()=>exportSession(s.id));el.append(info,button);$('sessionList').appendChild(el);}if(!list.length)$('sessionList').textContent='Noch keine Durchgänge.';}
+  // Offline-Paket ist die vollständige App-Shell; Lernstände bleiben ausschließlich
+  // in IndexedDB/localStorage und werden NIE in den App-Cache geschrieben.
+  let offlinePrepared=false;
+  function setNetworkState(){
+    const el=$('networkStatus');if(!el)return;
+    const online=navigator.onLine;
+    el.classList.toggle('is-offline',!online);
+    el.classList.remove('is-warning');
+    el.textContent=online?(offlinePrepared?'Online · Offline bereit':'Online · Offline wird vorbereitet'):(offlinePrepared?'Offline · Lernen möglich':'Offline · Daten prüfen');
+  }
+  async function prepareOffline(showMessage=false){
+    const label=$('offlineSaveStatus');
+    try{
+      if(!('caches' in window))throw Error('Offline-Speicher ist in diesem Browser nicht verfügbar.');
+      const cache=await caches.open(OFFLINE_CACHE);
+      if(navigator.onLine){
+        if(showMessage)label.textContent='Speichere die App-Dateien einschließlich Formeln und Karten …';
+        await cache.addAll(OFFLINE_FILES);
+      }
+      const found=await Promise.all(OFFLINE_FILES.map(file=>caches.match(new URL(file,location.href),{ignoreSearch:true})));
+      offlinePrepared=found.every(Boolean);
+      if(showMessage)label.textContent=offlinePrepared?'Offline-Dateien vollständig gespeichert. Du kannst nun ohne WLAN lernen.':'Einige Dateien fehlen noch. Bitte bei Internetverbindung erneut versuchen.';
+      setNetworkState();
+      return offlinePrepared;
+    }catch(error){
+      console.warn('Offline cache',error);offlinePrepared=false;
+      setNetworkState();
+      if(showMessage)label.textContent='Offline-Sicherung fehlgeschlagen: '+error.message;
+      return false;
+    }
+  }
+  async function checkForUpdates(force=false){
+    if(!navigator.onLine||checkingUpdates||(!force&&now()-lastUpdateCheck<30*60*1000))return;
+    checkingUpdates=true;lastUpdateCheck=now();
+    try{
+      const response=await fetch('./version.json?check='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw Error('Versionsprüfung: HTTP '+response.status);
+      const available=await response.json();
+      if(available.version&&available.version!==APP_VERSION){
+        const button=$('updateAppBtn');
+        button.textContent='Neue Version laden';
+        button.classList.add('is-update-ready');
+        $('networkStatus').textContent='Online · Update verfügbar';
+        // Nur Hintergrund-Download. Während einer Stiftskizze NIEMALS automatisch reloaden.
+        if('serviceWorker' in navigator){
+          const registration=await navigator.serviceWorker.getRegistration();
+          await registration?.update();
+        }
+      }
+    }catch(error){
+      // Kein Fehler für den Lernmodus: offline weiterarbeiten ist wichtiger.
+      console.info('Updateprüfung später erneut',error);
+    }finally{checkingUpdates=false;}
+  }
   // Update erzwingen, ohne IndexedDB, Stiftstriche oder Selbstbewertungen zu löschen.
   async function refreshApp(){
     if(appRefreshing)return;
@@ -355,6 +409,7 @@
     document.querySelectorAll('[data-rating]').forEach(b=>b.onclick=()=>grade(b.dataset.rating));$('newSessionBtn').onclick=startSession;$('exportSessionBtn').onclick=()=>exportSession();$('exportSessionBtn2').onclick=()=>exportSession();$('footerExport').onclick=()=>exportSession();
     $('penBtn').onclick=()=>tool('pen');$('eraserBtn').onclick=()=>tool('eraser');document.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{ink.color=b.dataset.color;document.querySelectorAll('[data-color]').forEach(x=>x.classList.toggle('is-active',x===b));tool('pen');});$('strokeWidth').onchange=e=>ink.width=Number(e.target.value);$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;
     $('clearBtn').onclick=()=>{if(!ink.strokes.length)return;if(!confirm('Alle Striche auf diesem Blatt löschen? Frühere exportierte Versuche bleiben bestehen.'))return;ink.undo.push(clone(ink.strokes));ink.strokes=[];ink.redo=[];renderInk();saveInk();};
+    $('offlineSaveBtn').onclick=async()=>{const b=$('offlineSaveBtn');b.disabled=true;try{await prepareOffline(true);}finally{b.disabled=false;}};
     $('sheetStyle').onchange=e=>{data.settings.sheetStyle=e.target.value;storeData();configureSheet();};$('sheetHeight').onchange=e=>{const h=Number(e.target.value);if(Number.isFinite(h))setCardSheetHeight(h);};$('extendSheetBtn').onclick=()=>setCardSheetHeight(cardSheetHeight()+400);$('updateAppBtn').onclick=refreshApp;
     $('cardFavoriteBtn').onclick=()=>selected.current&&changeFavorite(selected.current);$('cardDisableBtn').onclick=()=>selected.current&&changeDisabled(selected.current);$('cardEditBtn').onclick=()=>selected.current&&openEditor(selected.current);
     $('libraryBtn').onclick=()=>{renderLibrary();$('libraryDialog').showModal();};$('closeLibraryBtn').onclick=()=>$('libraryDialog').close();$('librarySearch').oninput=renderLibrary;$('libraryFilter').onchange=renderLibrary;
@@ -366,4 +421,11 @@
     await fetchCards();memory.attempts=await listRecords('attempts');await ensureSession();updateFilters();listeners();configureSheet();await advance();await updateSessionInfo();if(!storageError)status('Auf diesem Gerät gespeichert');
   }catch(e){console.error(e);status('Start fehlgeschlagen',true);$('cardQuestion').textContent=e.message;}}
   init();
+  // Automatische Hintergrund-Prüfung, sobald die PWA geöffnet oder wieder online ist.
+  window.addEventListener('load',()=>{setNetworkState();void prepareOffline(false);void checkForUpdates(true);});
+  window.addEventListener('online',()=>{setNetworkState();void prepareOffline(false);void checkForUpdates(true);});
+  window.addEventListener('offline',()=>setNetworkState());
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden&&navigator.onLine)void checkForUpdates(false);
+  });
 })();
