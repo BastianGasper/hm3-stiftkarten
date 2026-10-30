@@ -120,6 +120,7 @@
     const q=data.quiz;
     const active=!!q?.active;
     document.body.classList.toggle('quiz-active',active);
+    document.body.classList.toggle('quiz-results',active&&q.stage==='results');
     $('quizToolbar').classList.toggle('is-hidden',!active);
     if(!active){$('quizSummary').classList.add('is-hidden');return;}
     $('quizRoundLabel').textContent='Runde '+q.round;

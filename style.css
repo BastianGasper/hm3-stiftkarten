@@ -215,3 +215,8 @@ body.quiz-active .sessionbar,body.quiz-active .metrics,body.quiz-active .study-f
 .quiz-summary-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:23px}
 .quiz-summary-actions .button{min-height:43px}
 @media(max-width:600px){.quiz-checks{grid-template-columns:1fr}.quiz-summary-counts>div{padding:11px}.quiz-summary-counts strong{font-size:24px}}
+
+/* While answering a quiz keep Pencil/scroll controls available; hide them only on summary. */
+body.quiz-active:not(.quiz-results) .sessionbar{display:flex!important}
+body.quiz-active .sessionbar .sessionactions{display:none!important}
+body.quiz-results .sessionbar{display:none!important}
