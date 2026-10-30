@@ -275,3 +275,14 @@ body.proof-active .proof-panel{max-height:none;overflow:visible;touch-action:non
 .card-extra summary{cursor:pointer;padding:12px 13px;font-size:13px;font-weight:650;color:#274961}
 .card-extra-content{border-top:1px solid var(--line);padding:14px 13px;white-space:pre-wrap;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
 .card-extra-content mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+
+/* V19: one lightweight marking action; no obsolete navigation dock or online badges. */
+.card-small-button.is-marked{background:#e8edf4;color:#214768;border-color:#94acc3;font-weight:700}
+.library-item.is-marked{border-left:3px solid #456c92}
+.github-settings{padding:18px 0 12px;border-top:1px solid var(--line);margin-top:18px}
+.github-settings .editor-field{margin:10px 0}
+.github-settings input[type="password"],.github-settings input[type="text"]{width:100%;max-width:670px}
+.github-settings .checkrow{display:flex;align-items:center;gap:8px}
+.github-settings .dialog-actions{flex-wrap:wrap;justify-content:flex-start}
+#githubSyncStatus{min-height:0}
+.network-status,.ink-navigation{display:none!important}

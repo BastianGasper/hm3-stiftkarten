@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.18';
-  const OFFLINE_CACHE='hm3-stiftkarten-v18-20261030';
+  const APP_VERSION='2026-10-30.19';
+  const OFFLINE_CACHE='hm3-stiftkarten-v19-20261030';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
@@ -13,8 +13,10 @@
   const safeText = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const now = () => Date.now();
   let cards=[],proofs=[],proofById=new Map(),originalCards=new Map(),byId=new Map(),db=null,storageError=false,version=0,editingCardId=null;
-  let data={progress:{},cardPrefs:{},settings:{pencilOnly:true,sheetStyle:'grid',sheetHeight:800},sessionId:null,recordingActive:false,lastRecordingId:null,recordingTouchedCards:[],quiz:null,proofStudy:null};
-  let recordingTouchedCards=new Set(),recordingNamingId=null;
+  let data={progress:{},cardPrefs:{},settings:{pencilOnly:true,sheetStyle:'grid',sheetHeight:800},sessionId:null,recordingActive:false,lastRecordingId:null,recordingTouchedCards:[],recordingSheetKeys:{},currentSheet:null,quiz:null,proofStudy:null};
+  let recordingTouchedCards=new Set(),recordingNamingId=null,resumeSheetOnce=false;
+  const GH_SYNC_KEY='hm3-github-sync-v1';
+  let githubSyncBusy=false;
   let selected={mode:'due',topic:'all',type:'all',current:null,seen:new Set(),history:[],revealed:false};
   let ink={tool:'pen',color:'#182231',width:2.7,strokes:[],active:null,erasing:false,undo:[],redo:[],erasedBefore:null,pointerId:null,cardId:null};
   const pen=$('inkCanvas'),ctx=pen.getContext('2d',{alpha:true});
@@ -67,7 +69,15 @@
     }return result;}
   // Ensure every edit is serialized before changing cards or creating a snapshot.
   function saveInk(){const id=ink.cardId;if(!id)return Promise.resolve();
-    if(data.recordingActive&&data.sessionId&&ink.strokes.some(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId)){recordingTouchedCards.add(id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();}
+    if(data.recordingActive&&data.sessionId&&ink.strokes.some(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId)){
+      const cardId=selected.current;
+      if(byId.has(cardId)){
+        recordingTouchedCards.add(cardId);
+        data.recordingTouchedCards=[...recordingTouchedCards];
+        data.recordingSheetKeys={...(data.recordingSheetKeys||{}),[cardId]:id};
+        storeData();
+      }
+    }
     const snapshot=ink.strokes.slice();$('noteStatus').textContent='Speichert …';
     saveQueue=saveQueue.catch(()=>{}).then(async()=>{const ok=await writeRecord('sketches',id,snapshot);if(ink.cardId===id)$('noteStatus').textContent=ok?'Gespeichert':'Speichern fehlgeschlagen';if(!ok){storageError=true;status('Notiz nicht gespeichert – exportieren!',true);}});return saveQueue;
   }
@@ -76,14 +86,15 @@
   async function fetchCards(){let response;try{response=await fetch('cards.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);response=await response.json();}catch(e){console.warn('Deck load',e);throw Error('Karten konnten nicht geladen werden. Bitte Verbindung prüfen oder App erneut öffnen.');}
     if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=response.map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Hintergrund:String(c.Hintergrund||''),Beispiel:String(c.Beispiel||''),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
   function prefFor(id){return data.cardPrefs?.[id]||{};}
-  function rebuildCards(){cards=[...originalCards.values()].map(c=>{const p=prefFor(c.id);return {...c,Frage:typeof p.Frage==='string'&&p.Frage.trim()?p.Frage:c.Frage,Antwort:typeof p.Antwort==='string'&&p.Antwort.trim()?p.Antwort:c.Antwort,favorite:!!p.favorite,disabled:!!p.disabled};});byId=new Map(cards.map(c=>[c.id,c]));}
-  function mutatePref(id,patch){const p={...prefFor(id),...patch};if(!data.cardPrefs)data.cardPrefs={};if(!p.favorite&&!p.disabled&&!('Frage'in p)&&!('Antwort'in p)&&!('sheetHeight'in p))delete data.cardPrefs[id];else data.cardPrefs[id]=p;storeData();rebuildCards();updateStats();}
-  function quickActions(){const c=byId.get(selected.current);if(!c)return;const fav=$('cardFavoriteBtn');fav.textContent=c.favorite?'★':'☆';fav.classList.toggle('is-favorite',c.favorite);fav.setAttribute('aria-pressed',String(c.favorite));fav.setAttribute('aria-label',c.favorite?'Favorit entfernen':'Als Favorit markieren');fav.title=c.favorite?'Favorit entfernen':'Als Favorit markieren';const dis=$('cardDisableBtn');dis.disabled=!!data.quiz?.active;dis.textContent=c.disabled?'Aktivieren':'Deaktivieren';dis.classList.toggle('is-disabled',c.disabled);dis.title=c.disabled?'Karte wieder in den Lerndurchgang aufnehmen':'Karte aus normalen Lerndurchgängen nehmen';}
+  function rebuildCards(){cards=[...originalCards.values()].map(c=>{const p=prefFor(c.id);return {...c,Frage:typeof p.Frage==='string'&&p.Frage.trim()?p.Frage:c.Frage,Antwort:typeof p.Antwort==='string'&&p.Antwort.trim()?p.Antwort:c.Antwort,favorite:!!p.favorite,marked:!!p.marked,disabled:!!p.disabled};});byId=new Map(cards.map(c=>[c.id,c]));}
+  function mutatePref(id,patch){const p={...prefFor(id),...patch};if(!data.cardPrefs)data.cardPrefs={};if(!p.favorite&&!p.marked&&!p.disabled&&!('Frage'in p)&&!('Antwort'in p)&&!('sheetHeight'in p))delete data.cardPrefs[id];else data.cardPrefs[id]=p;storeData();rebuildCards();updateStats();}
+  function quickActions(){const c=byId.get(selected.current);if(!c)return;const fav=$('cardFavoriteBtn');fav.textContent=c.favorite?'★':'☆';fav.classList.toggle('is-favorite',c.favorite);fav.setAttribute('aria-pressed',String(c.favorite));fav.setAttribute('aria-label',c.favorite?'Favorit entfernen':'Als Favorit markieren');fav.title=c.favorite?'Favorit entfernen':'Als Favorit markieren';const mark=$('cardMarkBtn');mark.textContent=c.marked?'✓ Markiert':'Markieren';mark.classList.toggle('is-marked',c.marked);mark.setAttribute('aria-pressed',String(c.marked));const dis=$('cardDisableBtn');dis.disabled=!!data.quiz?.active;dis.textContent=c.disabled?'Aktivieren':'Deaktivieren';dis.classList.toggle('is-disabled',c.disabled);dis.title=c.disabled?'Karte wieder in den Lerndurchgang aufnehmen':'Karte aus normalen Lerndurchgängen nehmen';}
   async function changeFavorite(id){const c=byId.get(id);if(!c)return;mutatePref(id,{favorite:!c.favorite});if(selected.current===id){quickActions();if(selected.mode==='favorites'&&!byId.get(id).favorite){selected.seen.add(id);await advance();}}renderLibraryIfOpen();}
+  async function changeMarked(id){const c=byId.get(id);if(!c)return;mutatePref(id,{marked:!c.marked});if(selected.current===id)quickActions();renderLibraryIfOpen();}
   async function changeDisabled(id){const c=byId.get(id);if(!c)return;if(selected.current===id){await finishInk();await saveQueue.catch(()=>{});}mutatePref(id,{disabled:!c.disabled});if(selected.current===id&&byId.get(id).disabled){selected.seen.add(id);await advance();}else if(selected.current===id)quickActions();else if(!selected.current&&!byId.get(id).disabled)await advance();renderLibraryIfOpen();}
   function renderLibraryIfOpen(){if($('libraryDialog').open)renderLibrary();}
-  function renderLibrary(){const q=$('librarySearch').value.trim().toLocaleLowerCase('de'),mode=$('libraryFilter').value;const shown=cards.filter(c=>(mode==='all'||(mode==='active'&&!c.disabled)||(mode==='disabled'&&c.disabled)||(mode==='favorite'&&c.favorite))&&(!q||[c.Frage,c.Antwort,c.Bereich,c.Typ,c.Quelle].some(s=>s.toLocaleLowerCase('de').includes(q))));$('libraryCount').textContent=`${shown.length} von ${cards.length} Karten · ${cards.filter(c=>c.disabled).length} deaktiviert · ${cards.filter(c=>c.favorite).length} Favoriten`;
-    const frag=document.createDocumentFragment();for(const c of shown){const row=document.createElement('div');row.className='library-item'+(c.disabled?' is-disabled':'');const main=document.createElement('div');main.className='library-item-main';const meta=document.createElement('div');meta.className='library-item-meta';meta.textContent=`${c.Bereich} · ${c.Typ}${c.Quelle?' · '+c.Quelle:''}${prefFor(c.id).Frage!==undefined?' · Bearbeitet':''}`;const question=document.createElement('div');question.className='library-item-question';question.textContent=c.Frage;const preview=document.createElement('details');preview.className='library-preview';const summary=document.createElement('summary');summary.textContent='Musterlösung ansehen';const answer=document.createElement('div');answer.className='library-preview-answer';answer.textContent=c.Antwort;preview.append(summary,answer);preview.addEventListener('toggle',()=>{if(preview.open&&window.MathJax?.typesetPromise){mathQueue=mathQueue.catch(()=>{}).then(()=>window.MathJax.typesetPromise([answer]).catch(console.warn));}});main.append(meta,question,preview);const actions=document.createElement('div');actions.className='library-item-actions';const make=(label,fn,extra='')=>{const b=document.createElement('button');b.type='button';b.className='button '+extra;b.textContent=label;b.addEventListener('click',fn);actions.appendChild(b);return b;};const star=make(c.favorite?'★':'☆',()=>changeFavorite(c.id),'library-star'+(c.favorite?' is-favorite':''));star.setAttribute('aria-label',c.favorite?'Favorit entfernen':'Favorit setzen');star.title=star.getAttribute('aria-label');make(c.disabled?'Aktivieren':'Deaktivieren',()=>changeDisabled(c.id));make('Bearbeiten',()=>openEditor(c.id));make('Öffnen',async()=>{$('libraryDialog').close();await showCard(c.id);});row.append(main,actions);frag.appendChild(row);}const list=$('libraryList');list.replaceChildren(frag);if(!shown.length)list.textContent='Keine passenden Karten gefunden.';}
+  function renderLibrary(){const q=$('librarySearch').value.trim().toLocaleLowerCase('de'),mode=$('libraryFilter').value;const shown=cards.filter(c=>(mode==='all'||(mode==='active'&&!c.disabled)||(mode==='disabled'&&c.disabled)||(mode==='favorite'&&c.favorite)||(mode==='marked'&&c.marked))&&(!q||[c.Frage,c.Antwort,c.Bereich,c.Typ,c.Quelle].some(s=>s.toLocaleLowerCase('de').includes(q))));$('libraryCount').textContent=`${shown.length} von ${cards.length} Karten · ${cards.filter(c=>c.disabled).length} deaktiviert · ${cards.filter(c=>c.favorite).length} Favoriten · ${cards.filter(c=>c.marked).length} markiert`;
+    const frag=document.createDocumentFragment();for(const c of shown){const row=document.createElement('div');row.className='library-item'+(c.disabled?' is-disabled':'')+(c.marked?' is-marked':'');const main=document.createElement('div');main.className='library-item-main';const meta=document.createElement('div');meta.className='library-item-meta';meta.textContent=`${c.Bereich} · ${c.Typ}${c.Quelle?' · '+c.Quelle:''}${prefFor(c.id).Frage!==undefined?' · Bearbeitet':''}`;const question=document.createElement('div');question.className='library-item-question';question.textContent=c.Frage;const preview=document.createElement('details');preview.className='library-preview';const summary=document.createElement('summary');summary.textContent='Musterlösung ansehen';const answer=document.createElement('div');answer.className='library-preview-answer';answer.textContent=c.Antwort;preview.append(summary,answer);preview.addEventListener('toggle',()=>{if(preview.open&&window.MathJax?.typesetPromise){mathQueue=mathQueue.catch(()=>{}).then(()=>window.MathJax.typesetPromise([answer]).catch(console.warn));}});main.append(meta,question,preview);const actions=document.createElement('div');actions.className='library-item-actions';const make=(label,fn,extra='')=>{const b=document.createElement('button');b.type='button';b.className='button '+extra;b.textContent=label;b.addEventListener('click',fn);actions.appendChild(b);return b;};const star=make(c.favorite?'★':'☆',()=>changeFavorite(c.id),'library-star'+(c.favorite?' is-favorite':''));star.setAttribute('aria-label',c.favorite?'Favorit entfernen':'Favorit setzen');star.title=star.getAttribute('aria-label');make(c.marked?'✓ Markiert':'Markieren',()=>changeMarked(c.id),c.marked?'is-marked':'');make(c.disabled?'Aktivieren':'Deaktivieren',()=>changeDisabled(c.id));make('Bearbeiten',()=>openEditor(c.id));make('Öffnen',async()=>{$('libraryDialog').close();await showCard(c.id);});row.append(main,actions);frag.appendChild(row);}const list=$('libraryList');list.replaceChildren(frag);if(!shown.length)list.textContent='Keine passenden Karten gefunden.';}
   function openEditor(id){const c=byId.get(id);if(!c)return;editingCardId=id;$('editorHint').textContent=c.Bereich+' · '+c.Typ;$('editQuestion').value=c.Frage;$('editAnswer').value=c.Antwort;$('resetCardBtn').disabled=!('Frage'in prefFor(id))&&!('Antwort'in prefFor(id));$('editorDialog').showModal();}
   function closeEditor(){$('editorDialog').close();editingCardId=null;}
   function syncEditedCard(id){const c=byId.get(id);if(selected.current===id){$('cardQuestion').textContent=c.Frage;$('cardAnswer').textContent=c.Antwort;quickActions();math();}renderLibraryIfOpen();}
@@ -338,6 +349,18 @@
     updateQuizChrome();await advance();
   }
   function math(){const nodes=[$('cardQuestion'),...(selected.revealed?[$('cardAnswer'),$('cardBackground'),$('cardExample')]:[])];mathQueue=mathQueue.catch(()=>{}).then(async()=>{if(!window.MathJax?.typesetPromise)return;try{window.MathJax.typesetClear?.(nodes);await window.MathJax.typesetPromise(nodes);}catch(e){console.warn('MathJax',e)}});}
+  // A question's next appearance always starts on an empty new canvas.
+  // Only the in-progress sheet survives a reload of the same active question.
+  function noteIdForVisit(cardId){
+    const old=data.currentSheet;
+    if(resumeSheetOnce&&old?.cardId===cardId&&typeof old.noteId==='string'&&old.noteId.startsWith('hm3-visit-')){
+      resumeSheetOnce=false;return old.noteId;
+    }
+    resumeSheetOnce=false;
+    const noteId=uuid('hm3-visit');
+    data.currentSheet={cardId,noteId,createdAt:new Date().toISOString()};
+    storeData();return noteId;
+  }
   async function showCard(id){await finishInk();await saveQueue.catch(()=>{});if(selected.current&&selected.current!==id)await archiveDraftIfNeeded();selected.current=id;selected.revealed=false;const card=byId.get(id);if(!card)return showEmpty();$('workspace').classList.remove('is-hidden');$('emptyState').classList.add('is-hidden');
     $('cardTopic').textContent=`${card.Bereich} · ${card.Typ}`;$('cardSource').textContent=card.Quelle?`Quelle: ${card.Quelle}`:'';$('cardQuestion').textContent=card.Frage;$('cardAnswer').textContent=card.Antwort;
     $('cardBackground').textContent=card.Hintergrund||'';
@@ -345,7 +368,7 @@
     $('cardBackgroundSection').hidden=!card.Hintergrund;
     $('cardExampleSection').hidden=!card.Beispiel;
     $('cardBackgroundSection').open=false;$('cardExampleSection').open=false;
-    $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!!data.quiz?.active||!selected.history.length;quickActions();configureSheet();await loadInk(id);math();}
+    $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!!data.quiz?.active||!selected.history.length;quickActions();configureSheet();await loadInk(noteIdForVisit(id));math();}
   function showEmpty(){selected.current=null;$('workspace').classList.add('is-hidden');$('emptyState').classList.remove('is-hidden');updateStats();}
   async function advance(){if(data.proofStudy?.active){await displayProof();return;}if(data.quiz?.active){
       const q=data.quiz;
@@ -373,7 +396,7 @@
       for(const stroke of currentStrokes)stroke.archivedAttemptId=rec.id;
       if(currentStrokes.length)await saveInk();
       await saveQueue.catch(()=>{});
-      recordingTouchedCards.delete(c.id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();
+      recordingTouchedCards.delete(c.id);delete data.recordingSheetKeys?.[c.id];data.recordingTouchedCards=[...recordingTouchedCards];storeData();
     }
     return saved;
   }
@@ -381,7 +404,7 @@
     if(!data.recordingActive||!data.sessionId||!selected.current||!recordingTouchedCards.has(selected.current))return;
     await finishInk();await saveQueue.catch(()=>{});
     if(ink.strokes.some(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId))return snapshotAttempt('draft');
-    recordingTouchedCards.delete(selected.current);data.recordingTouchedCards=[...recordingTouchedCards];storeData();
+    recordingTouchedCards.delete(selected.current);delete data.recordingSheetKeys?.[selected.current];data.recordingTouchedCards=[...recordingTouchedCards];storeData();
   }
   async function archivePendingDrafts(){
     if(!data.recordingActive||!data.sessionId)return true;
@@ -390,16 +413,16 @@
     for(const cardId of [...recordingTouchedCards]){
       const card=byId.get(cardId);
       if(!card)continue;
-      const strokes=(await readRecord('sketches',cardId))||[];
+      const strokes=(await readRecord('sketches',data.recordingSheetKeys?.[cardId]||cardId))||[];
       const fresh=Array.isArray(strokes)?strokes.filter(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId):[];
       if(fresh.length){
         const rec={id:uuid('attempt'),sessionId:data.sessionId,cardId:card.id,Frage:card.Frage,Antwort:card.Antwort,Bereich:card.Bereich,Typ:card.Typ,Quelle:card.Quelle,rating:'draft',at:new Date().toISOString(),strokes:clone(fresh),height:cardSheetHeight(cardId)};
         if(!await writeRecord('attempts',rec.id,rec))return false;
         if(db)memory.attempts.push(rec);
         for(const stroke of fresh)stroke.archivedAttemptId=rec.id;
-        if(!await writeRecord('sketches',cardId,strokes))return false;
+        if(!await writeRecord('sketches',data.recordingSheetKeys?.[cardId]||cardId,strokes))return false;
       }
-      recordingTouchedCards.delete(cardId);
+      recordingTouchedCards.delete(cardId);delete data.recordingSheetKeys?.[cardId];
       data.recordingTouchedCards=[...recordingTouchedCards];storeData();
     }
     return true;
@@ -430,7 +453,7 @@
     await finishInk();await saveQueue.catch(()=>{});
     const session={id:uuid('session'),name:'Unbenannte Aufnahme',recording:true,startedAt:new Date().toISOString(),endedAt:null};
     if(!await writeRecord('sessions',session.id,session)){notice('Aufnahme konnte nicht gespeichert werden.');return;}
-    data.sessionId=session.id;data.recordingActive=true;recordingTouchedCards.clear();data.recordingTouchedCards=[];
+    data.sessionId=session.id;data.recordingActive=true;recordingTouchedCards.clear();data.recordingTouchedCards=[];data.recordingSheetKeys={};
     storeData();updateRecordingUI();updateStats();
     notice('Aufnahme gestartet. Neue Stiftstriche werden jetzt für die Kontrolle gespeichert.');
   }
@@ -444,7 +467,7 @@
     session.endedAt=new Date().toISOString();
     if(!await writeRecord('sessions',id,session)){notice('Aufnahme konnte nicht beendet werden.');return;}
     data.recordingActive=false;data.lastRecordingId=id;data.sessionId=null;
-    recordingTouchedCards.clear();data.recordingTouchedCards=[];
+    recordingTouchedCards.clear();data.recordingTouchedCards=[];data.recordingSheetKeys={};
     storeData();updateRecordingUI();updateStats();
     recordingNamingId=id;
     $('recordingNameInput').value='HM3 Aufnahme '+new Date().toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
@@ -456,14 +479,178 @@
     session.name=$('recordingNameInput').value.trim()||'Unbenannte Aufnahme';
     if(!await writeRecord('sessions',id,session)){notice('Name konnte nicht gespeichert werden.');return;}
     $('recordingNameDialog').close();recordingNamingId=null;
+    if(getGitHubConfig()?.enabled){
+      session.githubPending=true;
+      if(!await writeRecord('sessions',id,session)){notice('GitHub-Warteschlange konnte nicht gespeichert werden.');return;}
+      void syncPendingRecordings();
+    }
     await sessionList();notice('Aufnahme „'+session.name+'“ lokal gespeichert.');
     if(exportAfter)await exportSession(id);
+  }
+
+  // GitHub storage is opt-in. GitHub Pages cannot write to a repository on
+  // its own; only a user-created, repo-scoped token permits authenticated sync.
+  // Token is NEVER put inside data, backups, GitHub files, ZIPs or messages.
+  function getGitHubConfig(){
+    try{
+      const obj=JSON.parse(localStorage.getItem(GH_SYNC_KEY)||'null');
+      if(!obj||typeof obj!=='object')return null;
+      return {enabled:!!obj.enabled,repo:String(obj.repo||''),token:String(obj.token||''),allowPublic:!!obj.allowPublic};
+    }catch{return null;}
+  }
+  function setGitHubStatus(message){
+    const el=$('githubSyncStatus');if(el)el.textContent=message||'';
+  }
+  function showGitHubConfig(){
+    const c=getGitHubConfig();
+    $('githubSyncEnabled').checked=!!c?.enabled;
+    $('githubSyncRepo').value=c?.repo||'BastianGasper/hm3-theorie-aufnahmen';
+    $('githubSyncToken').value='';
+    $('githubSyncToken').placeholder=c?.token?'Token auf diesem Gerät gespeichert':'github_pat_…';
+    $('githubSyncPublicConsent').checked=!!c?.allowPublic;
+    setGitHubStatus('');
+  }
+  const validRepo=r=>/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(r)&&!r.includes('..')&&!r.endsWith('.git');
+  function githubHeaders(token){
+    return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'X-GitHub-Api-Version':'2022-11-28'};
+  }
+  async function verifyGitHubTarget(c){
+    if(!navigator.onLine)throw Error('Bitte zum Einrichten mit dem Internet verbinden.');
+    const response=await fetch('https://api.github.com/repos/'+c.repo,{headers:githubHeaders(c.token),cache:'no-store'});
+    if(!response.ok)throw Error(response.status===404?'Repository nicht gefunden oder Token ohne Zugriff.':response.status===401?'Token ungültig.':'GitHub-Verbindung: HTTP '+response.status);
+    const target=await response.json();
+    if(!target.private&&!c.allowPublic)throw Error('Öffentliches Repository gesperrt. Ein privates Repository wählen.');
+    if(target.archived||target.disabled)throw Error('Repository ist archiviert oder gesperrt.');
+    return target;
+  }
+  async function saveGitHubConfig(){
+    const prev=getGitHubConfig();
+    const enabled=$('githubSyncEnabled').checked;
+    if(!enabled){
+      localStorage.removeItem(GH_SYNC_KEY);
+      $('githubSyncToken').value='';
+      setGitHubStatus('GitHub-Sync deaktiviert. Lokale Aufnahmen bleiben erhalten.');
+      return;
+    }
+    const c={
+      enabled:true,
+      repo:$('githubSyncRepo').value.trim(),
+      token:$('githubSyncToken').value.trim()||prev?.token||'',
+      allowPublic:!!$('githubSyncPublicConsent').checked
+    };
+    if(!validRepo(c.repo)||!c.token){setGitHubStatus('Repository und Fine-grained Token eingeben.');return;}
+    if(c.allowPublic&&!confirm('ACHTUNG: Aufnahmen mit deinen handschriftlichen Antworten wären in einem öffentlichen Repository weltweit einsehbar. Wirklich erlauben?'))return;
+    const button=$('githubSyncSave');button.disabled=true;
+    try{
+      const target=await verifyGitHubTarget(c);
+      if(!target.private&&!c.allowPublic)throw Error('Öffentliches Repository gesperrt.');
+      localStorage.setItem(GH_SYNC_KEY,JSON.stringify(c));
+      $('githubSyncToken').value='';
+      setGitHubStatus('Verbunden: '+c.repo+(target.private?' · privat':' · öffentlich')+'.');
+      void syncPendingRecordings();
+    }catch(e){setGitHubStatus('Nicht gespeichert: '+e.message);}
+    finally{button.disabled=false;}
+  }
+  function removeGitHubConfig(){
+    if(!confirm('GitHub-Verbindung samt lokal gespeichertem Token entfernen? Hochgeladene Dateien bleiben in GitHub.'))return;
+    localStorage.removeItem(GH_SYNC_KEY);
+    showGitHubConfig();setGitHubStatus('Verbindung entfernt.');
+  }
+  async function queueOldRecordings(){
+    const c=getGitHubConfig();
+    if(!c?.enabled){setGitHubStatus('Zuerst GitHub-Sync einrichten.');return;}
+    const entries=(await listRecords('sessions')).filter(x=>x.endedAt&&!x.githubUploadedAt);
+    if(!entries.length){setGitHubStatus('Keine noch nicht hochgeladenen Aufnahmen.');return;}
+    if(!confirm(entries.length+' gespeicherte Aufnahme(n) jetzt zum GitHub-Upload vormerken?'))return;
+    for(const ses of entries){
+      ses.githubPending=true;
+      if(!await writeRecord('sessions',ses.id,ses)){setGitHubStatus('Warteschlange konnte nicht gespeichert werden.');return;}
+    }
+    setGitHubStatus(entries.length+' Aufnahme(n) vorgemerkt.');
+    void syncPendingRecordings();
+  }
+  function sessionPath(session){
+    const date=(session.startedAt||session.endedAt||new Date().toISOString()).slice(0,10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!/^[a-zA-Z0-9_-]+$/.test(session.id))throw Error('Ungültige Sitzungs-ID oder Datumsangabe.');
+    return 'aufnahmen/'+date+'/'+session.id+'.zip';
+  }
+  function bytesToBase64(bytes){
+    // Avoid stack overflow: use chunks rather than String.fromCharCode(...bytes).
+    let raw='';
+    for(let n=0;n<bytes.length;n+=8192)raw+=String.fromCharCode(...bytes.subarray(n,n+8192));
+    return btoa(raw);
+  }
+  async function buildRecordingZip(sessionId){
+    const ses=await readRecord('sessions',sessionId);
+    if(!ses?.endedAt)throw Error('Nur abgeschlossene Aufnahmen können synchronisiert werden.');
+    const attempts=(await listRecords('attempts')).filter(x=>x.sessionId===sessionId).sort((a,b)=>a.at.localeCompare(b.at));
+    const images=[],sketches=[];
+    for(let i=0;i<attempts.length;i++){
+      const png=await imageForAttempt(attempts[i]);
+      if(png){const path=filenameFor(attempts[i],i);sketches.push([path,png]);images.push(path);}
+      else images.push(null);
+    }
+    const payload={format:'hm3-study-session',version:2,exportedAt:new Date().toISOString(),session:ses,attempts:attempts.map((a,i)=>({...a,sketchImage:images[i]})),cardsInDeck:cards.length,notesIncluded:'PNG und Vektor-Strichdaten'};
+    const entries=[['LERNDURCHGANG.html',encoder.encode(reportHTML(attempts,images,ses))],
+      ['lerndurchgang.json',encoder.encode(JSON.stringify(payload,null,2))],...sketches];
+    return zip(entries);
+  }
+  async function uploadRecordingToGitHub(session,c,target){
+    const path=sessionPath(session);
+    const headers=githubHeaders(c.token);
+    const url='https://api.github.com/repos/'+c.repo+'/contents/'+path;
+    // GET permits safe retry after success response was lost. Never overwrite.
+    const exists=await fetch(url,{headers,cache:'no-store'});
+    if(exists.status===200){
+      session.githubUploadedAt=session.githubUploadedAt||new Date().toISOString();
+      session.githubRepo=c.repo;session.githubPath=path;session.githubPending=false;
+      await writeRecord('sessions',session.id,session);
+      return;
+    }
+    if(exists.status!==404)throw Error('GitHub-Dateiprüfung: HTTP '+exists.status);
+    const archive=await buildRecordingZip(session.id);
+    // GitHub Contents API best suited to small files; preserve local data on error.
+    if(archive.size>15*1024*1024)throw Error('ZIP über 15 MB: bitte manuell exportieren.');
+    const bytes=new Uint8Array(await archive.arrayBuffer());
+    const response=await fetch(url,{method:'PUT',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({
+      message:'HM3 Aufnahme: '+(session.name||session.id).slice(0,90),
+      content:bytesToBase64(bytes)
+    })});
+    if(!response.ok){
+      const detail=await response.json().catch(()=>({}));
+      throw Error('GitHub-Upload: HTTP '+response.status+(detail.message?' – '+String(detail.message).slice(0,130):''));
+    }
+    const result=await response.json();
+    session.githubUploadedAt=new Date().toISOString();
+    session.githubRepo=c.repo;session.githubPath=path;session.githubSha=result.content?.sha||null;session.githubCommitSha=result.commit?.sha||null;
+    session.githubPending=false;
+    if(!await writeRecord('sessions',session.id,session))throw Error('Upload erfolgreich, lokale Bestätigung fehlgeschlagen.');
+  }
+  async function syncPendingRecordings(){
+    const c=getGitHubConfig();
+    if(githubSyncBusy||!c?.enabled||!c.token||!navigator.onLine||data.recordingActive)return;
+    githubSyncBusy=true;
+    try{
+      const pending=(await listRecords('sessions')).filter(x=>x.endedAt&&x.githubPending&&!x.githubUploadedAt);
+      if(!pending.length)return;
+      const target=await verifyGitHubTarget(c); // Recheck public/private every run.
+      for(const session of pending){
+        if(!getGitHubConfig()?.enabled)break;
+        setGitHubStatus('Lade „'+(session.name||session.id)+'“ hoch …');
+        await uploadRecordingToGitHub(session,c,target);
+        setGitHubStatus('GitHub-Sync: '+(session.name||session.id)+' hochgeladen.');
+      }
+      void sessionList();
+    }catch(error){
+      console.warn('GitHub sync deferred',error);
+      setGitHubStatus('GitHub-Sync vorgemerkt: '+error.message);
+    }finally{githubSyncBusy=false;}
   }
   async function updateSessionInfo(){updateRecordingUI();updateStats();}
 
   // Das Schreibblatt gehört zur Karte; das Ändern einer Karte verändert keine andere.
   function cardSheetHeight(id=selected.current){const n=Number(data.cardPrefs?.[id]?.sheetHeight);return Number.isFinite(n)&&n>=520?Math.min(n,4000):(Number(data.settings.sheetHeight)||800);}
-  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction='none';$('sheet').style.touchAction='none';resizeInk();}
+  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';pen.style.touchAction='none';$('sheet').style.touchAction='none';resizeInk();}
   async function setCardSheetHeight(height){if(!selected.current)return;const h=Math.min(4000,Math.max(520,Math.round(height)));await finishInk();await saveQueue.catch(()=>{});const id=selected.current;data.cardPrefs[id]={...prefFor(id),sheetHeight:h};storeData();configureSheet();notice('Blattlänge gespeichert – deine bisherigen Skizzen bleiben erhalten.');}
   function resizeInk(){const r=pen.getBoundingClientRect();if(!r.width||!r.height)return;cssWidth=r.width;cssHeight=r.height;scale=cssWidth/1000;logicalHeight=cssHeight/scale;
     // Supersampling: deutlich feinere Kantenglättung als das bisherige DPR-Limit 2.
@@ -752,8 +939,6 @@
   $('inkAutoBtn').addEventListener('click',()=>setInkMode('auto'));
   $('inkModeBtn').addEventListener('click',()=>setInkMode('write'));
   $('inkScrollBtn').addEventListener('click',()=>setInkMode('scroll'));
-  $('scrollUpBtn').addEventListener('click',()=>scrollSheet(-1));
-  $('scrollDownBtn').addEventListener('click',()=>scrollSheet(1));
   // V18: unsichtbare Touch-Scrollzone: die linken 20% des Viewports.
   // Alle Touchstarts außerhalb der Zone bleiben ohne Scrollwirkung.
   // Ein Pencilstrich bleibt geschützt: während des Kontakts nicht scrollen.
@@ -865,12 +1050,12 @@
     for(const [id,strokes] of Object.entries(sketches))if(Array.isArray(strokes)&&!await writeRecord('sketches',id,strokes))throw Error('Notiz konnte nicht gespeichert werden: '+id);
     memory.attempts=[];for(const entry of attempts){if(!entry||typeof entry.id!=='string'||!await writeRecord('attempts',entry.id,entry))throw Error('Versuch konnte nicht gespeichert werden');if(db)memory.attempts.push(entry);}
     memory.sessions=[];for(const entry of sessions){if(!entry||typeof entry.id!=='string'||!await writeRecord('sessions',entry.id,entry))throw Error('Aufnahme konnte nicht gespeichert werden');if(db)memory.sessions.push(entry);}
-    if(!data.recordingActive){data.sessionId=null;data.recordingTouchedCards=[];}recordingTouchedCards=new Set(data.recordingTouchedCards||[]);storeData();rebuildCards();renderLibraryIfOpen();selected.seen.clear();selected.history=[];configureSheet();await advance();await updateSessionInfo();$('settingsDialog').close();notice('Backup wiederhergestellt.');
+    if(!data.recordingActive){data.sessionId=null;data.recordingTouchedCards=[];data.recordingSheetKeys={};}recordingTouchedCards=new Set(data.recordingTouchedCards||[]);storeData();rebuildCards();renderLibraryIfOpen();selected.seen.clear();selected.history=[];configureSheet();await advance();await updateSessionInfo();$('settingsDialog').close();notice('Backup wiederhergestellt.');
   }catch(e){console.error(e);notice('Import fehlgeschlagen: '+e.message);}}
   async function deleteRecording(id){
     const record=await readRecord('sessions',id);
     if(!record||data.recordingActive&&data.sessionId===id)return;
-    if(!confirm('Aufnahme „'+(record.name||'Unbenannt')+'“ und alle zugehörigen Kontrollversuche wirklich löschen? Deine normalen Pencil-Notizen und Bewertungen bleiben erhalten.'))return;
+    if(!confirm('Aufnahme „'+(record.name||'Unbenannt')+'“ lokal löschen? Dateien, die bereits auf GitHub liegen, bleiben dort erhalten.'))return;
     const affected=memory.attempts.filter(x=>x.sessionId===id);
     try{
       if(db){
@@ -901,6 +1086,14 @@
       const title=document.createElement('strong');title.textContent=ses.name||(ses.recording?'Unbenannte Aufnahme':'Früherer Lerndurchgang');
       const meta=document.createElement('small');meta.textContent=dateString(ses.startedAt)+' · '+entries.length+' Versuche'+(ses.endedAt?'':' · läuft');
       info.append(title,meta);
+      if(ses.githubUploadedAt&&ses.githubRepo&&ses.githubPath){
+        const githubLink=document.createElement('a');
+        githubLink.href='https://github.com/'+ses.githubRepo+'/blob/'+(ses.githubCommitSha||'main')+'/'+ses.githubPath;
+        githubLink.target='_blank';githubLink.rel='noopener noreferrer';
+        githubLink.textContent='GitHub';githubLink.className='button';
+        buttons.append(githubLink);
+        meta.textContent+=' · synchronisiert';
+      }else if(ses.githubPending)meta.textContent+=' · GitHub ausstehend';
       const exportBtn=document.createElement('button');exportBtn.className='button';exportBtn.textContent='ZIP exportieren';exportBtn.disabled=!entries.length;exportBtn.onclick=()=>exportSession(ses.id);
       const deleteBtn=document.createElement('button');
       deleteBtn.className='button recording-delete';
@@ -914,13 +1107,7 @@
   // Offline-Paket ist die vollständige App-Shell; Lernstände bleiben ausschließlich
   // in IndexedDB/localStorage und werden NIE in den App-Cache geschrieben.
   let offlinePrepared=false;
-  function setNetworkState(){
-    const el=$('networkStatus');if(!el)return;
-    const online=navigator.onLine;
-    el.classList.toggle('is-offline',!online);
-    el.classList.remove('is-warning');
-    el.textContent=online?(offlinePrepared?'Online · Offline bereit':'Online · Offline wird vorbereitet'):(offlinePrepared?'Offline · Lernen möglich':'Offline · Daten prüfen');
-  }
+  function setNetworkState(){}
   async function prepareOffline(showMessage=false){
     const label=$('offlineSaveStatus');
     try{
@@ -953,7 +1140,7 @@
         const button=$('updateAppBtn');
         button.textContent='Neue Version laden';
         button.classList.add('is-update-ready');
-        $('networkStatus').textContent='Online · Update verfügbar';
+        
         // Nur Hintergrund-Download. Während einer Stiftskizze NIEMALS automatisch reloaden.
         if('serviceWorker' in navigator){
           const registration=await navigator.serviceWorker.getRegistration();
@@ -1021,15 +1208,18 @@
     document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',async()=>{selected.mode=b.dataset.mode;selected.seen.clear();selected.history=[];document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('is-active',x===b));await advance();}));
     $('topicFilter').addEventListener('change',async e=>{selected.topic=e.target.value;selected.seen.clear();selected.history=[];await advance();});$('typeFilter').addEventListener('change',async e=>{selected.type=e.target.value;selected.seen.clear();selected.history=[];await advance();});$('prevBtn').onclick=goBack;$('skipBtn').onclick=()=>nextCard(true);$('showAllBtn').onclick=async()=>{selected.mode='all';selected.seen.clear();selected.history=[];document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.mode==='all'));await advance();};
     $('showSolutionBtn').onclick=()=>{selected.revealed=!selected.revealed;$('solutionContent').classList.toggle('is-hidden',!selected.revealed);$('showSolutionBtn').textContent=selected.revealed?'Musterlösung ausblenden':'Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded',String(selected.revealed));if(selected.revealed)math();};
-    document.querySelectorAll('[data-rating]').forEach(b=>b.onclick=()=>grade(b.dataset.rating));$('recordingStartBtn').onclick=startRecording;$('recordingStopBtn').onclick=stopRecording;$('recordingsBtn').onclick=async()=>{await sessionList();$('settingsDialog').showModal();};$('recordingNameForm').onsubmit=e=>{e.preventDefault();void saveRecordingName(false);};$('saveAndExportRecordingBtn').onclick=()=>{void saveRecordingName(true);};$('recordingNameDialog').addEventListener('cancel',e=>{e.preventDefault();void saveRecordingName(false);});$('exportSessionBtn').onclick=()=>exportSession();$('exportSessionBtn2').onclick=()=>exportSession();$('footerExport').onclick=()=>exportSession();
+    document.querySelectorAll('[data-rating]').forEach(b=>b.onclick=()=>grade(b.dataset.rating));$('recordingStartBtn').onclick=startRecording;$('recordingStopBtn').onclick=stopRecording;$('recordingsBtn').onclick=async()=>{await sessionList();showGitHubConfig();$('settingsDialog').showModal();};$('recordingNameForm').onsubmit=e=>{e.preventDefault();void saveRecordingName(false);};$('saveAndExportRecordingBtn').onclick=()=>{void saveRecordingName(true);};$('recordingNameDialog').addEventListener('cancel',e=>{e.preventDefault();void saveRecordingName(false);});$('exportSessionBtn').onclick=()=>exportSession();$('exportSessionBtn2').onclick=()=>exportSession();
+    $('githubSyncSave').onclick=saveGitHubConfig;
+    $('githubSyncRemove').onclick=removeGitHubConfig;
+    $('githubSyncNow').onclick=queueOldRecordings;
     $('penBtn').onclick=()=>tool('pen');$('eraserBtn').onclick=()=>tool('eraser');document.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{ink.color=b.dataset.color;document.querySelectorAll('[data-color]').forEach(x=>x.classList.toggle('is-active',x===b));tool('pen');});$('strokeWidth').onchange=e=>ink.width=Number(e.target.value);$('undoBtn').onclick=undo;$('redoBtn').onclick=redo;
     $('clearBtn').onclick=()=>{if(!ink.strokes.length)return;if(!confirm('Alle Striche auf diesem Blatt löschen? Frühere exportierte Versuche bleiben bestehen.'))return;ink.undo.push(ink.strokes.slice());ink.strokes=[];ink.redo=[];renderInk();saveInk();};
     $('offlineSaveBtn').onclick=async()=>{const b=$('offlineSaveBtn');b.disabled=true;try{await prepareOffline(true);}finally{b.disabled=false;}};
-    $('sheetStyle').onchange=e=>{data.settings.sheetStyle=e.target.value;storeData();configureSheet();};$('sheetHeight').onchange=e=>{const h=Number(e.target.value);if(Number.isFinite(h))setCardSheetHeight(h);};$('extendSheetBtn').onclick=()=>setCardSheetHeight(cardSheetHeight()+400);$('updateAppBtn').onclick=refreshApp;
-    $('cardFavoriteBtn').onclick=()=>selected.current&&changeFavorite(selected.current);$('cardDisableBtn').onclick=()=>selected.current&&changeDisabled(selected.current);$('cardEditBtn').onclick=()=>selected.current&&openEditor(selected.current);
+    $('sheetStyle').onchange=e=>{data.settings.sheetStyle=e.target.value;storeData();configureSheet();};$('sheetHeight').onchange=e=>{const h=Number(e.target.value);if(Number.isFinite(h))setCardSheetHeight(h);};$('updateAppBtn').onclick=refreshApp;
+    $('cardMarkBtn').onclick=()=>selected.current&&changeMarked(selected.current);$('cardFavoriteBtn').onclick=()=>selected.current&&changeFavorite(selected.current);$('cardDisableBtn').onclick=()=>selected.current&&changeDisabled(selected.current);$('cardEditBtn').onclick=()=>selected.current&&openEditor(selected.current);
     $('libraryBtn').onclick=()=>{renderLibrary();$('libraryDialog').showModal();};$('closeLibraryBtn').onclick=()=>$('libraryDialog').close();$('librarySearch').oninput=renderLibrary;$('libraryFilter').onchange=renderLibrary;
     $('editCardForm').onsubmit=saveEditor;$('closeEditorBtn').onclick=closeEditor;$('resetCardBtn').onclick=resetEditor;$('editorDialog').addEventListener('close',()=>editingCardId=null);
-    $('settingsBtn').onclick=async()=>{$('pencilOnly').checked=!!data.settings.pencilOnly;await sessionList();$('settingsDialog').showModal();};$('closeSettingsBtn').onclick=()=>$('settingsDialog').close();$('pencilOnly').onchange=e=>{data.settings.pencilOnly=e.target.checked;storeData();configureSheet();};$('exportBackupBtn').onclick=exportBackup;$('importBackup').onchange=e=>{if(e.target.files?.[0])importBackup(e.target.files[0]);e.target.value='';};
+    $('settingsBtn').onclick=async()=>{$('pencilOnly').checked=!!data.settings.pencilOnly;await sessionList();showGitHubConfig();$('settingsDialog').showModal();};$('closeSettingsBtn').onclick=()=>$('settingsDialog').close();$('pencilOnly').onchange=e=>{data.settings.pencilOnly=e.target.checked;storeData();configureSheet();};$('exportBackupBtn').onclick=exportBackup;$('importBackup').onchange=e=>{if(e.target.files?.[0])importBackup(e.target.files[0]);e.target.value='';};
     window.addEventListener('resize',resizeInk);document.addEventListener('visibilitychange',()=>{if(document.hidden)finishInk();});document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();e.shiftKey?redo():undo();}});
   }
   async function init(){try{$('appVersion').textContent='App V'+APP_VERSION.split('.').slice(2).join('.');status('Lade Karten …');loadData();db=await openDB();if(!db){storageError=true;status('Speicher eingeschränkt – Backup wichtig',true);try{memory.attempts=JSON.parse(localStorage.getItem('hm3-fallback-attempts')||'[]');memory.sessions=JSON.parse(localStorage.getItem('hm3-fallback-sessions')||'[]');}catch{}}
@@ -1046,14 +1236,14 @@
          data.proofStudy=null;storeData();
        }
      }
-     updateQuizChrome();updateProofChrome();await advance();await updateSessionInfo();if(!storageError)status('');
+     resumeSheetOnce=true;updateQuizChrome();updateProofChrome();await advance();await updateSessionInfo();void syncPendingRecordings();if(!storageError)status('');
   }catch(e){console.error(e);status('Start fehlgeschlagen',true);$('cardQuestion').textContent=e.message;}}
   init();
   // Automatische Hintergrund-Prüfung, sobald die PWA geöffnet oder wieder online ist.
   window.addEventListener('load',()=>{setNetworkState();void prepareOffline(false);void checkForUpdates(true);});
-  window.addEventListener('online',()=>{setNetworkState();void prepareOffline(false);void checkForUpdates(true);});
+  window.addEventListener('online',()=>{setNetworkState();void prepareOffline(false);void checkForUpdates(true);void syncPendingRecordings();});
   window.addEventListener('offline',()=>setNetworkState());
   document.addEventListener('visibilitychange',()=>{
-    if(!document.hidden&&navigator.onLine)void checkForUpdates(false);
+    if(!document.hidden&&navigator.onLine){void checkForUpdates(false);void syncPendingRecordings();}
   });
 })();

@@ -19,7 +19,7 @@
 <div class="layout">
   <header class="topbar">
     <div class="brand"><div class="brandmark" aria-hidden="true">∫</div><div><strong>HM3 Theorie Basti</strong><span>Höhere Mathematik III · TU Dortmund</span></div></div>
-    <div class="top-actions"><span class="save-status" id="saveStatus" role="alert" hidden></span><span class="network-status" id="networkStatus" role="status">Offline-Modus wird geprüft …</span><button class="button" id="updateAppBtn" title="Auf neue Version prüfen und neu laden">App aktualisieren</button><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
+    <div class="top-actions"><span class="save-status" id="saveStatus" role="alert" hidden></span><button class="button" id="updateAppBtn" title="Auf neue Version prüfen und neu laden">App aktualisieren</button><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
   </header>
 
   <div class="quiz-toolbar is-hidden" id="quizToolbar"><strong id="quizRoundLabel">Abfrage</strong><span id="quizProgress">0 / 0</span><button class="button" id="quizExitBtn">Abfrage beenden</button></div>
@@ -35,11 +35,7 @@
         <button class="button ink-mode-choice" id="inkModeBtn" type="button" aria-pressed="false">Schreiben</button>
         <button class="button ink-mode-choice" id="inkScrollBtn" type="button" aria-pressed="false">Scrollen</button>
       </div>
-      <div class="ink-navigation" role="group" aria-label="Seite und Blatt steuern">
-        <button class="button ink-nav-button" id="scrollUpBtn" type="button" title="Seite nach oben">↑ Hoch</button>
-        <button class="button ink-nav-button" id="scrollDownBtn" type="button" title="Seite nach unten">↓ Runter</button>
-        <button class="button ink-nav-button" id="extendSheetBtn" type="button" title="400 Pixel Schreibfläche hinzufügen">+ Blatt</button>
-      </div>
+
     </div>
     <div class="sessionactions"><button class="button button-primary" id="quizStartBtn">Abfrage starten</button><button class="button" id="proofStartBtn">Beweise lernen</button><span class="overline recording-live" id="recordingStatus" hidden>● Aufnahme läuft</span><button class="button button-primary" id="recordingStartBtn">● Aufnahme starten</button><button class="button recording-stop" id="recordingStopBtn" disabled>■ Stopp</button><button class="button" id="recordingsBtn">Aufnahmen</button><button class="button" id="exportSessionBtn" disabled>Letzte Aufnahme exportieren</button></div>
   </div>
@@ -73,7 +69,7 @@
           <button class="button button-primary" id="proofNextBtn">Weiter</button>
         </div>
       </section>
-      <div class="card-eyebrow"><span id="cardTopic">V01</span><div class="card-context"><span id="cardSource">Quelle</span><button class="card-small-button" id="cardFavoriteBtn" aria-label="Als Favorit markieren" aria-pressed="false" title="Favorit">☆</button><button class="card-small-button" id="cardDisableBtn" title="Karte aus dem Lernen nehmen">Deaktivieren</button></div></div>
+      <div class="card-eyebrow"><span id="cardTopic">V01</span><div class="card-context"><span id="cardSource">Quelle</span><button class="card-small-button" id="cardFavoriteBtn" aria-label="Als Favorit markieren" aria-pressed="false" title="Favorit">☆</button><button class="card-small-button" id="cardMarkBtn" aria-label="Frage markieren" aria-pressed="false">Markieren</button><button class="card-small-button" id="cardDisableBtn" title="Karte aus dem Lernen nehmen">Deaktivieren</button></div></div>
       <h1 class="card-question" id="cardQuestion">Die Karten werden geladen …</h1>
       <div class="card-buttons"><button class="button" id="prevBtn">Zurück</button><button class="button" id="skipBtn">Überspringen</button><button class="button button-quiet" id="cardEditBtn">Bearbeiten</button></div>
       <div class="solution-section">
@@ -100,7 +96,7 @@
         <div class="toolset toolbar-end"><button class="tool" id="undoBtn" aria-label="Rückgängig">Rückgängig</button><button class="tool" id="redoBtn" aria-label="Wiederholen">Wiederholen</button><button class="tool" id="clearBtn">Löschen</button></div>
       </div>
       <div class="sheet sheet-grid" id="sheet"><canvas id="inkCanvas" aria-label="Freie Schreibfläche für Apple Pencil"></canvas><canvas id="eraserOverlay" aria-hidden="true"></canvas></div>
-      <div class="sheet-foot"><label>Vorlage <select id="sheetStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="blank">Blanko</option></select></label><label>Blattlänge <select id="sheetHeight"><option value="520">Kurz</option><option value="800">Normal</option><option value="1250">Lang</option><option value="1850">Sehr lang</option><option value="custom">Individuell</option></select></label><span id="sheetLengthInfo" aria-live="polite">800 px · pro Karte</span><span>Notizen je Karte gespeichert</span></div>
+      <div class="sheet-foot"><label>Vorlage <select id="sheetStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="blank">Blanko</option></select></label><label>Blattlänge <select id="sheetHeight"><option value="520">Kurz</option><option value="800">Normal</option><option value="1250">Lang</option><option value="1850">Sehr lang</option><option value="custom">Individuell</option></select></label><span id="sheetLengthInfo" aria-live="polite">800 px</span></div>
     </section>
   </div>
   <section id="quizSummary" class="quiz-summary is-hidden" aria-label="Abfrageergebnis">
@@ -118,7 +114,7 @@
     </div>
   </section>
   <section id="emptyState" class="empty is-hidden"><h2>Keine Karte in dieser Auswahl</h2><p>Du kannst zu „Alle Karten“ wechseln oder deine Filter ändern.</p><button class="button button-primary" id="showAllBtn">Alle Karten anzeigen</button></section>
-  <footer>Stand: V01–V06 · Beweise &nbsp;·&nbsp; Persönliche Daten bleiben lokal auf dem iPad &nbsp;·&nbsp; <span id="appVersion">App-Version</span> &nbsp;·&nbsp; <button class="text-button" id="footerExport">Letzte Aufnahme exportieren</button></footer>
+  <footer><span id="appVersion">App-Version</span></footer>
 </div>
 
 <dialog id="proofSelectDialog" class="settings proof-select-dialog" aria-labelledby="proofSelectTitle">
@@ -139,10 +135,10 @@
   </form>
 </dialog>
 <dialog id="libraryDialog" class="settings card-library" aria-labelledby="libraryTitle">
-  <div class="dialog-title"><div><h2 id="libraryTitle">Alle Karteikarten</h2><p>Durchsuchen, favorisieren, deaktivieren oder bearbeiten.</p></div><button class="button button-quiet" id="closeLibraryBtn">Schließen</button></div>
-  <div class="library-controls"><label class="library-search">Suche <input id="librarySearch" type="search" placeholder="Frage, Antwort, Thema oder Quelle …" autocomplete="off"></label><label>Status <select id="libraryFilter"><option value="all">Alle Karten</option><option value="active">Aktiv</option><option value="favorite">Favoriten</option><option value="disabled">Deaktiviert</option></select></label></div>
+  <div class="dialog-title"><div><h2 id="libraryTitle">Alle Karteikarten</h2></div><button class="button button-quiet" id="closeLibraryBtn">Schließen</button></div>
+  <div class="library-controls"><label class="library-search">Suche <input id="librarySearch" type="search" placeholder="Frage, Antwort, Thema oder Quelle …" autocomplete="off"></label><label>Status <select id="libraryFilter"><option value="all">Alle Karten</option><option value="active">Aktiv</option><option value="favorite">Favoriten</option><option value="marked">Markierte Fragen</option><option value="disabled">Deaktiviert</option></select></label></div>
   <div class="library-summary" id="libraryCount" aria-live="polite">–</div><div id="libraryList" class="library-list"></div>
-  <p class="small-note">Die ursprünglichen Karten bleiben erhalten. Eigene Textänderungen sind im Gesamtbackup enthalten.</p>
+  
 </dialog>
 <dialog id="editorDialog" class="settings card-editor" aria-labelledby="editorTitle">
   <div class="dialog-title"><div><h2 id="editorTitle">Karte bearbeiten</h2><p id="editorHint">Frage und Musterlösung</p></div><button class="button button-quiet" id="closeEditorBtn">Schließen</button></div>
@@ -150,20 +146,31 @@
 </dialog>
 <dialog id="settingsDialog" class="settings">
   <div class="dialog-title"><h2>Einstellungen und Sicherung</h2><button class="button button-quiet" id="closeSettingsBtn">Schließen</button></div>
-  <p>Normale Notizen bleiben als Entwurf auf dem iPad. Nur bei einer laufenden Aufnahme werden Antworten und neu gezeichnete Stiftstriche für die spätere Kontrolle separat archiviert.</p>
+  
   <label class="checkrow"><input type="checkbox" id="pencilOnly" checked> Nur mit Apple Pencil zeichnen (Auto: Finger und Handballen auf dem Blatt ignorieren)</label>
   <section class="offline-settings"><h3>Offline lernen</h3>
-    <p>Fragen, Formeln und App-Dateien werden auf diesem iPad zwischengespeichert. Skizzen und Lernstand bleiben lokal – auch ohne Internet. Bei der nächsten Verbindung prüft die App auf neue Versionen.</p>
+    
     <button class="button" type="button" id="offlineSaveBtn">Alle Offline-Dateien sichern</button>
     <span id="offlineSaveStatus" role="status"></span>
   </section>
   <div class="dialog-actions"><button class="button button-primary" id="exportSessionBtn2">Letzte Aufnahme als ZIP</button><button class="button" id="exportBackupBtn">Gesamtes Backup (JSON)</button><label class="button file-label">Backup wiederherstellen <input type="file" id="importBackup" accept=".json,application/json" hidden></label></div>
+
+  <section class="github-settings" aria-labelledby="githubSyncTitle">
+    <h3 id="githubSyncTitle">GitHub-Aufnahmen</h3>
+    <label class="checkrow"><input id="githubSyncEnabled" type="checkbox"> Aufnahmen automatisch synchronisieren</label>
+    <label class="editor-field">Zielrepository <input id="githubSyncRepo" type="text" autocomplete="off" spellcheck="false" value="BastianGasper/hm3-theorie-aufnahmen" placeholder="Benutzer/privates-repository"></label>
+    <label class="editor-field">Fine-grained Token <input id="githubSyncToken" type="password" autocomplete="new-password" spellcheck="false" placeholder="github_pat_…"></label>
+    <label class="checkrow"><input id="githubSyncPublicConsent" type="checkbox"> Öffentliches Repository ausdrücklich erlauben</label>
+    <p class="small-note">Empfohlen: eigenes privates Repository. Token benötigt nur Contents: Read and write für dieses Repository. Das Token wird ausschließlich auf diesem iPad gespeichert, nicht exportiert. Wer Zugriff auf diese App-Daten erhält, könnte das Token auslesen.</p>
+    <div class="dialog-actions"><button class="button button-primary" id="githubSyncSave" type="button">GitHub-Sync speichern</button><button class="button" id="githubSyncNow" type="button">Jetzt synchronisieren</button><button class="button button-quiet" id="githubSyncRemove" type="button">Verbindung entfernen</button></div>
+    <p class="small-note" id="githubSyncStatus" role="status"></p>
+  </section>
   <h3>Gespeicherte Aufnahmen</h3><div id="sessionList" class="session-list"><p>Wird geladen …</p></div>
-  <p class="small-note">Sicherung ist wichtig: Safari kann lokale Websitedaten löschen. Ein Export lädt keine Daten automatisch hoch. Erst wenn du die ZIP hier im Chat hochlädst, kann ich deine Skizzen ansehen.</p>
+  <p class="small-note">Ein Gesamtbackup sichert deine lokalen Aufnahmen und Notizen.</p>
 </dialog>
 <dialog id="recordingNameDialog" class="settings recording-name-dialog" aria-labelledby="recordingNameTitle">
   <h2 id="recordingNameTitle">Aufnahme beendet</h2>
-  <p>Gib deiner Aufnahme einen Namen. Sie wird nur auf diesem iPad gespeichert, bis du sie ausdrücklich exportierst.</p>
+
   <form id="recordingNameForm">
     <label class="editor-field">Name der Aufnahme <input type="text" id="recordingNameInput" maxlength="100" required placeholder="Zum Beispiel: HöMa3 Testat – Peano und Picard"></label>
     <div class="editor-actions"><button class="button button-primary" type="submit" id="saveRecordingNameBtn">Speichern</button><button class="button" type="button" id="saveAndExportRecordingBtn">Speichern und ZIP exportieren</button></div>
