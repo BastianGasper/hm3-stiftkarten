@@ -1,12 +1,31 @@
 'use strict';
-const CACHE='hm3-stiftkarten-v5-20261029';
+const CACHE='hm3-stiftkarten-v6-20261030';
 const SHELL=['./','./index.html','./style.css','./app.js','./cards.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('hm3-stiftkarten-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  const url=new URL(e.request.url);if(url.origin!==self.location.origin)return;
-  const isDeck=url.pathname.endsWith('/cards.json');
-  if(isDeck){e.respondWith(fetch(e.request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(e.request,copy));}return response;}).catch(()=>caches.match(e.request)));return;}
-  e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(response=>{if(response.ok)caches.open(CACHE).then(cache=>cache.put(e.request,response.clone()));return response;})));
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('hm3-stiftkarten-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting();});
+self.addEventListener('fetch',event=>{
+  const request=event.request;
+  if(request.method!=='GET')return;
+  const url=new URL(request.url);
+  if(url.origin!==self.location.origin)return;
+  const fresh= request.mode==='navigate'||['index.html','app.js','style.css','cards.json','manifest.webmanifest'].some(p=>url.pathname.endsWith('/'+p));
+  if(fresh){
+    event.respondWith(
+      fetch(request,{cache:'no-store'}).then(response=>{
+        if(response.ok){const copy=response.clone();event.waitUntil(caches.open(CACHE).then(cache=>cache.put(request,copy)));}
+        return response;
+      }).catch(async()=>{
+        const cached=await caches.match(request,{ignoreSearch:true});
+        if(cached)return cached;
+        if(request.mode==='navigate')return caches.match('./index.html');
+        return Response.error();
+      })
+    );
+    return;
+  }
+  event.respondWith(caches.match(request).then(cached=>cached||fetch(request).then(response=>{
+    if(response.ok){const copy=response.clone();event.waitUntil(caches.open(CACHE).then(cache=>cache.put(request,copy)));}
+    return response;
+  })));
 });
