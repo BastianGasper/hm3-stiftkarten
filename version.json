@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-30.17.1",
+  "version": "2026-10-30.18",
   "released": "2026-10-30",
   "features": [
     "Glatte Stiftkurven",
@@ -17,6 +17,7 @@
     "Schlankes Layout ohne erklärende Texte und ohne überlagernde Bedienelemente; neuer App-Name",
     "63 vorlesungsnahe Verständnis-, Methoden- und Beweiskarten; zufällige, individuell gefilterte Abfrage mit persistentem Gesamtresultat",
     "Beweislernmodus in 5 Stufen mit 29 mathematisch ausgearbeiteten Beweisen, eigenen iPad-Notizen je Stufe; 41 vertiefte Karten einschließlich 13 Testataufgaben",
-    "Mathematische Notation in Kartentexten korrigiert; 1142 LaTeX-Ausdrücke validiert"
+    "Mathematische Notation in Kartentexten korrigiert; 1142 LaTeX-Ausdrücke validiert",
+    "Unsichtbare linke 20%-Scrollzone in allen Eingabemodi; 58 mathematische Vorbereitungsseiten vor 145 Beweisschritten; 25 umfassendere Testatfragen mit Zusatzwissen und Transferbeispielen"
   ]
 }

@@ -137,3 +137,13 @@ Keine Telemetrie, keine Konten. ZIP wird im Browser erstellt; kein Netztransfer 
 
 - LaTeX-Ungleichungen (insbesondere `\\ne0`) bleiben unversehrt. Eine falsch formatierte Zustandsraum-Matrix wurde korrigiert.
 - Der gesamte neue Fragen-/Beweiskatalog wurde zusätzlich mit MathJax auf 1.142 mathematische Ausdrücke geprüft (keine Formelsatz-Fehler).
+
+## V18: Unsichtbare Scrollzone, Beweisvorbereitung und vertiefte Lernkarten
+
+- Auf dem iPad beginnt **Finger-Scrollen im linken 20-%-Bereich der Bildschirmbreite**, in Auto, Schreiben und Scrollen. Kein sichtbarer Randstreifen oder Overlay. Startet die Geste außerhalb dieses Bereichs, bleibt die Seite gesperrt. Ein Tap auf dort liegende Buttons bleibt ein Tap; erst die Bewegung löst das Scrollen aus. Während eines laufenden Pencil-Strichs wird nicht gescrollt. Dialoge behalten ihre eigene Navigation. Die bisherigen ↑/↓-Buttons funktionieren weiterhin.
+- **Beweise lernen:** Vor den fünf eigentlichen Stufen erscheinen jetzt zwei eigenständige vorbereitende Informationsseiten je Beweis: **Einordnung** und **Mathematischer Werkzeugkasten**. Inhaltlich sind sie aus vorhandenen V01–V06/Übungsnachweisen und den mathematisch kenntlich gemachten Ergänzungen abgeleitet. Erst nach „Beweis beginnen“ kommt **Problem → Behauptung → Voraussetzungen → Ansatz → Durchführung** mit eigener Schreibfläche je Schritt. Zurück funktioniert bis zu den Infoseiten; Position und Zustand bleiben lokal gespeichert.
+- **25 statt 41 Karten** (17 in V01–V06 + 8 Testat). Jede Karte umfasst eine mehrteilige Kernaufgabe und eine zusätzliche prüfungsartige Anforderung. Die Musterlösungen enthalten einen ausführlicheren Begründungs-/Herleitungsteil. **Hintergrund** und **Beispiel / Transfer** sind erst nach Aufdecken der Antwort separat ausklappbar. Neue Inhalte benutzen keine rein deklarativen Stichwortantworten.
+- **Datenmigration:** Beibehaltene Karten behalten ihre IDs, Stiftblätter und Favoriten. Alte, herausgenommene Karten liegen archiviert unter `archive/cards-v17.json`; ihre früheren Notizen verbleiben im iPad-Speicher. Die Beweisnotiz-IDs bleiben unverändert. Auch im lokalen Ersatzspeicher werden beim Gesamtbackup sämtliche Notizschlüssel (einschließlich Beweisen und archivierter Karten) berücksichtigt.
+- **Offline**: `cards.json` und `proofs.json` bleiben Bestandteil des Service-Worker-Pakets. Es werden keine persönlichen Notizen auf GitHub hochgeladen. Vor größeren Updates bitte ein JSON-Gesamtbackup erstellen.
+
+Hinweis: Vorlesungsnachweise sind von mathematisch ergänzten Vollbeweisen unterscheidbar. Die Fragen bauen auf den bislang verfügbaren Mitschriften und zugeordneten Übungsnachweisen auf; neue Unterlagen können später gezielt ergänzt werden.

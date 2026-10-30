@@ -30,6 +30,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Sei \\(y\\) eine skalare Lösung. Mit \\(Y_k=y^{(k-1)}\\) gilt für \\(k<n\\): \\(Y_k\\prime=y^{(k)}=Y_{k+1}\\). Außerdem \\(Y_n\\prime=y^{(n)}=f(x,Y_1,\\ldots,Y_n)\\); die Anfangswerte übertragen sich. Umgekehrt erfülle \\(Y\\) das System. Aus \\(Y_1\\prime=Y_2\\), \\(Y_2\\prime=Y_3\\), … folgt induktiv \\(Y_k=Y_1^{(k-1)}\\). Die letzte Systemgleichung ergibt \\(Y_1^{(n)}=f(x,Y_1,\\ldots,Y_1^{(n-1)})\\), und \\(Y_1^{(k)}(x_0)=a_k\\). Somit ist \\(y:=Y_1\\) die gesuchte skalare Lösung."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Der Zustand \\(Y=(y,y',\\ldots,y^{(n-1)})^T\\) bündelt sämtliche bis zur Ordnung \\(n-1\\) relevanten Ableitungen. Die Transformation ist eine Äquivalenz von AWP-Lösungen, nicht bloß eine notwendige Bedingung.\n\nAus einer einzelnen Gleichung \\(y^{(n)}=f(x,y,\\ldots,y^{(n-1)})\\) soll ein AWP für einen Vektor gewonnen werden. Eine Richtung alleine genügt nicht."
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für \\(n=3\\): \\(Y_1'=Y_2,\\ Y_2'=Y_3,\\ Y_3'=f(x,Y_1,Y_2,Y_3)\\). Prüfe in beiden Richtungen, dass die Regularität und alle drei Anfangswerte erhalten bleiben.\n\nVoraussetzungen aus der Einheit: Explizite Normalform, gemeinsame Anfangsstelle \\(x_0\\in I\\), passende Differenzierbarkeit; die Umformung behauptet keine zusätzliche Existenz."
+      }
     ]
   },
   {
@@ -62,6 +72,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Aus \\(y\\prime(t)=f(t,y(t))\\) folgt \\(\\int_{x_0}^{x} y\\prime(t)\\,dt=\\int_{x_0}^{x}f(t,y(t))\\,dt\\), also \\(y(x)-y(x_0)=\\int_{x_0}^{x}f(t,y(t))\\,dt\\). Die Anfangsbedingung liefert die Integralform. Umgekehrt ergibt Einsetzen von \\(x=x_0\\) unmittelbar \\(y(x_0)=y_0\\). Da \\(t\\mapsto f(t,y(t))\\) stetig ist, folgt durch Ableiten nach dem Hauptsatz \\(y\\prime(x)=f(x,y(x))\\). Beide Richtungen sind bewiesen."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Eine Differentialgleichung erster Ordnung legt die Tangentensteigung fest. Die Integralform bündelt dieselbe Information einschließlich des Anfangswertes in einer Funktionalgleichung.\n\nWie wird aus \\(y\\prime=f(x,y)\\) ein Fixpunktproblem für eine Funktion? Beide Richtungen müssen gezeigt werden."
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Der Hauptsatz liefert \\(\\frac{d}{dx}\\int_{x_0}^x g(t)\\,dt=g(x)\\) für stetiges \\(g\\). Hier ist \\(g(t)=f(t,y(t))\\). Für die Rückrichtung muss \\(g\\) stetig sein.\n\nVoraussetzungen aus der Einheit: \\(f\\) stetig auf geeignetem Definitionsgebiet, \\(y\\) mit Graph darin, Intervall \\(I\\) enthält \\(x_0\\); Hauptsatz der Differential- und Integralrechnung."
       }
     ]
   },
@@ -96,6 +116,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Für \\(y\\neq z\\) gibt es nach dem Mittelwertsatz \\(\\xi\\) zwischen \\(y\\) und \\(z\\), sodass \\(f(x,z)-f(x,y)=\\partial_y f(x,\\xi)(z-y)\\). Daher \\(|f(x,z)-f(x,y)|\\le L|z-y|\\). Für \\(y=z\\) ist die Aussage trivial. Die Konstante \\(L\\) ist unabhängig von \\(x,y,z\\) im Rechteck; genau das wird benötigt."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Lipschitz in \\(y\\) bedeutet eine uniforme lineare Schranke für die Änderung von \\(f\\) bei Variation ausschließlich des Zustandsarguments – das ist stärker als bloße Stetigkeit.\n\nDie Lipschitz-Bedingung ist für Picard-Lindelöf entscheidend. Wie lässt sie sich im skalaren Fall aus \\(f_y\\) nachweisen?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für festes \\(x\\): \\(|f(x,z)-f(x,y)|\\le \\sup_{u\\in[y,z]}|\\partial_y f(x,u)|\\,|z-y|\\). Der Abschnitt muss ganz im Definitionsbereich liegen; die Konstante darf nicht vom konkreten \\(x,y,z\\) abhängen.\n\nVoraussetzungen aus der Einheit: Für festes \\(x\\) stetige Differenzierbarkeit im zweiten Argument; der ganze Abschnitt zwischen \\(y\\) und \\(z\\) bleibt im Rechteck; eine einheitliche Schranke \\(L\\)."
+      }
     ]
   },
   {
@@ -128,6 +158,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Die Vorlesungsargumentation: Für Schrittweite \\(h\\) konstruiere stückweise lineare Näherungen mit Steigungen \\(f(x_k,y_k)\\). Wegen \\(|f|\\le M\\) gilt \\(|y_h(x)-y_0|\\le M|x-x_0|\\le b\\), wenn \\(|x-x_0|\\le\\alpha\\). Alle Polygonzüge sind somit gleichmäßig beschränkt und \\(M\\)-Lipschitz. Der letzte Schritt – Existenz eines gleichmäßig konvergenten Teilzugs und Identifikation seines Grenzwerts als Integralgleichungslösung – wird in V02 nur skizziert; er wird im nächsten, ausdrücklich ergänzenden Beweis vollständig geführt."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Peano ist ein Existenzsatz ohne Eindeutigkeitsbehauptung. Ein Polygonzug approximiert die Steigung am linken Rand jedes Teilintervalls; der analytische Hauptschritt ist ein Grenzübergang.\n\nStetigkeit von \\(f\\) soll lokale Existenz einer Lösung liefern, ohne Lipschitz vorauszusetzen. Die Vorlesung skizziert das Polygonzugverfahren; der Kompaktheitsschritt wird dort nicht vollständig ausgeführt."
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Auf \\(R=[x_0-a,x_0+a]\\times[y_0-b,y_0+b]\\) sind \\(|f|\\le M\\) und gleichmäßige Stetigkeit verfügbar. Der Bereich \\(h\\le b/M\\) hält die Polygonzüge im Rechteck; daraus allein folgt noch keine Konvergenz jeder einzelnen Folge.\n\nVoraussetzungen aus der Einheit: \\(R\\) kompakt, \\(f\\) stetig und deshalb beschränkt und gleichmäßig stetig; Euler-Polygonzüge und ein Grenzübergang werden verwendet. Eindeutigkeit ist nicht behauptet."
       }
     ]
   },
@@ -162,6 +202,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Für \\(M=0\\) ist \\(y\\equiv y_0\\) eine Lösung. Sei \\(M>0\\). Wähle Gitterweiten \\(h_m=\\alpha/m\\) und konstruiere vorwärts \\(y_m(x_{k+1})=y_m(x_k)+h_m f(x_k,y_m(x_k))\\), entsprechend rückwärts, mit linearer Interpolation. Induktiv \\(|y_m(x)-y_0|\\le M|x-x_0|\\le b\\); alle Stützstellen bleiben in \\(R\\). Die interpolierten Kurven sind \\(M\\)-Lipschitz und gleichmäßig beschränkt. Nach Arzelà–Ascoli besitzt eine Teilfolge \\(y_{m_j}\\) einen auf \\(I\\) gleichmäßig konvergenten Grenzwert \\(y\\). Schreibe \\(\\tau_m(t)\\) für den jeweils benutzten linken bzw. rechten Gitterpunkt. Dann gilt exakt \\(y_m(x)=y_0+\\int_{x_0}^{x} f(\\tau_m(t),y_m(\\tau_m(t)))\\,dt\\). Da \\(|t-\\tau_m(t)|\\le h_m\\) und \\(|y_m(t)-y_m(\\tau_m(t))|\\le Mh_m\\), folgt aus gleichmäßiger Stetigkeit von \\(f\\) und gleichmäßiger Konvergenz \\(f(\\tau_{m_j}(t),y_{m_j}(\\tau_{m_j}(t)))\\to f(t,y(t))\\) gleichmäßig. Der Grenzübergang unter dem Integral ergibt \\(y(x)=y_0+\\int_{x_0}^{x}f(t,y(t))\\,dt\\). Der Hauptsatz liefert \\(y\\prime=f(x,y)\\) und \\(y(x_0)=y_0\\). Damit ist Existenz bewiesen; Eindeutigkeit folgt daraus nicht."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Dies ist eine ausdrücklich ergänzende Vollbeweis-Version. Der Satz von Arzelà–Ascoli ist ein Kompaktheitssatz für gleichmäßig beschränkte und gleichgradig stetige Funktionen.\n\nWie beweist man den im Kurs skizzierten Grenzübergang bei stetigem, aber möglicherweise nicht Lipschitz-stetigem \\(f\\)?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Euler-Polygonzüge \\(p_n\\) erfüllen \\(|p_n(x)-p_n(z)|\\le M|x-z|\\). Daraus folgt gleichgradige Stetigkeit. Uniforme Konvergenz einer Teilfolge plus gleichmäßige Stetigkeit von \\(f\\) führt zur Integralgleichung.\n\nVoraussetzungen aus der Einheit: \\(f\\in C(R)\\) auf kompaktem Rechteck, \\(M=\\max_R|f|\\), \\(\\alpha=\\min(a,b/M)\\) bei \\(M>0\\); Arzelà–Ascoli und gleichmäßige Stetigkeit auf kompakten Mengen. Das Kompaktheitsargument ist eine Ergänzung, nicht im Wortlaut von V02."
+      }
     ]
   },
   {
@@ -194,6 +244,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Sei zunächst \\(x\\ge x_0\\) und \\(u(x)=|y(x)-z(x)|\\). Aus den Integralgleichungen und der Lipschitz-Bedingung folgt \\(u(x)\\le L\\int_{x_0}^x u(t)dt\\). Auf \\([x_0,x_0+a]\\) sei \\(u\\le C\\). Durch Induktion ergibt sich \\(u(x)\\le C L^n(x-x_0)^n/n!\\) für jedes \\(n\\in\\mathbb N_0\\): aus der Schranke für \\(n\\) folgt nach Einsetzen \\(u(x)\\le CL^{n+1}(x-x_0)^{n+1}/(n+1)!\\). Für \\(n\\to\\infty\\) geht die rechte Seite gegen null. Also \\(u(x)=0\\). Für \\(x\\le x_0\\) argumentiert man über Integrale mit umgekehrter Grenze bzw. durch Zeitumkehr identisch. Damit \\(y\\equiv z\\). Dieser Beweis zeigt Eindeutigkeit; die Existenz benötigt ein zusätzliches Argument."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Zwei Lösungen desselben AWPs müssen eine Grönwall-artige Differenzungleichung erfüllen. Der Beweis nutzt nicht, dass die Lösungen explizit bekannt wären.\n\nPeano garantiert keine Eindeutigkeit. Warum schließen zwei Lösungen bei zusätzlicher Lipschitz-Bedingung einander aus?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Setze \\(u(x)=|y(x)-z(x)|\\). Dann \\(u(x)\\le L\\int_{x_0}^x u(t)\\,dt\\) für \\(x\\ge x_0\\). Ein integrierender Faktor oder Iteration zeigt \\(u=0\\); links von \\(x_0\\) argumentiert man analog.\n\nVoraussetzungen aus der Einheit: Integralform beider Lösungen, gemeinsamer Anfangswert, gleichmäßiges Lipschitz-\\(L\\) auf dem betrachteten Rechteck; beide Lösungen sind beschränkt."
       }
     ]
   },
@@ -228,6 +288,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Setze \\(\\varphi_0=y_0\\), \\(\\varphi_{n+1}(x)=y_0+\\int_{x_0}^x f(t,\\varphi_n(t))dt\\). Aus \\(|f|\\le M\\) folgt \\(|\\varphi_{n+1}(x)-y_0|\\le Mh\\le b\\), sodass die Iterierten im Rechteck bleiben. Außerdem \\(|\\varphi_1-\\varphi_0|\\le M|x-x_0|\\). Induktiv folgt \\(|\\varphi_{n+1}(x)-\\varphi_n(x)|\\le ML^n|x-x_0|^{n+1}/(n+1)!\\). Die Reihe der Supremumsnormen ist durch \\(\\sum_{n\\ge0}ML^n h^{n+1}/(n+1)!<\\infty\\) majorisiert. Also konvergiert \\(\\varphi_n\\) gleichmäßig gegen stetiges \\(y\\). Die Lipschitz-Bedingung liefert \\(f(t,\\varphi_n(t))\\to f(t,y(t))\\) gleichmäßig, also \\(y(x)=y_0+\\int_{x_0}^x f(t,y(t))dt\\). Daraus folgt per Hauptsatz \\(y\\prime=f(x,y)\\), \\(y(x_0)=y_0\\). Die Eindeutigkeit ist im vorherigen Beweis nachgewiesen."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Existenz per Picard benötigt mehr als die bloße formale Schreibweise \\(\\varphi_{k+1}=T\\varphi_k\\): Man muss zeigen, dass die Iterierten im gewählten Funktionenraum bleiben und eine Cauchyfolge bilden.\n\nWie wird aus der Iterationsvorschrift \\(\\varphi_{n+1}=T(\\varphi_n)\\) tatsächlich eine Lösung? Eine Formel allein ist kein Konvergenzbeweis."
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Die Abschätzung \\(\\|\\varphi_{k+1}-\\varphi_k\\|_\\infty\\le \\frac{M L^k h^{k+1}}{(k+1)!}\\) liefert eine summierbare Majorante. Alternativ ist bei \\(Lh<1\\) der Fixpunktoperator eine Kontraktion.\n\nVoraussetzungen aus der Einheit: Rechteck mit \\(M=\\max|f|\\), \\(L\\) Lipschitz; Intervall \\(J=[x_0-h,x_0+h]\\), \\(h\\le\\min(a,b/M)\\); Start \\(\\varphi_0\\equiv y_0\\). Vollständigkeit von \\(C(J)\\) in Supremumsnorm."
+      }
     ]
   },
   {
@@ -260,6 +330,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Für \\(n=0\\) ist die Behauptung \\(\\varphi_0(x)=e\\cdot1=e\\) richtig. Sei sie für \\(n\\) gültig. Dann \\(\\varphi_{n+1}(x)=e+e\\int_1^x\\sum_{k=0}^n(t-1)^k/k!\\,dt=e+e\\sum_{k=0}^n(x-1)^{k+1}/(k+1)!\\). Mit \\(j=k+1\\) folgt \\(\\varphi_{n+1}(x)=e\\sum_{j=0}^{n+1}(x-1)^j/j!\\). Somit gilt die Formel für alle \\(n\\ge0\\). Mit der Exponentialreihe \\(\\varphi_n(x)\\to e\\,e^{x-1}=e^x\\)."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Die Picard-Iteration für \\(y'=y\\) erzeugt die Taylor-Partialsumme der Exponentialfunktion um den Anfangspunkt. Die mathematische Pflicht ist Induktion statt bloßes Erkennen eines Musters.\n\nBei \\(y\\prime=y\\), \\(y(1)=e\\) sollen die sukzessiven Approximationen exakt identifiziert werden."
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Integralrekursion: \\(\\varphi_{n+1}(x)=e+\\int_1^x\\varphi_n(t)\\,dt\\). Potenzenintegral: \\(\\int_1^x(t-1)^k/k!\\,dt=(x-1)^{k+1}/(k+1)!\\). Für den Grenzwert ist die Konvergenz der Exponentialreihe erforderlich.\n\nVoraussetzungen aus der Einheit: Picard-Rekursion, Integral einer Potenzfunktion und endliche Summen; vollständige Induktion mit sauberem Indexwechsel."
       }
     ]
   },
@@ -294,6 +374,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Aus Taylor für die exakte Lösung: \\(y(x_k+h)=y(x_k)+h y\\prime(x_k)+\\frac{h^2}{2}y\\prime\\prime(\\xi_k)\\) (bei hinreichender Glattheit). Mit \\(y\\prime(x_k)=f(x_k,y(x_k))\\) erhält man \\(y(x_k+h)=y(x_k)+h f(x_k,y(x_k))+O(h^2)\\). Lässt man den Term \\(O(h^2)\\) weg und ersetzt die exakte Lösung am Stützpunkt durch \\(Y_k\\), entsteht \\(Y_{k+1}=Y_k+h f(x_k,Y_k)\\). Die lokale Ein-Schritt-Abweichung ist bei ausreichender Glattheit \\(O(h^2)\\); daraus allein folgt ohne Stabilitätsargument keine globale Fehlerordnung."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Der explizite Euler-Schritt ersetzt die Tangente der unbekannten exakten Lösung durch diejenige am aktuellen Näherungspunkt. Ein Konsistenzargument ist kein Existenzbeweis.\n\nWie wird aus einer DGL eine numerische Rekursion, und welche Näherung wird dabei gemacht?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Aus Taylor \\(y(x+h)=y(x)+hy'(x)+\\frac{h^2}{2}y''(\\xi)\\) folgt bei hinreichender Glattheit lokaler Fehler \\(O(h^2)\\). Daraus allein folgt noch nicht ohne Stabilitätsargument der globale Fehler.\n\nVoraussetzungen aus der Einheit: Glatt genug, damit Taylor bzw. Differenzenquotient eingesetzt werden kann. Der methodische Ansatz ist eine Approximation, kein exakter Identitätsbeweis für endliches \\(h\\)."
+      }
     ]
   },
   {
@@ -326,6 +416,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\(L(\\alpha y+\\beta z)=(\\alpha y+\\beta z)^{(n)}+\\sum_{k=1}^n a_k(x)(\\alpha y+\\beta z)^{(n-k)}=\\alpha[y^{(n)}+\\sum_{k=1}^n a_k y^{(n-k)}]+\\beta[z^{(n)}+\\sum_{k=1}^n a_k z^{(n-k)}]=\\alpha L(y)+\\beta L(z)\\). Sind \\(L(y)=L(z)=0\\), so folgt \\(L(\\alpha y+\\beta z)=0\\); \\(\\ker L\\) ist daher ein Vektorraum."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Der homogene Differentialoperator ist eine lineare Abbildung auf einem geeigneten Raum differenzierbarer Funktionen. Das Prinzip der Superposition gilt nur für den homogenen Teil direkt.\n\nWieso ist der homogene Lösungsraum unter Addition und skalarer Multiplikation abgeschlossen?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für \\(L(y)=y^{(n)}+\\sum_{k=1}^{n}a_k(x)y^{(n-k)}\\) überprüfe \\(L(\\alpha y+\\beta z)=\\alpha L(y)+\\beta L(z)\\) termweise. Die Koeffizienten hängen nur von \\(x\\) ab.\n\nVoraussetzungen aus der Einheit: Koeffizienten \\(a_k\\) hängen nur von \\(x\\) ab; Ableitungen sind linear; die Aussage gilt über \\(\\mathbb R\\) bzw. \\(\\mathbb C\\) entsprechend."
       }
     ]
   },
@@ -360,6 +460,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Ist \\(h\\in\\ker L\\), so gilt \\(L(y_p+h)=L(y_p)+L(h)=s+0=s\\); damit \\(y_p+\\ker L\\subseteq\\{L=s\\}\\). Ist umgekehrt \\(L(y)=s\\), folgt \\(L(y-y_p)=L(y)-L(y_p)=s-s=0\\). Also \\(h=y-y_p\\in\\ker L\\) und \\(y=y_p+h\\). Somit auch die umgekehrte Inklusion und die Mengenidentität."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Eine inhomogene Lösungsmenge ist bei vorhandener partikulärer Lösung eine affine Verschiebung des homogenen Kerns. Eine Affinmenge darf nicht automatisch als Vektorraum bezeichnet werden.\n\nWarum ist das allgemeine Lösungsschema \\(y=y_p+y_h\\) vollständig und nicht bloß ein Weg, neue Lösungen zu erzeugen?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Mengenidentität: \\(\\{y:L(y)=s\\}=y_p+\\ker L\\). Für die Hinrichtung ist \\(L(y-y_p)=0\\) entscheidend, für die Rückrichtung \\(L(y_p+h)=s\\).\n\nVoraussetzungen aus der Einheit: Linearität von \\(L\\), Existenz einer bestimmten partikulären Lösung \\(y_p\\); keine weiteren Strukturannahmen nötig."
+      }
     ]
   },
   {
@@ -392,6 +502,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\(T\\) ist linear. Ist \\(T(y)=0\\), dann ist \\(y\\) eine Lösung des homogenen AWPs mit Null-Anfangswerten; wegen Eindeutigkeit ist \\(y\\equiv0\\). Also ist \\(T\\) injektiv. Umgekehrt liefert der Existenzsatz für jedes \\((a_0,\\ldots,a_{n-1})\\in\\mathbb K^n\\) eine Lösung des AWPs und damit \\(T(y)=a\\); also ist \\(T\\) surjektiv. Somit ist \\(T\\) ein Vektorraumisomorphismus, und \\(\\dim\\ker L=\\dim\\mathbb K^n=n\\)."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Die Lösung einer linearen DGL n-ter Ordnung ist durch ihren Vektor der \\(n\\) Anfangswerte eindeutig charakterisiert. Deshalb bestimmt der Anfangswertoperator die Dimension des Lösungsraums.\n\nWarum braucht ein Fundamentalsystem genau \\(n\\) Lösungen und warum bestimmen \\(n\\) Anfangswerte die Lösung?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Definiere \\(E:\\ker L\\to\\mathbb K^n,\\ y\\mapsto(y(x_0),\\ldots,y^{(n-1)}(x_0))\\). Eindeutigkeit zeigt Injektivität, Existenz Surjektivität; als linearer Isomorphismus liefert \\(E\\) die Dimension \\(n\\).\n\nVoraussetzungen aus der Einheit: Das lineare AWP mit \\(n\\) Anfangswerten ist auf \\(I\\) eindeutig lösbar (linearer Existenz- und Eindeutigkeitssatz)."
       }
     ]
   },
@@ -426,6 +546,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Schreibe \\(\\det A(x)=\\sum_{\\sigma\\in S_n}\\operatorname{sgn}(\\sigma)\\prod_{i=1}^n a_{i,\\sigma(i)}(x)\\). Ableiten und Produktregel liefert \\((\\det A)\\prime=\\sum_{\\sigma}\\operatorname{sgn}(\\sigma)\\sum_{j=1}^n a_{j,\\sigma(j)}\\prime\\prod_{i\\ne j}a_{i,\\sigma(i)}\\). Wegen endlicher Summen vertauschen wir die Reihenfolge: \\(=\\sum_{j=1}^n\\sum_{\\sigma}\\operatorname{sgn}(\\sigma)a_{j,\\sigma(j)}\\prime\\prod_{i\\ne j}a_{i,\\sigma(i)}\\). Die innere Summe ist die Determinante mit genau der Zeile \\(j\\) abgeleitet. Q.e.d."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Die Determinante ist in jeder Zeile linear. Daraus folgt eine Produktregel für Determinanten mit genau einem Ableitungsstrich pro Summand.\n\nDie Wronski-Determinante enthält nach \\(x\\) differenzierbare Zeilen. Warum darf man jeweils eine Zeile ableiten und dann die Determinanten addieren?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für \\(A(x)\\in C^1(I,\\mathbb K^{n\\times n})\\): \\((\\det A)'=\\sum_{k=1}^n\\det(A_1,\\ldots,A_{k-1},A_k',A_{k+1},\\ldots,A_n)\\). Achtung: Das ist nicht \\(\\det(A')\\).\n\nVoraussetzungen aus der Einheit: Determinante ist multilinear in jeder Zeile; für jedes Matrixelement existiert die Ableitung. Alternativ Leibniz-Formel mit Produktregel."
+      }
     ]
   },
   {
@@ -458,6 +588,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Die Zeilen von \\(V\\) heißen \\(R_0=(y_j)_j,\\ldots,R_{n-1}=(y_j^{(n-1)})_j\\), \\(W=\\det V\\). Nach der Ableitungsregel ist \\(W\\prime\\) Summe der Determinanten, in denen je eine Zeile abgeleitet wurde. Für \\(R_k\\) mit \\(k<n-1\\) ist \\(R_k\\prime=R_{k+1}\\), also besitzt die entsprechende Determinante doppelte Zeilen und ist null. Übrig ist \\(\\det(R_0,\\ldots,R_{n-2},R_{n-1}\\prime)\\). Die DGL liefert \\(R_{n-1}\\prime=-a_1R_{n-1}-a_2R_{n-2}-\\cdots-a_nR_0\\). Wegen Linearität der Determinante in der letzten Zeile verschwinden alle Terme mit \\(R_k\\), \\(k<n-1\\), da sich die betreffende Zeile wiederholt. Somit \\(W\\prime=-a_1W\\). Multipliziere mit \\(\\mu(x)=\\exp(\\int_{x_0}^x a_1(t)dt)\\): \\((\\mu W)\\prime=\\mu(W\\prime+a_1W)=0\\), also \\(\\mu(x)W(x)=\\mu(x_0)W(x_0)=W(x_0)\\). Daher \\(W(x)=W(x_0)e^{-\\int_{x_0}^x a_1}\\). Für \\(W(x_0)=0\\) folgt \\(W\\equiv0\\), ohne je durch \\(W\\) zu teilen."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Die Abelsche Identität ist ein lineares AWP für die Wronski-Determinante. Die entscheidende Zeilenrechnung verhindert, dass unnötig durch \\(W\\) geteilt wird.\n\nWie hängt die Wronski-Determinante eines Systems linearer DGL-Lösungen von \\(a_1(x)\\) ab? Was passiert bei \\(W(x_0)=0\\)?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Schreibe \\(W'=\\sum_{i=1}^{n}\\det(\\text{Matrix mit Zeile }i\\text{ abgeleitet})\\). Für \\(i<n\\) entstehen doppelte Zeilen; in der letzten Zeile führt die DGL zu \\(-a_1W\\). In der Lösung \\(W(x_0)e^{-\\int a_1}\\) ist \\(W(x_0)=0\\) ausdrücklich zulässig.\n\nVoraussetzungen aus der Einheit: \\(a_j\\) stetig auf Intervall \\(I\\); alle \\(y_j\\) lösen dieselbe DGL und sind \\(C^n\\); Zeilen-Ableitungsregel für Determinanten."
       }
     ]
   },
@@ -492,6 +632,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Bei \\(W(x_0)\\ne0\\) ist \\(V(x_0)\\) invertierbar. Erfüllt \\(\\sum_j c_jy_j\\equiv0\\), so liefert Ableiten bis Ordnung \\(n-1\\) an \\(x_0\\) die Gleichung \\(V(x_0)c=0\\); folglich \\(c=0\\) und Unabhängigkeit. Ist umgekehrt \\(W(x_0)=0\\), existiert \\(c\\ne0\\) mit \\(V(x_0)c=0\\). Setze \\(z=\\sum_j c_jy_j\\). Wegen Linearität ist \\(z\\) eine Lösung der homogenen DGL, und \\(z^{(k)}(x_0)=0\\) für alle \\(k=0,\\ldots,n-1\\). Die Nullfunktion erfüllt dasselbe AWP. Aus Eindeutigkeit folgt \\(z\\equiv0\\); die \\(y_j\\) sind abhängig. Aus Abel folgt, dass die Alternative \\(W\\equiv0\\) oder \\(W\\ne0\\) auf ganz \\(I\\) gilt."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Ein Wronskian-Test an einer Stelle ist für beliebige Funktionen nicht notwendigerweise äquivalent zur Unabhängigkeit. Die Umkehrung gelingt hier wegen derselben linearen DGL und der Anfangswert-Eindeutigkeit.\n\nEine verschwindende Wronski-Determinante zeigt für beliebige Funktionen nicht immer Abhängigkeit. Warum ist das für gemeinsame Lösungen einer linearen DGL anders?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Bei \\(W(x_0)=0\\) existiert \\(c\\ne0\\) im Kern der Wronski-Matrix. Die Linearkombination \\(z=\\sum c_jy_j\\) löst dieselbe homogene DGL und besitzt sämtliche Null-Anfangswerte, also \\(z\\equiv0\\).\n\nVoraussetzungen aus der Einheit: Selbe lineare DGL und gemeinsames Intervall; Eindeutigkeit des linearen AWPs; Abel-Identität bzw. Invertierbarkeit von \\(V(x_0)\\)."
+      }
     ]
   },
   {
@@ -524,6 +674,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\(D^k(e^{\\lambda x})=\\lambda^k e^{\\lambda x}\\). Daher \\(L(e^{\\lambda x})=[\\lambda^n+a_1\\lambda^{n-1}+\\cdots+a_n]e^{\\lambda x}=p(\\lambda)e^{\\lambda x}\\). Die Exponentialfunktion verschwindet nie; somit gilt \\(L(e^{\\lambda x})=0\\) genau für \\(p(\\lambda)=0\\). Die Wurzeln mit ihren Vielfachheiten erzeugen das homogene Fundamentalsystem."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Der Exponentialansatz übersetzt einen Differentialoperator mit konstanten Koeffizienten in ein Polynom in \\(\\lambda\\). Dies erklärt den Begriff „charakteristisches Polynom“ statt bloß eine Merkregel zu liefern.\n\nWieso wird bei einer DGL mit konstanten Koeffizienten die Suche nach Exponentiallösungen auf ein Polynom reduziert?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für \\(L=p(D)\\) und \\(D=\\frac d{dx}\\): \\(D^ke^{\\lambda x}=\\lambda^ke^{\\lambda x}\\), daher \\(L(e^{\\lambda x})=p(\\lambda)e^{\\lambda x}\\). Die Exponentialfunktion wird nie null.\n\nVoraussetzungen aus der Einheit: Alle \\(a_k\\) konstant; \\(e^{\\lambda x}\\ne0\\) für jedes endliche \\(x\\) und \\(\\lambda\\in\\mathbb C\\)."
       }
     ]
   },
@@ -558,6 +718,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\(W(x)=\\det\\begin{pmatrix}e^{\\lambda_1x}&e^{\\lambda_2x}\\\\\\lambda_1e^{\\lambda_1x}&\\lambda_2e^{\\lambda_2x}\\end{pmatrix}=\\lambda_2e^{(\\lambda_1+\\lambda_2)x}-\\lambda_1e^{(\\lambda_1+\\lambda_2)x}=(\\lambda_2-\\lambda_1)e^{(\\lambda_1+\\lambda_2)x}\\). Der zweite Faktor ist nie null, der erste ist nach Voraussetzung von null verschieden. Also sind die Funktionen unabhängig. Zusammen mit der DGL-Eigenschaft bilden sie ein FS der Ordnung 2."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Zwei verschiedene reelle Nullstellen einer DGL zweiter Ordnung liefern zwei unterschiedliche Exponentiallösungen. Unabhängigkeit muss mathematisch belegt werden.\n\nWarum sind zwei aus unterschiedlichen reellen Nullstellen konstruierte Exponentiallösungen unabhängig?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Der Wronskian ist \\(W(e^{\\lambda_1x},e^{\\lambda_2x})=(\\lambda_2-\\lambda_1)e^{(\\lambda_1+\\lambda_2)x}\\). Der Faktor \\(\\lambda_2-\\lambda_1\\ne0\\) entscheidet.\n\nVoraussetzungen aus der Einheit: Die Nullstellen gehören zur selben DGL zweiter Ordnung; Differenzierbarkeit und Standardformel für 2×2-Determinante."
+      }
     ]
   },
   {
@@ -590,6 +760,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Für \\(k<r\\) gilt wegen Konstanz von \\(L\\) bezüglich \\(\\lambda\\): \\(L(x^k e^{\\lambda x})=L(\\partial_\\lambda^k e^{\\lambda x})=\\partial_\\lambda^k[p(\\lambda)e^{\\lambda x}]=\\sum_{j=0}^k\\binom{k}{j}p^{(j)}(\\lambda)x^{k-j}e^{\\lambda x}=0\\), weil \\(p^{(j)}(\\lambda)=0\\) für \\(j<r\\). Für Unabhängigkeit sei \\(\\sum_{k=0}^{r-1}c_kx^k e^{\\lambda x}=0\\). Division durch \\(e^{\\lambda x}\\ne0\\) ergibt \\(\\sum c_kx^k=0\\) auf einem Intervall. Ein Polynom, das auf einem Intervall verschwindet, hat alle Koeffizienten null. Deshalb sind die \\(r\\) Lösungen unabhängig."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Ein r-facher Faktor \\((\\mu-\\lambda)^r\\) des charakteristischen Polynoms erzeugt eine Kette \\(e^{\\lambda x},xe^{\\lambda x},\\ldots,x^{r-1}e^{\\lambda x}\\).\n\nEine \\(r\\)-fache Nullstelle liefert nicht nur \\(e^{\\lambda x}\\), sondern einen Block von \\(r\\) unabhängigen Lösungen. Wieso?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Mit \\(L=p(D)\\) darf \\(\\partial_\\lambda\\) mit \\(L\\) vertauscht werden. Bei \\(k<r\\) verschwinden \\(p^{(j)}(\\lambda)\\) für alle \\(j\\le k\\). Die Unabhängigkeit reduziert sich nach Division durch \\(e^{\\lambda x}\\) auf die Unabhängigkeit von Monomen.\n\nVoraussetzungen aus der Einheit: Konstante Koeffizienten; \\(p(\\lambda)=p\\prime(\\lambda)=\\cdots=p^{(r-1)}(\\lambda)=0\\); Ableitung nach Parameter \\(\\lambda\\) darf mit \\(L\\) vertauscht werden."
       }
     ]
   },
@@ -624,6 +804,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\(L(u+iv)=L(u)+iL(v)\\), da \\(L\\) reelle Koeffizienten besitzt. Ist \\(L(z)=0\\), so sind beide reellwertigen Summanden null, also \\(L(u)=L(v)=0\\). Für \\(z=e^{(\\alpha+i\\beta)x}=e^{\\alpha x}(\\cos\\beta x+i\\sin\\beta x)\\) folgt die genannte Lösungspaarung. Unabhängigkeit: \\(W=\\det\\begin{pmatrix}e^{\\alpha x}\\cos\\beta x&e^{\\alpha x}\\sin\\beta x\\\\(\\alpha\\cos\\beta x-\\beta\\sin\\beta x)e^{\\alpha x}&(\\alpha\\sin\\beta x+\\beta\\cos\\beta x)e^{\\alpha x}\\end{pmatrix}=\\beta e^{2\\alpha x}\\ne0\\)."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Für reelle Koeffizienten folgt aus einer komplexen Lösung ein reelles Lösungspaar. Die Realteiloperation ist kein allgemeiner Trick bei komplexen Differentialoperatoren.\n\nWarum darf bei einer reellen DGL von einer komplexen Lösung zu Real- und Imaginärteil übergegangen werden?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Schreibe \\(z=u+iv\\). Dann \\(L(z)=L(u)+iL(v)\\). Aus \\(L(z)=0\\) folgt \\(L(u)=L(v)=0\\); für \\(\\lambda=\\alpha+i\\beta\\) erhält man \\(e^{\\alpha x}\\cos\\beta x\\) und \\(e^{\\alpha x}\\sin\\beta x\\).\n\nVoraussetzungen aus der Einheit: Alle Koeffizienten von \\(L\\) reell; Linearität über \\(\\mathbb C\\); Eulersche Formel."
+      }
     ]
   },
   {
@@ -656,6 +846,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Definiere \\(y_p=\\sum_j c_jy_j\\). Die ersten \\(n-1\\) Zeilen von \\(Vc\\prime=s e_n\\) lauten \\(\\sum_jc_j\\prime y_j^{(k)}=0\\) für \\(k=0,\\ldots,n-2\\). Induktiv folgt \\(y_p^{(k)}=\\sum_jc_jy_j^{(k)}\\) für \\(k=0,\\ldots,n-1\\). Differenzieren der letzten Gleichung ergibt \\(y_p^{(n)}=\\sum_jc_jy_j^{(n)}+\\sum_jc_j\\prime y_j^{(n-1)}=\\sum_jc_jy_j^{(n)}+s\\). Daher \\(L(y_p)=\\sum_jc_jL(y_j)+s=s\\). Das LGS besitzt wegen \\(\\det V=W\\ne0\\) für jedes \\(x\\) eine eindeutige Lösung \\(c\\prime\\), die integriert werden kann; Integrationskonstanten gehen in \\(y_h\\) auf."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Variation der Konstanten ersetzt die Konstanten eines Fundamentalsystems durch unbekannte Funktionen. Die Nebenbedingungen sind Teil der Definition des Rechenschemas und müssen hergeleitet werden.\n\nEin vollständiges FS ist bekannt; warum ergibt das Ersetzen der Konstanten durch Funktionen eine partikuläre Lösung, und welche Nebenbedingungen sind nötig?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für \\(y_p=\\sum_jc_jy_j\\) werden \\(\\sum_jc_j'y_j^{(k)}=0\\) für \\(0\\le k\\le n-2\\) und \\(\\sum_jc_j'y_j^{(n-1)}=s\\) gesetzt. Das lineare System \\(Vc'=s e_n\\) ist bei \\(W\\ne0\\) lösbar.\n\nVoraussetzungen aus der Einheit: Stetige Koeffizienten und Störfunktion, normierte höchste Ableitung, bekanntes FS mit \\(W=\\det V\\ne0\\). Bei unnormierter DGL steht rechts \\(s/b_0\\)."
       }
     ]
   },
@@ -690,6 +890,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Da \\(W=\\det V\\ne0\\), ist das System eindeutig lösbar. Nach Cramers Regel erhält man für die \\(j\\)-te Komponente \\(c_j\\prime=\\det[y_1,\\ldots,y_{j-1},s e_n,y_{j+1},\\ldots,y_n]/W\\), wobei die Schreibweise hier die Spalten der Wronski-Matrix meint. Durch Integration \\(c_j(x)=\\int c_j\\prime(x)dx\\) und Einsetzen in \\(y_p=\\sum_j c_j y_j\\) entsteht die partikuläre Lösung. Ohne \\(W\\ne0\\) darf Cramer nicht eingesetzt werden."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Cramers Regel erklärt die explizite Lösung des Wronski-Systems und verknüpft die Variation der Konstanten mit der Linearen Algebra.\n\nWie kann ein VoK-System ohne manuelles Gauß-Verfahren vollständig symbolisch dargestellt werden?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für invertierbares \\(V\\): \\(c_j'=\\det V_j/\\det V\\), \\(V_j\\) entsteht durch Ersetzen der j-ten Spalte von \\(V\\) durch \\(s e_n\\). Man muss die ursprüngliche Spaltenreihenfolge beachten.\n\nVoraussetzungen aus der Einheit: \\(V\\in\\mathbb K^{n\\times n}\\) quadratisch und invertierbar; Cramersche Regel der linearen Algebra."
+      }
     ]
   },
   {
@@ -722,6 +932,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Zuerst \\(D(c e^{\\lambda x})=e^{\\lambda x}(c\\prime+\\lambda c)\\). Durch wiederholtes Anwenden folgt \\(p(D)(c e^{\\lambda x})=e^{\\lambda x}p(D+\\lambda)c\\), wobei \\(p(D+\\lambda)=p(\\lambda)+p\\prime(\\lambda)D+\\frac{p\\prime\\prime(\\lambda)}{2!}D^2+\\cdots+\\frac{p^{(n)}(\\lambda)}{n!}D^n\\). Weil \\(p(\\lambda)=0\\), verschwindet der Term mit \\(c\\) ohne Ableitung. Die verbleibende Gleichung ist \\(\\sum_{j=1}^n\\frac{p^{(j)}(\\lambda)}{j!}c^{(j)}=e^{-\\lambda x}s(x)\\). Mit \\(d=c\\prime\\) entsteht eine Gleichung höchstens der Ordnung \\(n-1\\) für \\(d\\). Nach deren Lösung integriere \\(d\\), setze \\(c\\) in \\(y_p=c e^{\\lambda x}\\) ein und prüfe \\(L(y_p)=s\\)."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Ein einzelner bekannter Exponentialmodus reicht bei konstanten Koeffizienten aus, um den Term ohne Ableitung der neuen Funktion \\(c\\) zu eliminieren.\n\nWie lässt sich bei konstanten Koeffizienten und einer bekannten Nullstelle \\(\\lambda\\) die Ordnung der inhomogenen Gleichung reduzieren?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Operatorverschiebung: \\(e^{-\\lambda x}p(D)(ce^{\\lambda x})=p(D+\\lambda)c\\). Aus \\(p(\\lambda)=0\\) folgt: kein Term mit bloßem \\(c\\). Mit \\(d=c'\\) reduziert sich die Ordnung.\n\nVoraussetzungen aus der Einheit: Konstante Koeffizienten, \\(\\lambda\\in\\mathbb C\\) Nullstelle von \\(p\\), hinreichend glattes \\(c\\); für reelle DGL kann am Schluss Real-/Imaginärteil genommen werden."
       }
     ]
   },
@@ -756,6 +976,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Schreibe \\(p(z)=(z-\\lambda)^r q(z)\\) mit \\(q(\\lambda)\\ne0\\). Dann \\(p(D+\\lambda)=D^r q(D+\\lambda)\\). Für ein Polynom \\(Q_m\\) hat \\(x^rQ_m\\) Grad höchstens \\(m+r\\); nach \\(D^r\\) besitzt die resultierende Funktion Grad höchstens \\(m\\), genau passend zu \\(P_m\\). Der Operator \\(q(D+\\lambda)\\) ist auf Polynomen bis Grad \\(m\\) bezüglich der Monombasis dreieckig mit Diagonale \\(q(\\lambda)\\ne0\\), somit invertierbar. Auch \\(D^r:\\{x^rQ_m\\}\\to\\{P_m\\}\\) ist bijektiv (auf diesen endlichdimensionalen Räumen). Deshalb existiert ein eindeutig bestimmtes \\(Q_m\\), das \\(p(D+\\lambda)(x^rQ_m)=P_m\\) erfüllt. Ohne \\(x^r\\) läge ein Teil des Ansatzes im homogenen Kern \\(\\{e^{\\lambda x},xe^{\\lambda x},\\ldots,x^{r-1}e^{\\lambda x}\\}\\)."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Resonanz bedeutet, dass ein Exponentialfaktor der Störfunktion bereits zur homogenen Lösung gehört. Die algebraische Vielfachheit gibt exakt die nötige Potenz von \\(x\\) an.\n\nWarum benötigt die Störfunktion \\(P_m(x)e^{\\lambda x}\\) bei einer \\(r\\)-fachen Nullstelle von \\(p\\) den Faktor \\(x^r\\) im partikulären Ansatz?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Ist \\(p(\\lambda+\\mu)=\\mu^r q(\\mu)\\), \\(q(0)\\ne0\\), so wirkt \\(p(D+\\lambda)=D^rq(D)\\) auf den Polynomfaktor. Daher ist für \\(P_m e^{\\lambda x}\\) der Ansatz \\(x^rQ_m e^{\\lambda x}\\) naheliegend.\n\nVoraussetzungen aus der Einheit: \\(p\\) charakteristisches Polynom, \\(\\lambda\\in\\mathbb C\\), \\(P_m\\) Polynom von Grad \\(m\\); Koeffizienten konstant. \\(r=0\\) falls \\(p(\\lambda)\\ne0\\)."
+      }
     ]
   },
   {
@@ -788,6 +1018,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\((e^Qy)\\prime=e^Q Q\\prime y+e^Qy\\prime=e^Q(qy+y\\prime)=e^Q s\\). Integration liefert \\(e^{Q(x)}y(x)=C+\\int_{x_*}^{x}e^{Q(t)}s(t)dt\\). Multiplikation mit \\(e^{-Q(x)}\\) ergibt die allgemeine Lösung. Umgekehrt liefert Differentiation der Lösung unmittelbar die Ausgangsgleichung."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Der integrierende Faktor dient dazu, die linke Seite einer linearen DGL erster Ordnung als vollständige Ableitung zu schreiben.\n\nWieso darf eine lineare DGL erster Ordnung nach Multiplikation mit einem bestimmten Faktor als Produktableitung integriert werden?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für \\(y'+q(x)y=s(x)\\), \\(Q'=q\\), \\(\\mu=e^{Q}\\): \\((\\mu y)'=\\mu(y'+qy)=\\mu s\\). Damit \\(y=\\mu^{-1}(C+\\int\\mu s\\,dx)\\).\n\nVoraussetzungen aus der Einheit: \\(q,s\\) stetig auf einem Intervall \\(I\\); \\(Q\\) Stammfunktion von \\(q\\)."
       }
     ]
   },
@@ -822,6 +1062,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\(u=y^{1-\\gamma}\\) liefert \\(u\\prime=(1-\\gamma)y^{-\\gamma}y\\prime\\). Multipliziere \\(y\\prime+p y=q y^\\gamma\\) mit \\((1-\\gamma)y^{-\\gamma}\\): \\((1-\\gamma)y^{-\\gamma}y\\prime+(1-\\gamma)p y^{1-\\gamma}=(1-\\gamma)q\\). Somit \\(u\\prime+(1-\\gamma)pu=(1-\\gamma)q\\), eine lineare DGL. Die Umformung verlangt \\(y\\ne0\\); daher anschließend prüfen, ob \\(y\\equiv0\\) eine Lösung der Originalgleichung ist, die beim Umformen verloren ging."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Die Bernoulli-Substitution ist nur dort äquivalent, wo die verwendete Potenz von \\(y\\) definiert ist. Sonderlösungen können durch die Division verlorengehen.\n\nWie wird aus einer Bernoulli-DGL eine lineare DGL? Warum können durch Division Lösungen verloren gehen?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Bei \\(y'+p y=q y^\\gamma\\) mit \\(y\\ne0,\\ \\gamma\\ne1\\), setze \\(u=y^{1-\\gamma}\\). Dann \\(u'+(1-\\gamma)p\\,u=(1-\\gamma)q\\). Die mögliche Lösung \\(y\\equiv0\\) stets separat prüfen.\n\nVoraussetzungen aus der Einheit: \\(y^{1-\\gamma}\\) auf dem betrachteten Bereich reell definierbar und differenzierbar; \\(y\\ne0\\) zur Division; Sonderlösung \\(y=0\\) falls zulässig getrennt prüfen."
+      }
     ]
   },
   {
@@ -854,6 +1104,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "Sei \\(\\delta=\\|Y-Z\\|_\\infty\\). Dann \\(|Y_1Y_2-Z_1Z_2|\\le |Y_1|\\cdot|Y_2-Z_2|+|Z_2|\\cdot|Y_1-Z_1|\\le2R\\delta\\). Für die zweite Komponente gilt \\(|(Y_1-Z_1)-(Y_2-Z_2)|\\le2\\delta\\). Somit \\(\\|F(Y)-F(Z)\\|_\\infty\\le\\max(2R,2)\\delta\\), insbesondere die angegebene schwächere Schranke \\((2R+2)\\delta\\). Bei \\(Y=(t,t)\\), \\(Z=(0,t)\\) wächst der Quotient \\(|t^2|/|t|=|t|\\) unbeschränkt, daher ist \\(F\\) nicht global Lipschitz."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Für Systeme genügt keine skalar vermutete „Lipschitzkonstante“. Die Schätzung muss in einer Vektornorm für sämtliche Komponenten von \\(F\\) gelten.\n\nWarum ist eine auf einem Rechteck polynomielle rechte Seite zwar lokal, aber nicht notwendig global Lipschitz-stetig?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "In der Maximumsnorm nutze \\(|uv-\\tilde u\\tilde v|\\le |u||v-\\tilde v|+|\\tilde v||u-\\tilde u|\\). Mit Zustandsgrenzen \\(|u|,|\\tilde v|\\le R\\) folgt \\(\\le2R\\|Y-Z\\|_\\infty\\).\n\nVoraussetzungen aus der Einheit: \\(Y,Z\\in[-R,R]^2\\), Maximumsnorm; Algebraische Zerlegung des Produktunterschieds."
       }
     ]
   },
@@ -888,6 +1148,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\((D-a)(P(x)e^{ax})=P\\prime(x)e^{ax}\\); somit \\((D-a)^3(x^k e^{ax})=(d^3/dx^3)x^k\\cdot e^{ax}=0\\) für \\(k=0,1,2\\). Die Wronski-Matrix bei \\(x=0\\) ist \\(\\begin{pmatrix}1&0&0\\\\a&1&0\\\\a^2&2a&2\\end{pmatrix}\\); ihre Determinante ist \\(2\\ne0\\). Die drei Lösungen sind unabhängig. Da die DGL Ordnung 3 hat, ist das ein FS."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Eine dreifache Nullstelle liefert drei homogene Basisfunktionen; sie müssen sowohl die Differentialgleichung erfüllen als auch unabhängig sein.\n\nWie beweist du an einer dreifachen reellen Nullstelle ein vollständiges Fundamentalsystem, statt nur die Basisfunktionen zu behaupten?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für \\(L=(D-a)^3\\): \\(e^{ax},xe^{ax},x^2e^{ax}\\). Zum Nachweis der Unabhängigkeit bei \\(x=0\\) eignet sich die Matrix der Ableitungen bis Ordnung 2.\n\nVoraussetzungen aus der Einheit: Differentialoperator \\(L=(D-a)^3\\) mit konstanten Koeffizienten; Wronski-Kriterium."
+      }
     ]
   },
   {
@@ -921,6 +1191,16 @@
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\(p(\\lambda)=\\lambda^3+\\lambda^2+4\\lambda+4=(\\lambda+1)(\\lambda^2+4)\\), also lösen \\(e^{-x}\\), \\(e^{\\pm2ix}\\) die DGL. Reell daraus \\(u_2=\\cos2x\\), \\(u_3=\\sin2x\\). Bei \\(x=0\\) ist \\(V(0)=\\begin{pmatrix}1&1&0\\\\-1&0&2\\\\1&-4&0\\end{pmatrix}\\); \\(W(0)=\\det V(0)=10\\ne0\\). Folglich sind die drei Lösungen unabhängig und wegen Ordnung 3 ein FS."
       }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Ein reelles FS kann aus komplexen Eigenmoden gewonnen werden, aber die reelle Dimension und die Unabhängigkeit müssen danach noch stimmen.\n\nWie wird aus \\(y_1=e^{-x},z_2=e^{2ix},z_3=e^{-2ix}\\) ein reelles Fundamentalsystem, und wie prüft man es an einer Stelle?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für die Wurzeln \\(-1,\\pm2i\\) einer DGL dritter Ordnung ist das reelle FS \\(e^{-x},\\cos2x,\\sin2x\\). Die Zeilen der Wronski-Matrix sind die Funktionen, deren erste und zweite Ableitung.\n\nVoraussetzungen aus der Einheit: Reelle konstante Koeffizienten; Euler-Formel; Wronski-Kriterium für drei gemeinsame Lösungen."
+      }
     ]
   },
   {
@@ -953,6 +1233,16 @@
         "title": "Durchführung",
         "task": "Führe den Nachweis mit allen mathematisch nötigen Zwischenschritten und dem Schlussargument aus.",
         "answer": "\\(f(y)=\\sqrt{|y|}\\) ist überall stetig. Die Nullfunktion \\(y_{\\mathrm{null}}(x)=0\\) löst \\(y\\prime=\\sqrt{|y|}\\), \\(y(0)=0\\). Für jedes \\(c\\ge0\\) setze \\(y_c(x)=0\\) für \\(x\\le c\\), \\(y_c(x)=(x-c)^2/4\\) für \\(x>c\\). Bei \\(x=c\\) stimmen die einseitigen Ableitungen überein und sind null; die Funktion ist \\(C^1\\). Für \\(x>c\\) ist \\(y_c\\prime=(x-c)/2=\\sqrt{(x-c)^2/4}=\\sqrt{|y_c|}\\), für \\(x\\le c\\) sind beide Seiten null. Für \\(c\\ge0\\) gilt \\(y_c(0)=0\\). Insbesondere \\(y_{\\mathrm{null}}\\equiv0\\) und \\(y_{c=0}\\) sind verschiedene Lösungen. Daher kann Stetigkeit allein Eindeutigkeit nicht garantieren."
+      }
+    ],
+    "intro": [
+      {
+        "title": "Einordnung",
+        "body": "Ein Gegenbeispiel mit kontinuierlicher, nicht lokal Lipschitz-stetiger rechter Seite zeigt, warum der Existenzsatz Peano keine Eindeutigkeit garantieren kann.\n\nWie widerlegt man die Behauptung „Stetige rechte Seite genügt für Eindeutigkeit“ durch ein korrektes AWP?"
+      },
+      {
+        "title": "Mathematischer Werkzeugkasten",
+        "body": "Für \\(f(y)=\\sqrt{|y|}\\) ist bei \\(\\varepsilon>0\\) der Quotient \\(|f(\\varepsilon)-f(0)|/\\varepsilon=\\varepsilon^{-1/2}\\). Mehrere \\(C^1\\)-Lösungen können ab verschieden langen Wartezeiten positiv werden.\n\nVoraussetzungen aus der Einheit: Wähle \\(f(y)=\\sqrt{|y|}\\), stetig aber bei \\(y=0\\) nicht lokal Lipschitz; direkte Differentialprobe."
       }
     ]
   }

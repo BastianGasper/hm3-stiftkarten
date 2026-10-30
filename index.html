@@ -62,7 +62,8 @@
     <section class="flashcard" aria-label="Karteikarte">
       <section class="proof-panel is-hidden" id="proofPanel" aria-label="Beweislernmodus">
         <div class="proof-meta"><span id="proofSource"></span><span id="proofScope"></span></div>
-        <div class="proof-steps" id="proofSteps" aria-label="Beweisschritte"></div>
+        <div id="proofIntro" class="proof-intro is-hidden"><h2 id="proofIntroTitle"></h2><div id="proofIntroBody" class="proof-intro-body"></div></div>
+<div class="proof-steps" id="proofSteps" aria-label="Beweisschritte"></div>
         <h1 id="proofStepHeading" class="proof-step-title">Problem</h1>
         <div id="proofStepTask" class="proof-task"></div>
         <button class="button button-solution" id="proofRevealBtn" aria-expanded="false">Schritt aufdecken</button>
@@ -78,7 +79,9 @@
       <div class="solution-section">
         <button class="button button-solution" id="showSolutionBtn" aria-expanded="false">Musterlösung anzeigen</button>
         <div class="solution-content is-hidden" id="solutionContent">
-          <h2>Musterlösung</h2><div id="cardAnswer" class="answer-text"></div>
+          <h2>Vollständige Musterlösung</h2><div id="cardAnswer" class="answer-text"></div>
+<details id="cardBackgroundSection" class="card-extra"><summary>Hintergrund</summary><div id="cardBackground" class="card-extra-content"></div></details>
+<details id="cardExampleSection" class="card-extra"><summary>Beispiel / Transfer</summary><div id="cardExample" class="card-extra-content"></div></details>
           <div class="rating-wrap"><p>Eigene Einschätzung – keine automatische Korrektur</p><div class="rating-buttons">
             <button class="button rate rate-wrong" data-rating="wrong">Nicht gewusst</button>
             <button class="button rate" data-rating="partial">Teilweise</button>
@@ -166,9 +169,6 @@
     <div class="editor-actions"><button class="button button-primary" type="submit" id="saveRecordingNameBtn">Speichern</button><button class="button" type="button" id="saveAndExportRecordingBtn">Speichern und ZIP exportieren</button></div>
   </form>
 </dialog>
-<div id="fingerScrollRail" class="finger-scroll-rail" aria-label="Finger-Scrollbereich am linken Bildschirmrand" title="Hier mit dem Finger scrollen" role="scrollbar" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
-  <span class="rail-grip" aria-hidden="true"></span>
-</div>
 <div class="notice" id="notice" role="status" aria-live="polite"></div>
 <script>if('serviceWorker' in navigator && location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(console.warn);</script>
 </body>

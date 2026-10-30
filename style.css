@@ -253,3 +253,25 @@ body.proof-active .workspace{grid-template-columns:minmax(0,2fr) minmax(0,3fr)!i
 .answer-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.78}
 .card-question{overflow-wrap:anywhere;line-height:1.38}
 .flashcard,.notes{min-width:0}
+
+/* V18 – 20 % unsichtbare Finger-Scrollzone. Kein Scrollbalken. */
+body{padding-left:0!important}
+.layout{padding:0 20px!important;max-width:1570px}
+.finger-scroll-rail{display:none!important}
+@media(max-width:700px){body{padding-left:0!important}.layout{padding:0 10px!important}}
+body.proof-intro .workspace{grid-template-columns:minmax(0,1fr)!important}
+body.proof-intro .notes{display:none!important}
+body.proof-intro .flashcard{min-height:0;width:100%;max-width:1100px;margin-inline:auto}
+body.proof-intro .proof-steps,body.proof-intro #proofStepHeading,body.proof-intro #proofStepTask,
+body.proof-intro #proofRevealBtn,body.proof-intro #proofStepAnswer{display:none!important}
+body.proof-active .proof-panel{max-height:none;overflow:visible;touch-action:none}
+.proof-intro{padding:6px 0 8px}
+.proof-intro h2{font-size:23px;margin:10px 0 18px}
+.proof-intro-body{font-size:16px;line-height:1.95;white-space:pre-wrap;overflow-wrap:anywhere}
+.proof-intro-body mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
+.proof-meta{margin-bottom:8px}
+.proof-nav{padding-top:12px}
+.card-extra{margin:12px 0 0;border:1px solid var(--line);border-radius:7px;background:#f7f9fb}
+.card-extra summary{cursor:pointer;padding:12px 13px;font-size:13px;font-weight:650;color:#274961}
+.card-extra-content{border-top:1px solid var(--line);padding:14px 13px;white-space:pre-wrap;font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+.card-extra-content mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}

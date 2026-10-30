@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.17.1';
-  const OFFLINE_CACHE='hm3-stiftkarten-v17-1-20261030';
+  const APP_VERSION='2026-10-30.18';
+  const OFFLINE_CACHE='hm3-stiftkarten-v18-20261030';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
@@ -44,7 +44,27 @@
     try{await idb(store,'put',key,value);return true;}catch(e){console.warn('Save failed',e);storageError=true;status('Speicherproblem – Backup erstellen',true);return false;}}
   async function listRecords(store){if(!db){if(store==='sketches')return [...memory.sketches].map(([id,strokes])=>({id,strokes}));return clone(memory[store]);}
     try{return await idb(store,'getAll');}catch(e){storageError=true;status('Datenbankproblem – Backup erstellen',true);return [];}}
-  async function getAllSketches(){const result={};if(db){try{const [keys,all]=await Promise.all([idb('sketches','keys'),idb('sketches','getAll')]);keys.forEach((k,i)=>result[k]=all[i]);}catch(e){storageError=true;status('Backup nicht möglich: Notizen konnten nicht gelesen werden',true);throw e;}}else{for(const [id,strokes] of memory.sketches)result[id]=strokes;for(const c of cards){if(!result[c.id]){try{const x=JSON.parse(localStorage.getItem('hm3-note-'+c.id)||'null');if(Array.isArray(x))result[c.id]=x;}catch{}}}}return result;}
+  async function getAllSketches(){const result={};if(db){try{const [keys,all]=await Promise.all([idb('sketches','keys'),idb('sketches','getAll')]);keys.forEach((k,i)=>result[k]=all[i]);}catch(e){storageError=true;status('Backup nicht möglich: Notizen konnten nicht gelesen werden',true);throw e;}}else{
+      for(const [id,strokes] of memory.sketches)result[id]=strokes;
+      // Also include retired cards and every proof-step notebook after reload.
+      // The previous fallback searched only currently active card IDs.
+      const keys=[];
+      if(typeof localStorage.length==='number'&&typeof localStorage.key==='function'){
+        for(let i=0;i<localStorage.length;i++){
+          const k=localStorage.key(i);
+          if(k&&k.startsWith('hm3-note-'))keys.push(k);
+        }
+      }else for(const c of cards)keys.push('hm3-note-'+c.id);
+      for(const key of keys){
+        const id=key.slice('hm3-note-'.length);
+        if(Object.prototype.hasOwnProperty.call(result,id))continue;
+        const raw=localStorage.getItem(key);if(raw===null)continue;
+        let strokes;
+        try{strokes=JSON.parse(raw);}catch(e){throw Error('Beschädigtes Notizblatt im Ersatzspeicher: '+id);}
+        if(!Array.isArray(strokes))throw Error('Ungültiges Notizblatt im Ersatzspeicher: '+id);
+        result[id]=strokes;
+      }
+    }return result;}
   // Ensure every edit is serialized before changing cards or creating a snapshot.
   function saveInk(){const id=ink.cardId;if(!id)return Promise.resolve();
     if(data.recordingActive&&data.sessionId&&ink.strokes.some(stroke=>stroke.recordingId===data.sessionId&&!stroke.archivedAttemptId)){recordingTouchedCards.add(id);data.recordingTouchedCards=[...recordingTouchedCards];storeData();}
@@ -54,7 +74,7 @@
   async function loadInk(cardId){const token=++noteLoads;ink.cardId=cardId;ink.strokes=[];ink.active=null;ink.erasing=false;ink.erasedInGesture=false;ink.eraserTrail=[];ink.eraserTip=null;ink.lastEraserPoint=null;ink.undo=[];ink.redo=[];renderInk();renderEraserOverlay();$('noteStatus').textContent='Lade Notizen …';await saveQueue.catch(()=>{});const strokes=await readRecord('sketches',cardId);if(noteLoads!==token)return;ink.strokes=Array.isArray(strokes)?strokes:[];renderInk();$('noteStatus').textContent=ink.strokes.length?'Gespeichert':'Leeres Blatt';}
 
   async function fetchCards(){let response;try{response=await fetch('cards.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);response=await response.json();}catch(e){console.warn('Deck load',e);throw Error('Karten konnten nicht geladen werden. Bitte Verbindung prüfen oder App erneut öffnen.');}
-    if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=response.map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
+    if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=response.map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Hintergrund:String(c.Hintergrund||''),Beispiel:String(c.Beispiel||''),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
   function prefFor(id){return data.cardPrefs?.[id]||{};}
   function rebuildCards(){cards=[...originalCards.values()].map(c=>{const p=prefFor(c.id);return {...c,Frage:typeof p.Frage==='string'&&p.Frage.trim()?p.Frage:c.Frage,Antwort:typeof p.Antwort==='string'&&p.Antwort.trim()?p.Antwort:c.Antwort,favorite:!!p.favorite,disabled:!!p.disabled};});byId=new Map(cards.map(c=>[c.id,c]));}
   function mutatePref(id,patch){const p={...prefFor(id),...patch};if(!data.cardPrefs)data.cardPrefs={};if(!p.favorite&&!p.disabled&&!('Frage'in p)&&!('Antwort'in p)&&!('sheetHeight'in p))delete data.cardPrefs[id];else data.cardPrefs[id]=p;storeData();rebuildCards();updateStats();}
@@ -88,7 +108,7 @@
     if(!Array.isArray(items)||items.length===0)throw Error('Ungültiger Beweiskatalog');
     const seen=new Set(),parts=['Problem','Behauptung','Voraussetzungen','Ansatz','Durchführung'];
     for(const p of items){
-      if(typeof p.id!=='string'||seen.has(p.id)||!p.title||!p.source||!p.scope||!Array.isArray(p.steps)||p.steps.length!==5||
+      if(typeof p.id!=='string'||seen.has(p.id)||!p.title||!p.source||!p.scope||!Array.isArray(p.intro)||p.intro.length!==2||p.intro.some(i=>!i.title||!i.body)||!Array.isArray(p.steps)||p.steps.length!==5||
          p.steps.some((s,i)=>s.title!==parts[i]||typeof s.task!=='string'||typeof s.answer!=='string'||!s.answer.trim()))
         throw Error('Ungültiger Beweiseintrag: '+p.id);
       seen.add(p.id);
@@ -110,7 +130,7 @@
     $('proofSelectDialog').showModal();
   }
   function proofMath(){
-    const nodes=[$('proofStepTask'),$('proofStepAnswer')];
+    const nodes=[$('proofStepTask'),$('proofStepAnswer'),$('proofIntroBody')];
     mathQueue=mathQueue.catch(()=>{}).then(async()=>{
       if(!window.MathJax?.typesetPromise)return;
       try{window.MathJax.typesetClear?.(nodes);await window.MathJax.typesetPromise(nodes);}
@@ -120,39 +140,52 @@
   function updateProofChrome(){
     const s=data.proofStudy,active=!!s?.active;
     document.body.classList.toggle('proof-active',active);
+    document.body.classList.toggle('proof-intro',active&&s.phase==='intro');
     $('proofToolbar').classList.toggle('is-hidden',!active);
     $('proofPanel').classList.toggle('is-hidden',!active);
     if(active){
       const p=proofById.get(s.id);
       $('proofToolbarTitle').textContent=p?.title||'Beweis';
-      $('proofToolbarProgress').textContent=(s.step+1)+' / 5';
+      $('proofToolbarProgress').textContent=s.phase==='intro'?'Vorbereitung '+((s.introIndex||0)+1)+' / 2':(s.step+1)+' / 5';
     }
   }
   async function displayProof(){
-    const s=data.proofStudy;if(!s?.active)return;
-    const p=proofById.get(s.id);
+    const state=data.proofStudy;if(!state?.active)return;
+    const p=proofById.get(state.id);
     if(!p){data.proofStudy=null;storeData();updateProofChrome();await advance();return;}
     if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
     await finishInk();await saveQueue.catch(()=>{});
+    if(!state.phase)state.phase='steps';
     updateProofChrome();
-    const step=p.steps[s.step],noteId=proofNoteId(p,s.step);
-    selected.current=noteId;selected.revealed=false;
     $('workspace').classList.remove('is-hidden');
     $('emptyState').classList.add('is-hidden');
     $('quizSummary').classList.add('is-hidden');
     $('proofSource').textContent=p.source;
     $('proofScope').textContent=p.scope;
+    const intro=state.phase==='intro';
+    $('proofIntro').classList.toggle('is-hidden',!intro);
+    $('proofPrevBtn').disabled=intro?state.introIndex===0:false;
+    if(intro){
+      const page=p.intro[state.introIndex];
+      $('proofIntroTitle').textContent=page.title;
+      $('proofIntroBody').textContent=page.body;
+      $('proofNextBtn').textContent=state.introIndex===p.intro.length-1?'Beweis beginnen':'Weiter';
+      selected.current=null;selected.revealed=false;
+      proofMath();return;
+    }
+    const step=p.steps[state.step],noteId=proofNoteId(p,state.step);
+    selected.current=noteId;selected.revealed=false;
     $('proofStepHeading').textContent=step.title;
     $('proofStepTask').textContent=step.task;
     $('proofStepAnswer').textContent=step.answer;
-    $('proofStepAnswer').classList.toggle('is-hidden',!s.revealed);
-    $('proofRevealBtn').textContent=s.revealed?'Antwort ausblenden':'Schritt aufdecken';
-    $('proofRevealBtn').setAttribute('aria-expanded',String(!!s.revealed));
-    $('proofPrevBtn').disabled=s.step===0;
-    $('proofNextBtn').textContent=s.step===4?'Beweis abschließen':'Weiter';
+    $('proofStepAnswer').classList.toggle('is-hidden',!state.revealed);
+    $('proofRevealBtn').textContent=state.revealed?'Antwort ausblenden':'Schritt aufdecken';
+    $('proofRevealBtn').setAttribute('aria-expanded',String(!!state.revealed));
+    $('proofNextBtn').textContent=state.step===4?'Beweis abschließen':'Weiter';
     const chips=$('proofSteps');chips.replaceChildren();
     for(let i=0;i<5;i++){
-      const el=document.createElement('div');el.className='proof-step-chip'+(i===s.step?' is-current':i<s.step?' is-done':'');
+      const el=document.createElement('div');
+      el.className='proof-step-chip'+(i===state.step?' is-current':i<state.step?' is-done':'');
       el.textContent=p.steps[i].title;chips.append(el);
     }
     configureSheet();await loadInk(noteId);proofMath();
@@ -164,12 +197,12 @@
     const id=$('proofSelect').value;
     if(!proofById.has(id))return;
     await finishInk();await saveQueue.catch(()=>{});
-    data.proofStudy={active:true,id,step:0,revealed:false};
+    data.proofStudy={active:true,id,phase:'intro',introIndex:0,step:0,revealed:false};
     storeData();$('proofSelectDialog').close();
     await displayProof();
   }
   function revealProof(){
-    const s=data.proofStudy;if(!s?.active)return;
+    const s=data.proofStudy;if(!s?.active||s.phase==='intro')return;
     s.revealed=!s.revealed;storeData();
     $('proofStepAnswer').classList.toggle('is-hidden',!s.revealed);
     $('proofRevealBtn').textContent=s.revealed?'Antwort ausblenden':'Schritt aufdecken';
@@ -177,14 +210,26 @@
     if(s.revealed)proofMath();
   }
   async function moveProof(delta){
-    const s=data.proofStudy;if(!s?.active)return;
+    const state=data.proofStudy;if(!state?.active)return;
     if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return;}
-    if(delta===1&&s.step===4){await exitProof();return;}
-    const next=Math.min(4,Math.max(0,s.step+delta));
-    if(next===s.step)return;
+    if(state.phase==='intro'){
+      if(delta<0){
+        if(state.introIndex===0)return;
+        state.introIndex-=1;
+      }else if(state.introIndex<1)state.introIndex+=1;
+      else{state.phase='steps';state.step=0;state.revealed=false;}
+      storeData();await displayProof();return;
+    }
+    if(delta===1&&state.step===4){await exitProof();return;}
+    if(delta<0&&state.step===0){
+      await finishInk();await saveQueue.catch(()=>{});
+      state.phase='intro';state.introIndex=1;state.revealed=false;
+      storeData();await displayProof();return;
+    }
+    const next=Math.min(4,Math.max(0,state.step+delta));
+    if(next===state.step)return;
     await finishInk();await saveQueue.catch(()=>{});
-    s.step=next;s.revealed=false;storeData();
-    await displayProof();
+    state.step=next;state.revealed=false;storeData();await displayProof();
   }
   async function exitProof(){
     if(!data.proofStudy?.active)return;
@@ -292,9 +337,14 @@
     selected.seen.clear();selected.history=[];
     updateQuizChrome();await advance();
   }
-  function math(){const nodes=[$('cardQuestion'),...(selected.revealed?[$('cardAnswer')]:[])];mathQueue=mathQueue.catch(()=>{}).then(async()=>{if(!window.MathJax?.typesetPromise)return;try{window.MathJax.typesetClear?.(nodes);await window.MathJax.typesetPromise(nodes);}catch(e){console.warn('MathJax',e)}});}
+  function math(){const nodes=[$('cardQuestion'),...(selected.revealed?[$('cardAnswer'),$('cardBackground'),$('cardExample')]:[])];mathQueue=mathQueue.catch(()=>{}).then(async()=>{if(!window.MathJax?.typesetPromise)return;try{window.MathJax.typesetClear?.(nodes);await window.MathJax.typesetPromise(nodes);}catch(e){console.warn('MathJax',e)}});}
   async function showCard(id){await finishInk();await saveQueue.catch(()=>{});if(selected.current&&selected.current!==id)await archiveDraftIfNeeded();selected.current=id;selected.revealed=false;const card=byId.get(id);if(!card)return showEmpty();$('workspace').classList.remove('is-hidden');$('emptyState').classList.add('is-hidden');
     $('cardTopic').textContent=`${card.Bereich} · ${card.Typ}`;$('cardSource').textContent=card.Quelle?`Quelle: ${card.Quelle}`:'';$('cardQuestion').textContent=card.Frage;$('cardAnswer').textContent=card.Antwort;
+    $('cardBackground').textContent=card.Hintergrund||'';
+    $('cardExample').textContent=card.Beispiel||'';
+    $('cardBackgroundSection').hidden=!card.Hintergrund;
+    $('cardExampleSection').hidden=!card.Beispiel;
+    $('cardBackgroundSection').open=false;$('cardExampleSection').open=false;
     $('showSolutionBtn').textContent='Musterlösung anzeigen';$('showSolutionBtn').setAttribute('aria-expanded','false');$('solutionContent').classList.add('is-hidden');$('positionLabel').textContent=`${filtered().length} Karten im Filter`;$('prevBtn').disabled=!!data.quiz?.active||!selected.history.length;quickActions();configureSheet();await loadInk(id);math();}
   function showEmpty(){selected.current=null;$('workspace').classList.add('is-hidden');$('emptyState').classList.remove('is-hidden');updateStats();}
   async function advance(){if(data.proofStudy?.active){await displayProof();return;}if(data.quiz?.active){
@@ -413,7 +463,7 @@
 
   // Das Schreibblatt gehört zur Karte; das Ändern einer Karte verändert keine andere.
   function cardSheetHeight(id=selected.current){const n=Number(data.cardPrefs?.[id]?.sheetHeight);return Number.isFinite(n)&&n>=520?Math.min(n,4000):(Number(data.settings.sheetHeight)||800);}
-  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';$('sheet').style.touchAction=inkMode==='scroll'?'pan-y':'none';resizeInk();}
+  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction='none';$('sheet').style.touchAction='none';resizeInk();}
   async function setCardSheetHeight(height){if(!selected.current)return;const h=Math.min(4000,Math.max(520,Math.round(height)));await finishInk();await saveQueue.catch(()=>{});const id=selected.current;data.cardPrefs[id]={...prefFor(id),sheetHeight:h};storeData();configureSheet();notice('Blattlänge gespeichert – deine bisherigen Skizzen bleiben erhalten.');}
   function resizeInk(){const r=pen.getBoundingClientRect();if(!r.width||!r.height)return;cssWidth=r.width;cssHeight=r.height;scale=cssWidth/1000;logicalHeight=cssHeight/scale;
     // Supersampling: deutlich feinere Kantenglättung als das bisherige DPR-Limit 2.
@@ -574,7 +624,7 @@
     }
     document.body.classList.toggle('ink-scroll',inkMode==='scroll');
 
-    const action=inkMode==='scroll'?'pan-y':'none';
+    const action='none';
     pen.style.touchAction=action;$('sheet').style.touchAction=action;
   }
   function lockPage(){
@@ -595,7 +645,7 @@
     if(!['auto','write','scroll'].includes(mode))return;
     if(ink.pointerId!==null)endStroke(ink.pointerId,ink.inputSource);
     inkMode=mode;
-    if(mode==='scroll')unlockPage();else lockPage();
+    lockPage();
     data.settings.inputMode=mode;storeData();refreshInkModeUI();
   }
   function beginStroke(point,id,source){
@@ -704,44 +754,36 @@
   $('inkScrollBtn').addEventListener('click',()=>setInkMode('scroll'));
   $('scrollUpBtn').addEventListener('click',()=>scrollSheet(-1));
   $('scrollDownBtn').addEventListener('click',()=>scrollSheet(1));
-  // Finger-only Scrollstreifen links: unberührt von der Pencil-Sperre.
-  const rail=$('fingerScrollRail');
-  rail.addEventListener('touchstart',e=>{
-    const finger=Array.from(e.changedTouches||[]).find(t=>t.touchType!=='stylus');
+  // V18: unsichtbare Touch-Scrollzone: die linken 20% des Viewports.
+  // Alle Touchstarts außerhalb der Zone bleiben ohne Scrollwirkung.
+  // Ein Pencilstrich bleibt geschützt: während des Kontakts nicht scrollen.
+  const LEFT_SCROLL_RATIO=.20;
+  let edgeScroll=null;
+  const isFinger=t=>t.touchType!=='stylus';
+  document.addEventListener('touchstart',e=>{
+    if(inDialog(e)||ink.pointerId!==null)return;
+    const finger=Array.from(e.changedTouches||[]).find(t=>isFinger(t)&&t.clientX<=(window.innerWidth||document.documentElement.clientWidth)*LEFT_SCROLL_RATIO);
+    if(finger)edgeScroll={id:finger.identifier,lastY:finger.clientY,startY:finger.clientY,moved:false};
+  },{passive:true,capture:true});
+  document.addEventListener('touchmove',e=>{
+    if(!edgeScroll||ink.pointerId!==null||inDialog(e))return;
+    const finger=Array.from(e.changedTouches||[]).find(t=>t.identifier===edgeScroll.id&&isFinger(t));
     if(!finger)return;
+    if(!edgeScroll.moved&&Math.abs(finger.clientY-edgeScroll.startY)<5)return;
+    const delta=edgeScroll.lastY-finger.clientY;
+    edgeScroll.lastY=finger.clientY;edgeScroll.moved=true;
     if(e.cancelable)e.preventDefault();
-    // Never shift the canvas underneath an unfinished Pencil stroke.
-    if(ink.pointerId!==null)return;
-    railTouch={id:finger.identifier,lastY:finger.clientY};
-  },{passive:false});
-  rail.addEventListener('touchmove',e=>{
-    if(e.cancelable)e.preventDefault();
-    if(!railTouch||ink.pointerId!==null)return;
-    const finger=Array.from(e.changedTouches||[]).find(t=>t.identifier===railTouch.id&&t.touchType!=='stylus');
-    if(!finger)return;
-    const delta=railTouch.lastY-finger.clientY;
-    railTouch.lastY=finger.clientY;
-    if(delta){
-      const doc=document.scrollingElement||document.documentElement;
-      const max=Math.max(0,doc.scrollHeight-(window.innerHeight||700));
-      const top=Math.max(0,Math.min(max,(doc.scrollTop||0)+delta));
-      doc.scrollTop=top;
-      if(typeof window.scrollTo==='function')window.scrollTo(0,top);
-    }
-    updateScrollRail();
-  },{passive:false});
-  for(const name of ['touchend','touchcancel'])rail.addEventListener(name,e=>{
-    if(railTouch&&Array.from(e.changedTouches||[]).some(t=>t.identifier===railTouch.id))railTouch=null;
-  },{passive:false});
-  rail.addEventListener('keydown',e=>{
-    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();scrollSheet(e.key==='ArrowDown'?1:-1);}
-  });
-  function updateScrollRail(){
-    const d=document.scrollingElement||document.documentElement;
-    const max=Math.max(0,d.scrollHeight-(window.innerHeight||700));
-    rail.setAttribute('aria-valuenow',String(max?Math.round(Math.min(100,Math.max(0,(d.scrollTop||0)/max*100))):0));
-  }
-  window.addEventListener('scroll',updateScrollRail,{passive:true});
+    if(!delta)return;
+    const doc=document.scrollingElement||document.documentElement;
+    const limit=Math.max(0,doc.scrollHeight-(window.innerHeight||700));
+    const top=Math.min(limit,Math.max(0,(doc.scrollTop||0)+delta));
+    doc.scrollTop=top;
+    if(typeof window.scrollTo==='function')window.scrollTo(0,top);
+  },{passive:false,capture:true});
+  for(const name of ['touchend','touchcancel'])document.addEventListener(name,e=>{
+    if(edgeScroll&&Array.from(e.changedTouches||[]).some(t=>t.identifier===edgeScroll.id))edgeScroll=null;
+  },{passive:true,capture:true});
+  function updateScrollRail(){} // kept for older arrow-button handler
   // Startet mit dauerhaftem Pencil-only-Lock. Keine Layoutverschiebung!
   inkMode='auto';lockPage();refreshInkModeUI();
   function tool(t){ink.tool=t;ink.eraserTip=null;ink.eraserTrail=[];renderEraserOverlay();for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}}
@@ -966,6 +1008,9 @@
     $('proofRevealBtn').onclick=revealProof;
     $('proofPrevBtn').onclick=()=>moveProof(-1);
     $('proofNextBtn').onclick=()=>moveProof(1);
+    for(const id of ['cardBackgroundSection','cardExampleSection']){
+      $(id).addEventListener('toggle',()=>{if($(id).open)math();});
+    }
     $('quizStartBtn').onclick=()=>{quizSelectUI();$('quizSetupDialog').showModal();};
     $('quizSetupClose').onclick=()=>$('quizSetupDialog').close();
     $('quizSetupForm').onsubmit=beginQuiz;
@@ -997,7 +1042,7 @@
      }
      if(data.proofStudy?.active){
        if(!proofById.has(data.proofStudy.id)||!Number.isInteger(data.proofStudy.step)||
-          data.proofStudy.step<0||data.proofStudy.step>4||data.quiz?.active||data.recordingActive){
+          data.proofStudy.step<0||data.proofStudy.step>4||(data.proofStudy.phase==='intro'&&(!Number.isInteger(data.proofStudy.introIndex)||data.proofStudy.introIndex<0||data.proofStudy.introIndex>1))||data.quiz?.active||data.recordingActive){
          data.proofStudy=null;storeData();
        }
      }
