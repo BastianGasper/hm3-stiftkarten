@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-30.15",
+  "version": "2026-10-30.16",
   "released": "2026-10-30",
   "features": [
     "Glatte Stiftkurven",
@@ -14,6 +14,7 @@
     "Finger-Scrollstreifen links",
     "Fortlaufender Ganzstrich-Radierer mit orangener visueller Spur",
     "Abschlussrevision: gesicherter Datenexport, effiziente Zeichenflächen und Aufnahmeverwaltung",
-    "Schlankes Layout ohne erklärende Texte und ohne überlagernde Bedienelemente; neuer App-Name"
+    "Schlankes Layout ohne erklärende Texte und ohne überlagernde Bedienelemente; neuer App-Name",
+    "63 vorlesungsnahe Verständnis-, Methoden- und Beweiskarten; zufällige, individuell gefilterte Abfrage mit persistentem Gesamtresultat"
   ]
 }
