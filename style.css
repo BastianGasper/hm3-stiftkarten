@@ -192,3 +192,6 @@ body{padding-left:44px!important}
   .ink-mode-dock{flex-wrap:wrap!important;gap:7px!important}
   .ink-mode-dock .ink-mode-choice,.ink-mode-dock .ink-nav-button{padding:7px 8px!important}
 }
+
+/* V15: keine große Leerstelle mehr unter dem Inhalt nach Entfernen des schwebenden Dock. */
+footer{padding-bottom:36px!important}
