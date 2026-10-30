@@ -164,6 +164,7 @@
   }
   async function stopRecording(){
     if(!data.recordingActive)return;
+    if(ink.pointerId!==null){notice('Zum Beenden der Aufnahme zuerst den Pencil abheben.');return;}
     await finishInk();await saveQueue.catch(()=>{});await archiveDraftIfNeeded();
     if(!await archivePendingDrafts()){notice('Einige Entwürfe konnten nicht gespeichert werden. Aufnahme bleibt aktiv.');return;}
     const id=data.sessionId,session=await readRecord('sessions',id);
@@ -487,11 +488,13 @@
     const finger=Array.from(e.changedTouches||[]).find(t=>t.touchType!=='stylus');
     if(!finger)return;
     if(e.cancelable)e.preventDefault();
+    // Never shift the canvas underneath an unfinished Pencil stroke.
+    if(ink.pointerId!==null)return;
     railTouch={id:finger.identifier,lastY:finger.clientY};
   },{passive:false});
   rail.addEventListener('touchmove',e=>{
     if(e.cancelable)e.preventDefault();
-    if(!railTouch)return;
+    if(!railTouch||ink.pointerId!==null)return;
     const finger=Array.from(e.changedTouches||[]).find(t=>t.identifier===railTouch.id&&t.touchType!=='stylus');
     if(!finger)return;
     const delta=railTouch.lastY-finger.clientY;
@@ -555,7 +558,7 @@
     const entries=[['LERNDURCHGANG.html',encoder.encode(reportHTML(attempts,images,ses))],['lerndurchgang.json',encoder.encode(JSON.stringify(result,null,2))],['HINWEIS.txt',encoder.encode('HM3 Stiftkarten: Im Ordner skizzen liegen PNG-Bilder deiner handschriftlichen Lösungen. Lade diese ZIP-Datei bei ChatGPT hoch und bitte um die Prüfung aller Aufgaben. Die App führt keine automatische Bewertung aus.\n')],...files];
     const filename=(ses.name||'HM3-Aufnahme').replace(/[^a-zA-Z0-9 _-]/g,'').trim().replace(/\s+/g,'_').slice(0,55)||'HM3-Aufnahme';download(await zip(entries),filename+'_'+sessionId.slice(-7)+'.zip');notice(`Durchgang exportiert: ${attempts.length} Versuche, ${files.length} Skizzen.`);
   }catch(e){console.error('ZIP export',e);notice('Export fehlgeschlagen: '+e.message);}finally{exporting=false;updateRecordingUI();}}
-  async function exportBackup(){await finishInk();await saveQueue.catch(()=>{});const payload={app:'HM3 Stiftkarten',version:2,exportedAt:new Date().toISOString(),data,sketches:await getAllSketches(),attempts:await listRecords('attempts'),sessions:await listRecords('sessions')};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),`HM3-Gesamtbackup-${new Date().toISOString().slice(0,10)}.json`);notice('Gesamtes Backup erstellt.');}
+  async function exportBackup(){if(ink.pointerId!==null){notice('Zum Sichern zuerst den Pencil abheben.');return;}await finishInk();await saveQueue.catch(()=>{});const payload={app:'HM3 Stiftkarten',version:2,exportedAt:new Date().toISOString(),data,sketches:await getAllSketches(),attempts:await listRecords('attempts'),sessions:await listRecords('sessions')};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),`HM3-Gesamtbackup-${new Date().toISOString().slice(0,10)}.json`);notice('Gesamtes Backup erstellt.');}
   async function importBackup(file){try{const input=JSON.parse(await file.text());if(input.app!=='HM3 Stiftkarten')throw Error('Keine HM3-Datensicherung');
     if(input.version!==1&&input.version!==2)throw Error('Unbekannte Backup-Version');
     const rawSketches=input.version===1?(input.notes||{}):(input.sketches||{});
@@ -675,6 +678,7 @@
   // Update erzwingen, ohne IndexedDB, Stiftstriche oder Selbstbewertungen zu löschen.
   async function refreshApp(){
     if(appRefreshing)return;
+    if(ink.pointerId!==null){notice('Zum Aktualisieren zuerst den Pencil abheben.');return;}
     if(!navigator.onLine){notice('Offline: Zum Aktualisieren bitte Internet verbinden.');return;}
     const button=$('updateAppBtn');appRefreshing=true;button.disabled=true;button.textContent='Prüfe Update …';
     try{
