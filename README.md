@@ -132,3 +132,8 @@ Keine Telemetrie, keine Konten. ZIP wird im Browser erstellt; kein Netztransfer 
 - Neuer Kartensatz: **41 komplexere mehrteilige Aufgaben**, davon **13 Testat-Aufgaben**, statt V16 mit 63 teilweise zu kleinen Karten. Die neuen IDs verhindern eine falsche Zuordnung alter Zeichnungen. V16 bleibt als `archive/cards-v16.json` erhalten. Die Testat-Kategorie kann im gewöhnlichen Kartenfilter und in individuell ausgewählten Quiz-Runden ausgewählt werden. Antworten sind ausdrücklich keine Ein-Satz-Schlagwörter, sondern Voraussetzungen, Herleitung, Rechnung und Probe.
 - `proofs.json` ist Teil des vollständigen Offline-Pakets und des PWA-Update-Caches. Die App nutzt weiter ausschließlich lokal gespeicherte Daten, bis ausdrücklich ein Export erfolgt.
 - Die bestehende Aufnahmefunktion bleibt erhalten. Das eigene Beweislernen beginnt aus Sicherheitsgründen nicht während einer laufenden Aufnahme oder einer laufenden Abfrage.
+
+### V17.1 – Formelsatz korrigiert
+
+- LaTeX-Ungleichungen (insbesondere `\\ne0`) bleiben unversehrt. Eine falsch formatierte Zustandsraum-Matrix wurde korrigiert.
+- Der gesamte neue Fragen-/Beweiskatalog wurde zusätzlich mit MathJax auf 1.142 mathematische Ausdrücke geprüft (keine Formelsatz-Fehler).

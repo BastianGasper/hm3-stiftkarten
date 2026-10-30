@@ -13,7 +13,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V01 S. 1–4",
     "Frage": "Zwei Begriffe „homogen“ werden in HM3 verwendet. Stelle anhand von \\(y\\prime=g(y/x)\\) und \\(y\\prime+q(x)y=0\\) dar, worin sie sich unterscheiden. Leite jeweils die sinnvolle Lösungsstrategie her und erläutere die nötigen Definitionsbereiche.",
-    "Antwort": "(1) Homogen erster Ordnung im Substitutionssinn: \\(y\\prime=g(y/x)\\) für \\(x\ne0\\). Mit \\(u=y/x\\) gilt \\(y=xu\\), \\(y\\prime=u+xu\\prime\\). Daraus \\(xu\\prime=g(u)-u\\), ggf. Variablentrennung. Ein Intervall darf \\(x=0\\) nicht durchschreiten.\n(2) Homogen im linearen Sinn: \\(y\\prime+q(x)y=0\\) besitzt keine Störfunktion. Mit \\(Q\\prime=q\\) ist \\((e^Qy)\\prime=0\\), also \\(y=Ce^{-Q}\\).\nDie Bezeichnungen sind strukturell verschieden; aus „homogen“ allein darf man keine Methode ableiten."
+    "Antwort": "(1) Homogen erster Ordnung im Substitutionssinn: \\(y\\prime=g(y/x)\\) für \\(x\\ne0\\). Mit \\(u=y/x\\) gilt \\(y=xu\\), \\(y\\prime=u+xu\\prime\\). Daraus \\(xu\\prime=g(u)-u\\), ggf. Variablentrennung. Ein Intervall darf \\(x=0\\) nicht durchschreiten.\n(2) Homogen im linearen Sinn: \\(y\\prime+q(x)y=0\\) besitzt keine Störfunktion. Mit \\(Q\\prime=q\\) ist \\((e^Qy)\\prime=0\\), also \\(y=Ce^{-Q}\\).\nDie Bezeichnungen sind strukturell verschieden; aus „homogen“ allein darf man keine Methode ableiten."
   },
   {
     "id": "hm3-v17-003",
@@ -21,7 +21,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V01 S. 3–6",
     "Frage": "Ein gedämpfter Oszillator erfüllt \\(my\\prime\\prime+dy\\prime+ky=F(t)\\), \\(y(0)=a\\), \\(y\\prime(0)=v\\). (a) Erkläre die Modellterme. (b) Gib die explizite Normalform und das Zustandsraummodell an. (c) Welche Annahme an \\(m\\) ist erforderlich? (d) Welche Rolle spielen die Anfangswerte?",
-    "Antwort": "(a) \\(my\\prime\\prime\\): Trägheit, \\(dy\\prime\\): Dämpfung, \\(ky\\): Federkraft, \\(F\\): Anregung.\n(b) Für \\(m\ne0\\): \\(y\\prime\\prime=(F(t)-dy\\prime-ky)/m\\). Mit \\(Y=(y,v)^T\\) gilt \\(Y\\prime=\\begin{pmatrix}v\\\\[F(t)-dv-ky]/m\\end{pmatrix}\\), \\(Y(0)=(a,v)^T\\).\n(c) Nur für \\(m\ne0\\) ist die DGL in der zweiten Ableitung explizit; physikalisch \\(m>0\\).\n(d) Beide Anfangswerte sind notwendig, um die zwei Integrationskonstanten der homogenen Lösung eindeutig festzulegen."
+    "Antwort": "(a) \\(my\\prime\\prime\\): Trägheit, \\(dy\\prime\\): Dämpfung, \\(ky\\): Federkraft, \\(F\\): Anregung.\n(b) Für \\(m\\ne0\\): \\(y\\prime\\prime=(F(t)-dy\\prime-ky)/m\\). Mit \\(Y=(y,v)^T\\) gilt \\(Y\\prime=\\begin{pmatrix}v\\\\\\frac{F(t)-dv-ky}{m}\\end{pmatrix}\\), \\(Y(0)=(a,v)^T\\).\n(c) Nur für \\(m\\ne0\\) ist die DGL in der zweiten Ableitung explizit; physikalisch \\(m>0\\).\n(d) Beide Anfangswerte sind notwendig, um die zwei Integrationskonstanten der homogenen Lösung eindeutig festzulegen."
   },
   {
     "id": "hm3-v17-004",
@@ -29,7 +29,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V01 S. 2–3; Ü00",
     "Frage": "In V01 steht die Gleichung \\(y\\prime\\prime=(1+y\\prime)/\\sin y\\). (a) Weshalb ist das eine explizite DGL zweiter Ordnung? (b) Welche Einschränkungen gelten für den Definitionsbereich? (c) Wie lautet das zugehörige System erster Ordnung? (d) Welche Anfangsbedingungen sind nötig?",
-    "Antwort": "(a) Die höchste auftretende Ableitung ist \\(y\\prime\\prime\\), und sie ist isoliert. Die rechte Seite darf von \\(y\\) und \\(y\\prime\\) abhängen.\n(b) Notwendig ist \\(\\sin y\ne0\\), also dürfen Lösungswerte nicht \\(k\\pi\\) für \\(k\\in\\mathbb Z\\) sein. Ein geeignetes offenes Gebiet muss diese Singularitäten ausschließen.\n(c) Setze \\(Y_1=y\\), \\(Y_2=y\\prime\\). Dann \\(Y\\prime=(Y_2,(1+Y_2)/\\sin Y_1)^T\\).\n(d) Für ein klassisches AWP werden beide Werte \\(y(x_0)=a_0\\), \\(y\\prime(x_0)=a_1\\) am selben Punkt benötigt; es muss \\(\\sin a_0\ne0\\) gelten."
+    "Antwort": "(a) Die höchste auftretende Ableitung ist \\(y\\prime\\prime\\), und sie ist isoliert. Die rechte Seite darf von \\(y\\) und \\(y\\prime\\) abhängen.\n(b) Notwendig ist \\(\\sin y\\ne0\\), also dürfen Lösungswerte nicht \\(k\\pi\\) für \\(k\\in\\mathbb Z\\) sein. Ein geeignetes offenes Gebiet muss diese Singularitäten ausschließen.\n(c) Setze \\(Y_1=y\\), \\(Y_2=y\\prime\\). Dann \\(Y\\prime=(Y_2,(1+Y_2)/\\sin Y_1)^T\\).\n(d) Für ein klassisches AWP werden beide Werte \\(y(x_0)=a_0\\), \\(y\\prime(x_0)=a_1\\) am selben Punkt benötigt; es muss \\(\\sin a_0\\ne0\\) gelten."
   },
   {
     "id": "hm3-v17-005",
@@ -93,7 +93,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V03 S. 3–7",
     "Frage": "Du erhältst drei Funktionen, die alle \\(y\\prime\\prime\\prime+a_1y\\prime\\prime+a_2y\\prime+a_3y=0\\) erfüllen. Beweise die Äquivalenz zwischen \\(W(x_0)\ne0\\) und linearer Unabhängigkeit. Warum wäre der Umkehrschluss für beliebige glatte Funktionen falsch?",
-    "Antwort": "Bei \\(W(x_0)\ne0\\) ist die Wronski-Matrix invertierbar. Aus \\(\\sum c_jy_j\\equiv0\\) folgt durch Ableiten und Einsetzen von \\(x_0\\) das LGS \\(V(x_0)c=0\\), also \\(c=0\\).\nBei \\(W(x_0)=0\\) existiert \\(c\ne0\\) mit \\(V(x_0)c=0\\). Die Linearkombination \\(z=\\sum c_jy_j\\) ist dann Lösung **derselben** homogenen DGL mit allen Null-Anfangswerten. Die AWP-Eindeutigkeit erzwingt \\(z\\equiv0\\); somit sind die Funktionen abhängig.\nOhne gemeinsame lineare DGL kann eine Wronski-Determinante an einer einzelnen Stelle verschwinden, obwohl die Funktionen unabhängig sind, z. B. \\(1,x^2\\) bei \\(x=0\\). Die Voraussetzung darf im Beweis nicht entfallen."
+    "Antwort": "Bei \\(W(x_0)\\ne0\\) ist die Wronski-Matrix invertierbar. Aus \\(\\sum c_jy_j\\equiv0\\) folgt durch Ableiten und Einsetzen von \\(x_0\\) das LGS \\(V(x_0)c=0\\), also \\(c=0\\).\nBei \\(W(x_0)=0\\) existiert \\(c\\ne0\\) mit \\(V(x_0)c=0\\). Die Linearkombination \\(z=\\sum c_jy_j\\) ist dann Lösung **derselben** homogenen DGL mit allen Null-Anfangswerten. Die AWP-Eindeutigkeit erzwingt \\(z\\equiv0\\); somit sind die Funktionen abhängig.\nOhne gemeinsame lineare DGL kann eine Wronski-Determinante an einer einzelnen Stelle verschwinden, obwohl die Funktionen unabhängig sind, z. B. \\(1,x^2\\) bei \\(x=0\\). Die Voraussetzung darf im Beweis nicht entfallen."
   },
   {
     "id": "hm3-v17-013",
@@ -101,7 +101,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V03 S. 3–7",
     "Frage": "Prüfe \\(y_1=e^x\\), \\(y_2=xe^x\\), \\(y_3=e^{2x}\\) als Fundamentalsystem der DGL \\(y\\prime\\prime\\prime-4y\\prime\\prime+5y\\prime-2y=0\\). (a) Zeige die DGL-Eigenschaft. (b) Berechne \\(W(0)\\). (c) Bestimme \\(W(x)\\) mithilfe von Abel und interpretiere das Ergebnis.",
-    "Antwort": "(a) Das charakteristische Polynom ist \\(p(\\lambda)=(\\lambda-1)^2(\\lambda-2)\\). Die genannten Funktionen gehören zur doppelten Wurzel \\(1\\) und einfachen Wurzel \\(2\\), also sind sie Lösungen.\n(b) \\(V(0)=\\begin{pmatrix}1&0&1\\\\1&1&2\\\\1&2&4\\end{pmatrix}\\), \\(W(0)=1\\).\n(c) Der Koeffizient vor \\(y\\prime\\prime\\) ist \\(a_1=-4\\), somit \\(W(x)=W(0)e^{-\\int_0^x(-4)dt}=e^{4x}\ne0\\). Die Funktionen sind auf \\(\\mathbb R\\) unabhängig; wegen Dimension 3 bilden sie ein Fundamentalsystem."
+    "Antwort": "(a) Das charakteristische Polynom ist \\(p(\\lambda)=(\\lambda-1)^2(\\lambda-2)\\). Die genannten Funktionen gehören zur doppelten Wurzel \\(1\\) und einfachen Wurzel \\(2\\), also sind sie Lösungen.\n(b) \\(V(0)=\\begin{pmatrix}1&0&1\\\\1&1&2\\\\1&2&4\\end{pmatrix}\\), \\(W(0)=1\\).\n(c) Der Koeffizient vor \\(y\\prime\\prime\\) ist \\(a_1=-4\\), somit \\(W(x)=W(0)e^{-\\int_0^x(-4)dt}=e^{4x}\\ne0\\). Die Funktionen sind auf \\(\\mathbb R\\) unabhängig; wegen Dimension 3 bilden sie ein Fundamentalsystem."
   },
   {
     "id": "hm3-v17-014",
@@ -109,7 +109,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V03 S. 2–4",
     "Frage": "Ein Fundamentalsystem \\(y_1,\\ldots,y_n\\) liegt vor. Erläutere formal und nicht nur verbal, wie ein beliebiges AWP \\(L(y)=s\\) mit Anfangsdaten bei \\(x_0\\) in ein lineares Gleichungssystem für die Konstanten übergeht. Zeige, warum dieses System invertierbar ist.",
-    "Antwort": "Wähle eine partikuläre Lösung \\(y_p\\). Dann \\(y=y_p+\\sum_{j=1}^n c_jy_j\\). Für jeden Anfangswert \\(y^{(k)}(x_0)=a_k\\), \\(k=0,\\ldots,n-1\\), erhält man \\(\\sum_j c_j y_j^{(k)}(x_0)=a_k-y_p^{(k)}(x_0)\\). In Matrixform \\(V(x_0)c=a-b_p\\), wobei \\(V\\) die Wronski-Matrix und \\(b_p=(y_p(x_0),\\ldots,y_p^{(n-1)}(x_0))^T\\) ist. Da das FS unabhängig ist, gilt \\(\\det V(x_0)\ne0\\) für jedes \\(x_0\\). Das LGS besitzt daher genau eine Lösung \\(c\\)."
+    "Antwort": "Wähle eine partikuläre Lösung \\(y_p\\). Dann \\(y=y_p+\\sum_{j=1}^n c_jy_j\\). Für jeden Anfangswert \\(y^{(k)}(x_0)=a_k\\), \\(k=0,\\ldots,n-1\\), erhält man \\(\\sum_j c_j y_j^{(k)}(x_0)=a_k-y_p^{(k)}(x_0)\\). In Matrixform \\(V(x_0)c=a-b_p\\), wobei \\(V\\) die Wronski-Matrix und \\(b_p=(y_p(x_0),\\ldots,y_p^{(n-1)}(x_0))^T\\) ist. Da das FS unabhängig ist, gilt \\(\\det V(x_0)\\ne0\\) für jedes \\(x_0\\). Das LGS besitzt daher genau eine Lösung \\(c\\)."
   },
   {
     "id": "hm3-v17-015",
@@ -133,7 +133,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V04 S. 2–5",
     "Frage": "Für eine reelle DGL mit \\(\\lambda=\\alpha\\pm i\\beta\\), \\(\\beta>0\\), beweise (a) die Paarung der Nullstellen, (b) die Reellwertigkeit und Lösungs-Eigenschaft von \\(e^{\\alpha x}\\cos\\beta x\\) und \\(e^{\\alpha x}\\sin\\beta x\\), (c) ihre Unabhängigkeit durch eine konkrete Wronski-Determinante.",
-    "Antwort": "(a) Für ein Polynom mit reellen Koeffizienten gilt \\(p(\\bar\\lambda)=\\overline{p(\\lambda)}\\), somit ist \\(\\bar\\lambda\\) ebenfalls Nullstelle.\n(b) \\(e^{(\\alpha+i\\beta)x}=e^{\\alpha x}(\\cos\\beta x+i\\sin\\beta x)\\). Bei reellen Koeffizienten ist \\(L(\\mathrm{Re}\\,z)=\\mathrm{Re}(Lz)\\), entsprechend imaginär; die beiden Funktionen sind daher reelle homogene Lösungen.\n(c) Direkt ergibt sich \\(W(x)=\\beta e^{2\\alpha x}\ne0\\). Sie sind unabhängig. Bei einer DGL zweiter Ordnung ist dies bereits ein FS; bei höherer Ordnung ein Teil eines solchen."
+    "Antwort": "(a) Für ein Polynom mit reellen Koeffizienten gilt \\(p(\\bar\\lambda)=\\overline{p(\\lambda)}\\), somit ist \\(\\bar\\lambda\\) ebenfalls Nullstelle.\n(b) \\(e^{(\\alpha+i\\beta)x}=e^{\\alpha x}(\\cos\\beta x+i\\sin\\beta x)\\). Bei reellen Koeffizienten ist \\(L(\\mathrm{Re}\\,z)=\\mathrm{Re}(Lz)\\), entsprechend imaginär; die beiden Funktionen sind daher reelle homogene Lösungen.\n(c) Direkt ergibt sich \\(W(x)=\\beta e^{2\\alpha x}\\ne0\\). Sie sind unabhängig. Bei einer DGL zweiter Ordnung ist dies bereits ein FS; bei höherer Ordnung ein Teil eines solchen."
   },
   {
     "id": "hm3-v17-018",
@@ -141,7 +141,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V04 S. 5; Ü02",
     "Frage": "Bestimme aus \\(y\\prime\\prime\\prime+y\\prime\\prime+y\\prime+y=0\\) das reelle Fundamentalsystem. Warum genügt es nicht, die drei Nullstellen einfach aufzuschreiben? Führe mindestens eine überprüfbare Argumentation für die Unabhängigkeit an.",
-    "Antwort": "\\(p(\\lambda)=\\lambda^3+\\lambda^2+\\lambda+1=(\\lambda+1)(\\lambda^2+1)\\). Wurzeln \\(-1,\\pm i\\). Reelles FS: \\(e^{-x},\\cos x,\\sin x\\).\nZur Lösungseigenschaft folgt \\(L(e^{\\lambda x})=p(\\lambda)e^{\\lambda x}\\) für jede Wurzel; mit reellen Koeffizienten sind Real-/Imaginärteile ebenfalls Lösungen.\nUnabhängigkeit z. B. an \\(x=0\\): \\(V(0)=\\begin{pmatrix}1&1&0\\\\-1&0&1\\\\1&-1&0\\end{pmatrix}\\), \\(\\det V(0)=2\ne0\\). Drei unabhängige Lösungen einer DGL dritter Ordnung bilden ein FS."
+    "Antwort": "\\(p(\\lambda)=\\lambda^3+\\lambda^2+\\lambda+1=(\\lambda+1)(\\lambda^2+1)\\). Wurzeln \\(-1,\\pm i\\). Reelles FS: \\(e^{-x},\\cos x,\\sin x\\).\nZur Lösungseigenschaft folgt \\(L(e^{\\lambda x})=p(\\lambda)e^{\\lambda x}\\) für jede Wurzel; mit reellen Koeffizienten sind Real-/Imaginärteile ebenfalls Lösungen.\nUnabhängigkeit z. B. an \\(x=0\\): \\(V(0)=\\begin{pmatrix}1&1&0\\\\-1&0&1\\\\1&-1&0\\end{pmatrix}\\), \\(\\det V(0)=2\\ne0\\). Drei unabhängige Lösungen einer DGL dritter Ordnung bilden ein FS."
   },
   {
     "id": "hm3-v17-019",
@@ -149,7 +149,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V05 S. 2–4",
     "Frage": "Führe die Variation der Konstanten für eine normierte lineare DGL n-ter Ordnung als mathematisch exaktes Verfahren her. (a) Ansatz, (b) alle \\(n\\) Nebenbedingungen, (c) Wronski-LGS, (d) Eindeutigkeit seiner Lösung, (e) Verifikation \\(L(y_p)=s\\).",
-    "Antwort": "(a) Bei FS \\(y_1,\\ldots,y_n\\): \\(y_p=\\sum c_j(x)y_j(x)\\).\n(b) Für \\(k=0,\\ldots,n-2\\): \\(\\sum_j c_j\\prime y_j^{(k)}=0\\); letzte Gleichung \\(\\sum_j c_j\\prime y_j^{(n-1)}=s\\).\n(c) Damit \\(V c\\prime=s e_n\\), \\(V_{kj}=y_j^{(k-1)}\\).\n(d) \\(\\det V=W\ne0\\) auf \\(I\\) wegen FS und Abel; daher \\(c\\prime=V^{-1}s e_n\\) eindeutig.\n(e) Wegen der Nebenbedingungen gilt \\(y_p^{(k)}=\\sum c_jy_j^{(k)}\\) bis \\(k=n-1\\) und \\(y_p^{(n)}=\\sum c_jy_j^{(n)}+s\\). Somit \\(L(y_p)=\\sum c_jL(y_j)+s=s\\). Anschließend \\(c\\prime\\) integrieren. Nicht normierte Gleichungen zuerst durch den höchsten Koeffizienten dividieren."
+    "Antwort": "(a) Bei FS \\(y_1,\\ldots,y_n\\): \\(y_p=\\sum c_j(x)y_j(x)\\).\n(b) Für \\(k=0,\\ldots,n-2\\): \\(\\sum_j c_j\\prime y_j^{(k)}=0\\); letzte Gleichung \\(\\sum_j c_j\\prime y_j^{(n-1)}=s\\).\n(c) Damit \\(V c\\prime=s e_n\\), \\(V_{kj}=y_j^{(k-1)}\\).\n(d) \\(\\det V=W\\ne0\\) auf \\(I\\) wegen FS und Abel; daher \\(c\\prime=V^{-1}s e_n\\) eindeutig.\n(e) Wegen der Nebenbedingungen gilt \\(y_p^{(k)}=\\sum c_jy_j^{(k)}\\) bis \\(k=n-1\\) und \\(y_p^{(n)}=\\sum c_jy_j^{(n)}+s\\). Somit \\(L(y_p)=\\sum c_jL(y_j)+s=s\\). Anschließend \\(c\\prime\\) integrieren. Nicht normierte Gleichungen zuerst durch den höchsten Koeffizienten dividieren."
   },
   {
     "id": "hm3-v17-020",
@@ -157,7 +157,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V05 S. 4; Ü03",
     "Frage": "Löse \\(y\\prime\\prime+2y\\prime+2y=1\\) mittels Variation der Konstanten mit \\(y_1=e^{-x}\\cos x\\), \\(y_2=e^{-x}\\sin x\\). Stelle das vollständige LGS auf, bestimme \\(c_1\\prime,c_2\\prime\\) und eine partikuläre Lösung; prüfe durch Einsetzen.",
-    "Antwort": "\\(W=e^{-2x}\ne0\\). Nebenbedingungen: \\(c_1\\prime y_1+c_2\\prime y_2=0\\), \\(c_1\\prime y_1\\prime+c_2\\prime y_2\\prime=1\\). Aus Cramer ergibt sich \\(c_1\\prime=-y_2/W=-e^x\\sin x\\), \\(c_2\\prime=y_1/W=e^x\\cos x\\).\nIntegriere \\(c_1=-(e^x/2)(\\sin x-\\cos x)\\), \\(c_2=(e^x/2)(\\sin x+\\cos x)\\), Integrationskonstanten null. Dann \\(y_p=c_1e^{-x}\\cos x+c_2e^{-x}\\sin x=\\tfrac12(\\cos^2x+\\sin^2x)=1/2\\). Probe: \\(0+0+2(1/2)=1\\)."
+    "Antwort": "\\(W=e^{-2x}\\ne0\\). Nebenbedingungen: \\(c_1\\prime y_1+c_2\\prime y_2=0\\), \\(c_1\\prime y_1\\prime+c_2\\prime y_2\\prime=1\\). Aus Cramer ergibt sich \\(c_1\\prime=-y_2/W=-e^x\\sin x\\), \\(c_2\\prime=y_1/W=e^x\\cos x\\).\nIntegriere \\(c_1=-(e^x/2)(\\sin x-\\cos x)\\), \\(c_2=(e^x/2)(\\sin x+\\cos x)\\), Integrationskonstanten null. Dann \\(y_p=c_1e^{-x}\\cos x+c_2e^{-x}\\sin x=\\tfrac12(\\cos^2x+\\sin^2x)=1/2\\). Probe: \\(0+0+2(1/2)=1\\)."
   },
   {
     "id": "hm3-v17-021",
@@ -189,7 +189,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V06 S. 3–5",
     "Frage": "Leite bei \\(L=p(D)\\) die Resonanzregel für \\(s(x)=P_m(x)e^{\\lambda x}\\) her. (a) Bedeutung der Nullstellenvielfachheit \\(r\\), (b) Ansatz \\(x^rQ_m e^{\\lambda x}\\), (c) Operatorbegründung, (d) Unterschied zu einem homogenen Vielfachheitsblock.",
-    "Antwort": "\\(r\\) ist die Vielfachheit von \\(\\lambda\\) als Nullstelle von \\(p\\), bei Nichtnullstelle \\(r=0\\).\nMit \\(p(z)=(z-\\lambda)^r q(z)\\), \\(q(\\lambda)\ne0\\), gilt \\(p(D)(e^{\\lambda x}u)=e^{\\lambda x}D^r q(D+\\lambda)u\\). Auf Polynomen bis Grad \\(m\\) ist \\(q(D+\\lambda)\\) invertierbar, weil es eine obere Dreiecksmatrix mit Diagonale \\(q(\\lambda)\ne0\\) darstellt. \\(D^r\\) bildet \\(x^r\\) mal Polynome vom Grad \\(\\le m\\) bijektiv auf Polynome vom Grad \\(\\le m\\) ab. Deshalb kann \\(u=x^rQ_m\\) gewählt werden.\nIm homogenen FS beschreibt \\(x^ke^{\\lambda x}\\), \\(k<r\\), gerade den Kern; der Faktor \\(x^r\\) im inhomogenen Ansatz verlässt diesen Kern."
+    "Antwort": "\\(r\\) ist die Vielfachheit von \\(\\lambda\\) als Nullstelle von \\(p\\), bei Nichtnullstelle \\(r=0\\).\nMit \\(p(z)=(z-\\lambda)^r q(z)\\), \\(q(\\lambda)\\ne0\\), gilt \\(p(D)(e^{\\lambda x}u)=e^{\\lambda x}D^r q(D+\\lambda)u\\). Auf Polynomen bis Grad \\(m\\) ist \\(q(D+\\lambda)\\) invertierbar, weil es eine obere Dreiecksmatrix mit Diagonale \\(q(\\lambda)\\ne0\\) darstellt. \\(D^r\\) bildet \\(x^r\\) mal Polynome vom Grad \\(\\le m\\) bijektiv auf Polynome vom Grad \\(\\le m\\) ab. Deshalb kann \\(u=x^rQ_m\\) gewählt werden.\nIm homogenen FS beschreibt \\(x^ke^{\\lambda x}\\), \\(k<r\\), gerade den Kern; der Faktor \\(x^r\\) im inhomogenen Ansatz verlässt diesen Kern."
   },
   {
     "id": "hm3-v17-025",
@@ -213,7 +213,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V06 S. 3–5",
     "Frage": "Eine lineare DGL mit konstanten Koeffizienten hat \\(s(x)=2e^x+3x\\). Konstruiere einen vollständigen und minimalen partikulären Ansatz, wenn \\(p(\\lambda)=(\\lambda-1)^2(\\lambda-2)\\). Warum ist ein einfacher Ansatz \\(Ae^x+Bx+C\\) unzureichend?",
-    "Antwort": "Die Störfunktion ist Summe zweier Komponenten; wegen Linearität kann \\(y_p=y_{p,1}+y_{p,2}\\) gewählt werden.\nFür \\(2e^x\\): \\(\\lambda=1\\) ist doppelte Nullstelle, daher \\(y_{p,1}=A x^2e^x\\). Für \\(3x\\): \\(\\lambda=0\\) ist keine Nullstelle, \\(p(0)=(-1)^2(-2)=-2\ne0\\); daher \\(y_{p,2}=Bx+C\\).\nMinimaler Ansatz \\(y_p=Ax^2e^x+Bx+C\\). Ein bloßes \\(Ae^x\\) liegt im homogenen Kern und kann die Störfunktion \\(2e^x\\) nicht erzeugen."
+    "Antwort": "Die Störfunktion ist Summe zweier Komponenten; wegen Linearität kann \\(y_p=y_{p,1}+y_{p,2}\\) gewählt werden.\nFür \\(2e^x\\): \\(\\lambda=1\\) ist doppelte Nullstelle, daher \\(y_{p,1}=A x^2e^x\\). Für \\(3x\\): \\(\\lambda=0\\) ist keine Nullstelle, \\(p(0)=(-1)^2(-2)=-2\\ne0\\); daher \\(y_{p,2}=Bx+C\\).\nMinimaler Ansatz \\(y_p=Ax^2e^x+Bx+C\\). Ein bloßes \\(Ae^x\\) liegt im homogenen Kern und kann die Störfunktion \\(2e^x\\) nicht erzeugen."
   },
   {
     "id": "hm3-v17-028",
@@ -221,7 +221,7 @@
     "Typ": "Vertiefung",
     "Quelle": "V06 S. 1–3; V05",
     "Frage": "Für \\(y\\prime\\prime+y=x\\) und \\(y\\prime\\prime+y=e^x\\cos x\\) vergleiche jeweils die drei Verfahren VoK, RoO und unbestimmte Koeffizienten. (a) Was ist bei der jeweiligen Störfunktion der mathematisch kürzeste Ansatz? (b) Welche Voraussetzungen und etwaige Resonanzen müssen geprüft werden?",
-    "Antwort": "Bei \\(y\\prime\\prime+y=x\\): \\(p(\\lambda)=\\lambda^2+1\\), \\(p(0)=1\ne0\\). Ansatz \\(y_p=Ax+B\\); sofort \\(A=1,B=0\\), also \\(y_p=x\\). VoK/RoO funktionieren grundsätzlich, sind aber unnötig aufwendig.\nBei \\(y\\prime\\prime+y=e^x\\cos x\\): komplexe Ersatzstörfunktion \\(e^{(1+i)x}\\). \\(p(1+i)=(1+i)^2+1=1+2i\ne0\\): keine Resonanz. Ansatz \\(z_p=A e^{(1+i)x}\\) mit \\(A=1/(1+2i)=(1-2i)/5\\), dann \\(y_p=\\mathrm{Re}z_p=e^x(\\cos x+2\\sin x)/5\\). Reelle Koeffizienten sind entscheidend für den Realteil-Schritt."
+    "Antwort": "Bei \\(y\\prime\\prime+y=x\\): \\(p(\\lambda)=\\lambda^2+1\\), \\(p(0)=1\\ne0\\). Ansatz \\(y_p=Ax+B\\); sofort \\(A=1,B=0\\), also \\(y_p=x\\). VoK/RoO funktionieren grundsätzlich, sind aber unnötig aufwendig.\nBei \\(y\\prime\\prime+y=e^x\\cos x\\): komplexe Ersatzstörfunktion \\(e^{(1+i)x}\\). \\(p(1+i)=(1+i)^2+1=1+2i\\ne0\\): keine Resonanz. Ansatz \\(z_p=A e^{(1+i)x}\\) mit \\(A=1/(1+2i)=(1-2i)/5\\), dann \\(y_p=\\mathrm{Re}z_p=e^x(\\cos x+2\\sin x)/5\\). Reelle Koeffizienten sind entscheidend für den Realteil-Schritt."
   },
   {
     "id": "hm3-v17-029",
@@ -261,7 +261,7 @@
     "Typ": "Testat-Aufgabe",
     "Quelle": "V03; Ü02",
     "Frage": "TESTAT · Abel vollständig. Es seien \\(y_1,\\ldots,y_n\\) Lösungen derselben homogenen linearen DGL n-ter Ordnung. (1) Definiere die Wronski-Matrix. (2) Beweise die Zeilen-Ableitungsregel. (3) leite \\(W\\prime=-a_1W\\) mit dem Verschwinden von \\(a_2,\\ldots,a_n\\) her. (4) Löse für \\(W\\) ohne Division. (5) Leite Unabhängigkeitsfolgen für \\(W(x_0)=0\\) und \\(\ne0\\) ab.",
-    "Antwort": "Wronski-Matrix \\(V_{kj}=y_j^{(k-1)}\\). Die Ableitungsregel folgt aus Multilinearität bzw. der Leibniz-Formel: \\((\\det V)\\prime\\) ist die Summe mit je einer differenzierten Zeile.\nFür jede der ersten \\(n-1\\) Zeilen entsteht eine bereits vorhandene nächste Zeile; jeweilige Determinante null. In der verbleibenden letzten Zeile gilt wegen der DGL \\(y_j^{(n)}=-a_1y_j^{(n-1)}-\\cdots-a_n y_j\\); nur \\(-a_1\\) multipliziert die ursprüngliche letzte Zeile, die übrigen Terme erzeugen doppelte Zeilen. Damit \\(W\\prime=-a_1W\\).\nMit \\(\\mu=e^{\\int_{x_0}^x a_1}\\) gilt \\((\\mu W)\\prime=0\\), also \\(W=W(x_0)e^{-\\int_{x_0}^x a_1}\\). Bei \\(W(x_0)=0\\) ist \\(W\\equiv0\\) und die n gemeinsamen Lösungen sind wegen AWP-Eindeutigkeit abhängig; bei \\(W(x_0)\ne0\\) ist die Determinante überall ungleich null und sie bilden ein FS. Nirgends durch \\(W\\) teilen."
+    "Antwort": "Wronski-Matrix \\(V_{kj}=y_j^{(k-1)}\\). Die Ableitungsregel folgt aus Multilinearität bzw. der Leibniz-Formel: \\((\\det V)\\prime\\) ist die Summe mit je einer differenzierten Zeile.\nFür jede der ersten \\(n-1\\) Zeilen entsteht eine bereits vorhandene nächste Zeile; jeweilige Determinante null. In der verbleibenden letzten Zeile gilt wegen der DGL \\(y_j^{(n)}=-a_1y_j^{(n-1)}-\\cdots-a_n y_j\\); nur \\(-a_1\\) multipliziert die ursprüngliche letzte Zeile, die übrigen Terme erzeugen doppelte Zeilen. Damit \\(W\\prime=-a_1W\\).\nMit \\(\\mu=e^{\\int_{x_0}^x a_1}\\) gilt \\((\\mu W)\\prime=0\\), also \\(W=W(x_0)e^{-\\int_{x_0}^x a_1}\\). Bei \\(W(x_0)=0\\) ist \\(W\\equiv0\\) und die n gemeinsamen Lösungen sind wegen AWP-Eindeutigkeit abhängig; bei \\(W(x_0)\\ne0\\) ist die Determinante überall ungleich null und sie bilden ein FS. Nirgends durch \\(W\\) teilen."
   },
   {
     "id": "hm3-v17-034",
@@ -269,7 +269,7 @@
     "Typ": "Testat-Aufgabe",
     "Quelle": "V03–V04",
     "Frage": "TESTAT · Fundamentalsystem. Für \\(L(y)=y\\prime\\prime\\prime-4y\\prime\\prime+5y\\prime-2y\\) werden \\(e^x,xe^x,e^{2x}\\) vorgeschlagen. (1) Weise für jede Funktion die homogene Lösungseigenschaft nach. (2) berechne \\(W(0)\\). (3) bestimme \\(W(x)\\) mit Abel. (4) stelle für beliebige Anfangsdaten \\(y(0),y\\prime(0),y\\prime\\prime(0)\\) das eindeutige LGS für die Koeffizienten auf.",
-    "Antwort": "\\(p(\\lambda)=\\lambda^3-4\\lambda^2+5\\lambda-2=(\\lambda-1)^2(\\lambda-2)\\), daher alle Funktionen homogene Lösungen (doppelte Wurzel \\(1\\)).\n\\(V(0)=\\begin{pmatrix}1&0&1\\\\1&1&2\\\\1&2&4\\end{pmatrix}\\), \\(W(0)=1\\). Nach Abel wegen \\(a_1=-4\\): \\(W(x)=e^{4x}\\).\nFür \\(y(0)=a_0,y\\prime(0)=a_1,y\\prime\\prime(0)=a_2\\) gilt \\(V(0)(c_1,c_2,c_3)^T=(a_0,a_1,a_2)^T\\), also \\(c_1+c_3=a_0\\), \\(c_1+c_2+2c_3=a_1\\), \\(c_1+2c_2+4c_3=a_2\\). Wegen \\(\\det V(0)=1\\) ist die Lösung eindeutig. Die Buchstaben \\(a_i\\) bezeichnen hier Anfangswerte, nicht DGL-Koeffizienten."
+    "Antwort": "\\(p(\\lambda)=\\lambda^3-4\\lambda^2+5\\lambda-2=(\\lambda-1)^2(\\lambda-2)\\), daher alle Funktionen homogene Lösungen (doppelte Wurzel \\(1\\)).\\n\\(V(0)=\\begin{pmatrix}1&0&1\\\\1&1&2\\\\1&2&4\\end{pmatrix}\\), \\(W(0)=1\\). Nach Abel wegen \\(a_1=-4\\): \\(W(x)=e^{4x}\\).\nFür \\(y(0)=a_0,y\\prime(0)=a_1,y\\prime\\prime(0)=a_2\\) gilt \\(V(0)(c_1,c_2,c_3)^T=(a_0,a_1,a_2)^T\\), also \\(c_1+c_3=a_0\\), \\(c_1+c_2+2c_3=a_1\\), \\(c_1+2c_2+4c_3=a_2\\). Wegen \\(\\det V(0)=1\\) ist die Lösung eindeutig. Die Buchstaben \\(a_i\\) bezeichnen hier Anfangswerte, nicht DGL-Koeffizienten."
   },
   {
     "id": "hm3-v17-035",
@@ -285,7 +285,7 @@
     "Typ": "Testat-Aufgabe",
     "Quelle": "V04–V06",
     "Frage": "TESTAT · Resonanz und AWP. Löse \\(y\\prime\\prime-2y\\prime+y=e^x\\) mit \\(y(0)=0\\), \\(y\\prime(0)=1\\). (1) Bestimme FS und Wronski. (2) Ermittle eine partikuläre Lösung mit dem Resonanzansatz. (3) Baue die allgemeine Lösung. (4) Setze die Anfangsdaten ein und führe die direkte Differentialprobe durch.",
-    "Antwort": "\\(p(\\lambda)=(\\lambda-1)^2\\). FS \\(\\{e^x,xe^x\\}\\) mit \\(W=e^{2x}\ne0\\). Die Störung \\(e^x\\) resoniert zweifach, daher \\(y_p=Ax^2e^x\\). Weil \\((D-1)^2(x^2e^x)=2e^x\\), gilt \\(A=1/2\\). Allgemeine Lösung \\(y=e^x(c_1+c_2x+x^2/2)\\).\nAnfangsdaten: \\(y(0)=c_1=0\\); \\(y\\prime(0)=c_1+c_2=1\\) ergibt \\(c_2=1\\). Eindeutige Lösung \\(y=e^x(x+x^2/2)\\).\nProbe: \\((D-1)^2(e^xQ)=e^xQ\\prime\\prime\\) mit \\(Q=x+x^2/2\\) und \\(Q\\prime\\prime=1\\), also \\(L(y)=e^x\\); die Anfangswerte stimmen."
+    "Antwort": "\\(p(\\lambda)=(\\lambda-1)^2\\). FS \\(\\{e^x,xe^x\\}\\) mit \\(W=e^{2x}\\ne0\\). Die Störung \\(e^x\\) resoniert zweifach, daher \\(y_p=Ax^2e^x\\). Weil \\((D-1)^2(x^2e^x)=2e^x\\), gilt \\(A=1/2\\). Allgemeine Lösung \\(y=e^x(c_1+c_2x+x^2/2)\\).\nAnfangsdaten: \\(y(0)=c_1=0\\); \\(y\\prime(0)=c_1+c_2=1\\) ergibt \\(c_2=1\\). Eindeutige Lösung \\(y=e^x(x+x^2/2)\\).\nProbe: \\((D-1)^2(e^xQ)=e^xQ\\prime\\prime\\) mit \\(Q=x+x^2/2\\) und \\(Q\\prime\\prime=1\\), also \\(L(y)=e^x\\); die Anfangswerte stimmen."
   },
   {
     "id": "hm3-v17-037",
@@ -293,7 +293,7 @@
     "Typ": "Testat-Aufgabe",
     "Quelle": "V05; Ü03",
     "Frage": "TESTAT · Variation der Konstanten. Es gilt \\(y\\prime\\prime+2y\\prime+2y=1\\). (1) Bestimme ein reelles FS und überprüfe \\(W\ne0\\). (2) Stelle die Nebenbedingungen auf. (3) löse das \\(2\\times2\\)-System für \\(c\\prime\\) mit Cramer. (4) Integriere und überprüfe \\(y_p\\). (5) Erläutere, was bei einer nicht normierten DGL rechts im System steht.",
-    "Antwort": "FS \\(y_1=e^{-x}\\cos x,\\ y_2=e^{-x}\\sin x\\), \\(W=e^{-2x}\\). Nebenbedingungen \\(c_1\\prime y_1+c_2\\prime y_2=0\\), \\(c_1\\prime y_1\\prime+c_2\\prime y_2\\prime=1\\). Cramer: \\(c_1\\prime=-y_2/W=-e^x\\sin x\\), \\(c_2\\prime=y_1/W=e^x\\cos x\\).\nEine Wahl der Stammfunktionen: \\(c_1=-e^x(\\sin x-\\cos x)/2\\), \\(c_2=e^x(\\sin x+\\cos x)/2\\). Dann \\(y_p=c_1y_1+c_2y_2=1/2\\). Durch Einsetzen: \\(y_p\\prime\\prime+2y_p\\prime+2y_p=1\\).\nBei \\(b_0(x)y\\prime\\prime+\\cdots=s\\) zuerst durch \\(b_0(x)\ne0\\) teilen; das VoK-LGS hat rechts \\((0,s/b_0)^T\\)."
+    "Antwort": "FS \\(y_1=e^{-x}\\cos x,\\ y_2=e^{-x}\\sin x\\), \\(W=e^{-2x}\\). Nebenbedingungen \\(c_1\\prime y_1+c_2\\prime y_2=0\\), \\(c_1\\prime y_1\\prime+c_2\\prime y_2\\prime=1\\). Cramer: \\(c_1\\prime=-y_2/W=-e^x\\sin x\\), \\(c_2\\prime=y_1/W=e^x\\cos x\\).\nEine Wahl der Stammfunktionen: \\(c_1=-e^x(\\sin x-\\cos x)/2\\), \\(c_2=e^x(\\sin x+\\cos x)/2\\). Dann \\(y_p=c_1y_1+c_2y_2=1/2\\). Durch Einsetzen: \\(y_p\\prime\\prime+2y_p\\prime+2y_p=1\\).\nBei \\(b_0(x)y\\prime\\prime+\\cdots=s\\) zuerst durch \\(b_0(x)\\ne0\\) teilen; das VoK-LGS hat rechts \\((0,s/b_0)^T\\)."
   },
   {
     "id": "hm3-v17-038",
@@ -309,7 +309,7 @@
     "Typ": "Testat-Aufgabe",
     "Quelle": "V06",
     "Frage": "TESTAT · Unbestimmte Koeffizienten. Behandle \\(y\\prime\\prime\\prime-4y\\prime\\prime+5y\\prime-2y=2e^x+3x\\). (1) Faktorisierung von \\(p\\), (2) minimale Ansätze für beide Störanteile, (3) Koeffizienten bestimmen, (4) warum Superposition zulässig ist, (5) Probe.",
-    "Antwort": "\\(p(z)=(z-1)^2(z-2)\\), \\(r_1=2\\) bei \\(z=1\\), und \\(p(0)=-2\ne0\\). Wegen Linearität \\(y_p=y_{p,1}+y_{p,2}\\).\nFür \\(2e^x\\): \\(y_{p,1}=Ax^2e^x\\) und aus \\(p(D+1)=D^2(D-1)\\) folgt \\(L(y_{p,1})=-2Ae^x\\), also \\(A=-1\\).\nFür \\(3x\\): \\(y_{p,2}=Bx+C\\). Ableitungen \\(y\\prime=B\\), \\(y\\prime\\prime=y\\prime\\prime\\prime=0\\). Daraus \\(L(Bx+C)=5B-2(Bx+C)=-2Bx+(5B-2C)\\). Koeffizientenvergleich mit \\(3x\\): \\(B=-3/2\\), \\(5B-2C=0\\), also \\(C=-15/4\\).\nErgebnis \\(y_p=-x^2e^x-3x/2-15/4\\). Probe: \\(L(-x^2e^x)=2e^x\\) und \\(L(-3x/2-15/4)=3x\\)."
+    "Antwort": "\\(p(z)=(z-1)^2(z-2)\\), \\(r_1=2\\) bei \\(z=1\\), und \\(p(0)=-2\\ne0\\). Wegen Linearität \\(y_p=y_{p,1}+y_{p,2}\\).\nFür \\(2e^x\\): \\(y_{p,1}=Ax^2e^x\\) und aus \\(p(D+1)=D^2(D-1)\\) folgt \\(L(y_{p,1})=-2Ae^x\\), also \\(A=-1\\).\nFür \\(3x\\): \\(y_{p,2}=Bx+C\\). Ableitungen \\(y\\prime=B\\), \\(y\\prime\\prime=y\\prime\\prime\\prime=0\\). Daraus \\(L(Bx+C)=5B-2(Bx+C)=-2Bx+(5B-2C)\\). Koeffizientenvergleich mit \\(3x\\): \\(B=-3/2\\), \\(5B-2C=0\\), also \\(C=-15/4\\).\nErgebnis \\(y_p=-x^2e^x-3x/2-15/4\\). Probe: \\(L(-x^2e^x)=2e^x\\) und \\(L(-3x/2-15/4)=3x\\)."
   },
   {
     "id": "hm3-v17-040",
@@ -317,7 +317,7 @@
     "Typ": "Testat-Aufgabe",
     "Quelle": "V05–V06",
     "Frage": "TESTAT · Methodenentscheidung. Untersuche die drei DGLs \\(y\\prime\\prime+(2/x)y\\prime=1/x\\) auf \\((0,\\infty)\\), \\(y\\prime\\prime+y=x\\) und \\(y\\prime\\prime-2y\\prime+2y=e^x\\cos x\\). Ordne für jede eine wirtschaftliche Methode zu, begründe die mathematischen Voraussetzungen, den Ansatz und die erwartete Form der Lösung. Bei der ersten zeige eine direkte partikuläre Probe.",
-    "Antwort": "(1) Variable Koeffizienten \\(2/x\\), auf \\(I=(0,\\infty)\\) stetig. Für die homogene Gleichung sind \\(y_1=1\\), \\(y_2=1/x\\) unabhängige Lösungen, \\(W=-1/x^2\ne0\\). VoK wäre möglich, ein direkter Ansatz \\(y_p=x/2\\) ist jedoch schneller: \\(y_p\\prime\\prime+(2/x)y_p\\prime=0+(2/x)(1/2)=1/x\\). Die konstante-Koeffizienten-Methoden sind nicht allgemein anwendbar.\n(2) \\(p(0)=1\ne0\\) und Störung \\(x\\); Ansatz \\(Ax+B\\), ergibt \\(y_p=x\\).\n(3) Konstante reelle Koeffizienten, \\(p(1+i)=1+2i\ne0\\), keine Resonanz. Hilfsgleichung mit \\(e^{(1+i)x}\\); \\(z_p=(1-2i)e^{(1+i)x}/5\\), damit \\(y_p=e^x(\\cos x+2\\sin x)/5\\)."
+    "Antwort": "(1) Variable Koeffizienten \\(2/x\\), auf \\(I=(0,\\infty)\\) stetig. Für die homogene Gleichung sind \\(y_1=1\\), \\(y_2=1/x\\) unabhängige Lösungen, \\(W=-1/x^2\\ne0\\). VoK wäre möglich, ein direkter Ansatz \\(y_p=x/2\\) ist jedoch schneller: \\(y_p\\prime\\prime+(2/x)y_p\\prime=0+(2/x)(1/2)=1/x\\). Die konstante-Koeffizienten-Methoden sind nicht allgemein anwendbar.\n(2) \\(p(0)=1\\ne0\\) und Störung \\(x\\); Ansatz \\(Ax+B\\), ergibt \\(y_p=x\\).\n(3) Konstante reelle Koeffizienten, \\(p(1+i)=1+2i\\ne0\\), keine Resonanz. Hilfsgleichung mit \\(e^{(1+i)x}\\); \\(z_p=(1-2i)e^{(1+i)x}/5\\), damit \\(y_p=e^x(\\cos x+2\\sin x)/5\\)."
   },
   {
     "id": "hm3-v17-041",
@@ -325,6 +325,6 @@
     "Typ": "Testat-Aufgabe",
     "Quelle": "Ü00–Ü03",
     "Frage": "TESTAT · Sonderlösungen und Umformungen. Vergleiche Variablentrennung bei \\(y\\prime=x y^2\\), Bernoulli bei \\(y\\prime+py=qy^\\gamma\\) und lineare DGL erster Ordnung \\(y\\prime+py=q\\). Für jede Methode: (1) zulässiger Definitionsbereich, (2) Umformung, (3) Gefahr verlorener Lösungen, (4) direkte Verifikation der gewonnenen allgemeinen Lösung.",
-    "Antwort": "Variablentrennung \\(y\\prime=x y^2\\): Für \\(y\ne0\\): \\(y^{-2}dy=x dx\\), \\(-1/y=x^2/2+C\\), also \\(y=-1/(x^2/2+C)\\) auf Intervallen ohne Nennernullstelle. Die Sonderlösung \\(y\\equiv0\\) wurde bei Division durch \\(y^2\\) verloren und muss separat ergänzt werden. Probe: \\(y\\prime=x/(x^2/2+C)^2=xy^2\\).\nBernoulli: \\(u=y^{1-\\gamma}\\) auf passendem Bereich \\(y\ne0\\), \\(u\\prime+(1-\\gamma)pu=(1-\\gamma)q\\). Eine mögliche Null-Lösung stets im Original prüfen.\nLinear: \\(Q\\prime=p\\), \\(y=e^{-Q}[C+\\int e^Qq]\\) (mit festem Integralbasispunkt); die Produktregel \\((e^Qy)\\prime=e^Qq\\) verifiziert. Bei Divisionen oder Wurzelpotenzen darf der Definitionsbereich nicht überschritten werden."
+    "Antwort": "Variablentrennung \\(y\\prime=x y^2\\): Für \\(y\\ne0\\): \\(y^{-2}dy=x dx\\), \\(-1/y=x^2/2+C\\), also \\(y=-1/(x^2/2+C)\\) auf Intervallen ohne Nennernullstelle. Die Sonderlösung \\(y\\equiv0\\) wurde bei Division durch \\(y^2\\) verloren und muss separat ergänzt werden. Probe: \\(y\\prime=x/(x^2/2+C)^2=xy^2\\).\nBernoulli: \\(u=y^{1-\\gamma}\\) auf passendem Bereich \\(y\\ne0\\), \\(u\\prime+(1-\\gamma)pu=(1-\\gamma)q\\). Eine mögliche Null-Lösung stets im Original prüfen.\nLinear: \\(Q\\prime=p\\), \\(y=e^{-Q}[C+\\int e^Qq]\\) (mit festem Integralbasispunkt); die Produktregel \\((e^Qy)\\prime=e^Qq\\) verifiziert. Bei Divisionen oder Wurzelpotenzen darf der Definitionsbereich nicht überschritten werden."
   }
 ]

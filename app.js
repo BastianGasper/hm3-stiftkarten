@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.17';
-  const OFFLINE_CACHE='hm3-stiftkarten-v17-20261030';
+  const APP_VERSION='2026-10-30.17.1';
+  const OFFLINE_CACHE='hm3-stiftkarten-v17-1-20261030';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
@@ -987,7 +987,7 @@
     $('settingsBtn').onclick=async()=>{$('pencilOnly').checked=!!data.settings.pencilOnly;await sessionList();$('settingsDialog').showModal();};$('closeSettingsBtn').onclick=()=>$('settingsDialog').close();$('pencilOnly').onchange=e=>{data.settings.pencilOnly=e.target.checked;storeData();configureSheet();};$('exportBackupBtn').onclick=exportBackup;$('importBackup').onchange=e=>{if(e.target.files?.[0])importBackup(e.target.files[0]);e.target.value='';};
     window.addEventListener('resize',resizeInk);document.addEventListener('visibilitychange',()=>{if(document.hidden)finishInk();});document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();e.shiftKey?redo():undo();}});
   }
-  async function init(){try{$('appVersion').textContent='App V'+APP_VERSION.split('.').at(-1);status('Lade Karten …');loadData();db=await openDB();if(!db){storageError=true;status('Speicher eingeschränkt – Backup wichtig',true);try{memory.attempts=JSON.parse(localStorage.getItem('hm3-fallback-attempts')||'[]');memory.sessions=JSON.parse(localStorage.getItem('hm3-fallback-sessions')||'[]');}catch{}}
+  async function init(){try{$('appVersion').textContent='App V'+APP_VERSION.split('.').slice(2).join('.');status('Lade Karten …');loadData();db=await openDB();if(!db){storageError=true;status('Speicher eingeschränkt – Backup wichtig',true);try{memory.attempts=JSON.parse(localStorage.getItem('hm3-fallback-attempts')||'[]');memory.sessions=JSON.parse(localStorage.getItem('hm3-fallback-sessions')||'[]');}catch{}}
     await fetchCards();await fetchProofs();memory.attempts=await listRecords('attempts');if(data.recordingActive&&data.sessionId){const old=await readRecord('sessions',data.sessionId);if(!old||old.endedAt){data.recordingActive=false;data.sessionId=null;data.recordingTouchedCards=[];storeData();}}updateFilters();listeners();configureSheet();
      if(data.quiz?.active){
        const q=data.quiz;
