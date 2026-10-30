@@ -58,3 +58,7 @@ body.ink-locked{overflow:hidden!important}
 .ink-mode-button.is-writing{background:#f8f4eb;color:#754c1d;border-color:#c6ab82}
 .ink-mode-button.is-writing:active{background:#f4ead7}
 @media(max-width:520px){.ink-mode-dock{right:10px;bottom:10px;gap:6px;padding:5px}.ink-mode-dock span{font-size:10px}.ink-mode-button{min-width:98px}}
+
+/* Explizit freigegebene Navigation hat Vorrang vor Pencil-Schreibsperre. */
+body.ink-scroll #inkCanvas,body.ink-scroll .sheet{touch-action:pan-y!important}
+body.ink-locked #inkCanvas,body.ink-locked .sheet{touch-action:none!important}
