@@ -23,14 +23,14 @@
   </header>
 
   <div class="sessionbar">
-    <div class="sessioninfo"><span class="overline">AKTUELLER DURCHGANG</span><strong id="sessionTitle">Laden …</strong><span class="meta" id="sessionMeta"></span></div>
-    <div class="sessionactions"><button class="button" id="newSessionBtn">Neuer Durchgang</button><button class="button button-primary" id="exportSessionBtn">Durchgang exportieren</button></div>
+    <div class="sessioninfo"><span class="overline" id="recordingStatus">KEINE AUFNAHME</span><strong id="sessionTitle">Freies Lernen</strong><span class="meta" id="sessionMeta">Nur während einer Aufnahme werden Lösungen für die Auswertung archiviert.</span></div>
+    <div class="sessionactions"><button class="button button-primary" id="recordingStartBtn">● Aufnahme starten</button><button class="button recording-stop" id="recordingStopBtn" disabled>■ Stopp</button><button class="button" id="recordingsBtn">Aufnahmen</button><button class="button" id="exportSessionBtn" disabled>Letzte Aufnahme exportieren</button></div>
   </div>
 
   <section class="metrics" aria-label="Lernübersicht">
     <div><span>Aktive Karten</span><strong id="statAll">–</strong></div>
     <div><span>Aktuell fällig</span><strong id="statDue">–</strong></div>
-    <div><span>In diesem Durchgang</span><strong id="statSession">–</strong></div>
+    <div><span>In dieser Aufnahme</span><strong id="statSession">–</strong></div>
     <div><span>Davon nicht gewusst</span><strong id="statWrong">–</strong></div>
   </section>
 
@@ -73,7 +73,7 @@
     </section>
   </div>
   <section id="emptyState" class="empty is-hidden"><h2>Keine Karte in dieser Auswahl</h2><p>Du kannst zu „Alle Karten“ wechseln oder deine Filter ändern.</p><button class="button button-primary" id="showAllBtn">Alle Karten anzeigen</button></section>
-  <footer>Stand: V01–V06 · Ü00–03 &nbsp;·&nbsp; Persönliche Daten bleiben lokal auf dem iPad &nbsp;·&nbsp; <button class="text-button" id="footerExport">Durchgang exportieren</button></footer>
+  <footer>Stand: V01–V06 · Ü00–03 &nbsp;·&nbsp; Persönliche Daten bleiben lokal auf dem iPad &nbsp;·&nbsp; <button class="text-button" id="footerExport">Letzte Aufnahme exportieren</button></footer>
 </div>
 
 <dialog id="libraryDialog" class="settings card-library" aria-labelledby="libraryTitle">
@@ -88,16 +88,24 @@
 </dialog>
 <dialog id="settingsDialog" class="settings">
   <div class="dialog-title"><h2>Einstellungen und Sicherung</h2><button class="button button-quiet" id="closeSettingsBtn">Schließen</button></div>
-  <p>Die Zeichnungen werden als Stiftstriche gespeichert. Du kannst den aktuellen Durchgang inklusive einzelner PNG-Bilder exportieren, damit ich anschließend deine Lösungen prüfen kann.</p>
+  <p>Normale Notizen bleiben als Entwurf auf dem iPad. Nur bei einer laufenden Aufnahme werden Antworten und neu gezeichnete Stiftstriche für die spätere Kontrolle separat archiviert.</p>
   <label class="checkrow"><input type="checkbox" id="pencilOnly" checked> Nur mit Apple Pencil zeichnen (Auto: Finger navigiert und bedient Buttons)</label>
   <section class="offline-settings"><h3>Offline lernen</h3>
     <p>Fragen, Formeln und App-Dateien werden auf diesem iPad zwischengespeichert. Skizzen und Lernstand bleiben lokal – auch ohne Internet. Bei der nächsten Verbindung prüft die App auf neue Versionen.</p>
     <button class="button" type="button" id="offlineSaveBtn">Alle Offline-Dateien sichern</button>
     <span id="offlineSaveStatus" role="status"></span>
   </section>
-  <div class="dialog-actions"><button class="button button-primary" id="exportSessionBtn2">Durchgang mit Skizzen als ZIP</button><button class="button" id="exportBackupBtn">Gesamtes Backup (JSON)</button><label class="button file-label">Backup wiederherstellen <input type="file" id="importBackup" accept=".json,application/json" hidden></label></div>
-  <h3>Gespeicherte Durchgänge</h3><div id="sessionList" class="session-list"><p>Wird geladen …</p></div>
+  <div class="dialog-actions"><button class="button button-primary" id="exportSessionBtn2">Letzte Aufnahme als ZIP</button><button class="button" id="exportBackupBtn">Gesamtes Backup (JSON)</button><label class="button file-label">Backup wiederherstellen <input type="file" id="importBackup" accept=".json,application/json" hidden></label></div>
+  <h3>Gespeicherte Aufnahmen</h3><div id="sessionList" class="session-list"><p>Wird geladen …</p></div>
   <p class="small-note">Sicherung ist wichtig: Safari kann lokale Websitedaten löschen. Ein Export lädt keine Daten automatisch hoch. Erst wenn du die ZIP hier im Chat hochlädst, kann ich deine Skizzen ansehen.</p>
+</dialog>
+<dialog id="recordingNameDialog" class="settings recording-name-dialog" aria-labelledby="recordingNameTitle">
+  <h2 id="recordingNameTitle">Aufnahme beendet</h2>
+  <p>Gib deiner Aufnahme einen Namen. Sie wird nur auf diesem iPad gespeichert, bis du sie ausdrücklich exportierst.</p>
+  <form id="recordingNameForm">
+    <label class="editor-field">Name der Aufnahme <input type="text" id="recordingNameInput" maxlength="100" required placeholder="Zum Beispiel: HöMa3 Testat – Peano und Picard"></label>
+    <div class="editor-actions"><button class="button button-primary" type="submit" id="saveRecordingNameBtn">Speichern</button><button class="button" type="button" id="saveAndExportRecordingBtn">Speichern und ZIP exportieren</button></div>
+  </form>
 </dialog>
 <div class="ink-mode-dock" id="inkModeDock" role="group" aria-label="Eingabemodus">
   <span id="inkModeHint" aria-live="polite">Pencil zeichnet · Finger bedient</span>
