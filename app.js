@@ -1236,7 +1236,11 @@
          data.proofStudy=null;storeData();
        }
      }
-     resumeSheetOnce=true;updateQuizChrome();updateProofChrome();await advance();await updateSessionInfo();void syncPendingRecordings();if(!storageError)status('');
+     resumeSheetOnce=true;updateQuizChrome();updateProofChrome();
+     if(!data.quiz?.active&&!data.proofStudy?.active&&data.currentSheet?.cardId&&byId.has(data.currentSheet.cardId)&&!byId.get(data.currentSheet.cardId).disabled){
+       await showCard(data.currentSheet.cardId);
+     }else await advance();
+     await updateSessionInfo();void syncPendingRecordings();if(!storageError)status('');
   }catch(e){console.error(e);status('Start fehlgeschlagen',true);$('cardQuestion').textContent=e.message;}}
   init();
   // Automatische Hintergrund-Prüfung, sobald die PWA geöffnet oder wieder online ist.
