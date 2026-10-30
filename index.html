@@ -19,7 +19,7 @@
 <div class="layout">
   <header class="topbar">
     <div class="brand"><div class="brandmark" aria-hidden="true">∫</div><div><strong>HM3 Stiftkarten</strong><span>Höhere Mathematik III · TU Dortmund</span></div></div>
-    <div class="top-actions"><span class="save-status" id="saveStatus" role="status">Speicher wird geprüft …</span><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
+    <div class="top-actions"><span class="save-status" id="saveStatus" role="status">Speicher wird geprüft …</span><button class="button" id="updateAppBtn" title="Auf neue Version prüfen und neu laden">App aktualisieren</button><button class="button" id="libraryBtn">Karten verwalten</button><button class="button button-quiet" id="settingsBtn">Einstellungen</button></div>
   </header>
 
   <div class="sessionbar">
@@ -69,7 +69,7 @@
         <div class="toolset toolbar-end"><button class="tool" id="undoBtn" aria-label="Rückgängig">Rückgängig</button><button class="tool" id="redoBtn" aria-label="Wiederholen">Wiederholen</button><button class="tool" id="clearBtn">Löschen</button></div>
       </div>
       <div class="sheet sheet-grid" id="sheet"><canvas id="inkCanvas" aria-label="Freie Schreibfläche für Apple Pencil"></canvas></div>
-      <div class="sheet-foot"><label>Vorlage <select id="sheetStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="blank">Blanko</option></select></label><label>Blattlänge <select id="sheetHeight"><option value="520">Kurz</option><option value="800">Normal</option><option value="1250">Lang</option><option value="1850">Sehr lang</option></select></label><span>Notizen je Karte gespeichert</span></div>
+      <div class="sheet-foot"><label>Vorlage <select id="sheetStyle"><option value="grid">Kariert</option><option value="lines">Liniert</option><option value="blank">Blanko</option></select></label><label>Blattlänge <select id="sheetHeight"><option value="520">Kurz</option><option value="800">Normal</option><option value="1250">Lang</option><option value="1850">Sehr lang</option><option value="custom">Individuell</option></select></label><button class="button extend-button" id="extendSheetBtn" title="400 Pixel karierten Schreibplatz hinzufügen">+ Blatt verlängern</button><span id="sheetLengthInfo" aria-live="polite">800 px · pro Karte</span><span>Notizen je Karte gespeichert</span></div>
     </section>
   </div>
   <section id="emptyState" class="empty is-hidden"><h2>Keine Karte in dieser Auswahl</h2><p>Du kannst zu „Alle Karten“ wechseln oder deine Filter ändern.</p><button class="button button-primary" id="showAllBtn">Alle Karten anzeigen</button></section>
