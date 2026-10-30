@@ -13,7 +13,8 @@
   let selected={mode:'due',topic:'all',type:'all',current:null,seen:new Set(),history:[],revealed:false};
   let ink={tool:'pen',color:'#182231',width:2.7,strokes:[],active:null,erasing:false,undo:[],redo:[],erasedBefore:null,pointerId:null,cardId:null};
   const pen=$('inkCanvas'),ctx=pen.getContext('2d',{alpha:true});
-  let fingerScroll=null,appRefreshing=false;
+  let appRefreshing=false;
+  let inkMode='auto',savedScrollY=0;
   let logicalWidth=1000,logicalHeight=1000,cssWidth=800,cssHeight=800,scale=1;
   let noteLoads=0,saveQueue=Promise.resolve(),noticeTimeout=null,mathQueue=Promise.resolve();
   const status=(msg,error=false)=>{$('saveStatus').textContent=msg;$('saveStatus').classList.toggle('is-warning',error);};
@@ -88,7 +89,7 @@
 
   // Das Schreibblatt gehört zur Karte; das Ändern einer Karte verändert keine andere.
   function cardSheetHeight(id=selected.current){const n=Number(data.cardPrefs?.[id]?.sheetHeight);return Number.isFinite(n)&&n>=520?Math.min(n,4000):(Number(data.settings.sheetHeight)||800);}
-  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction='none';resizeInk();}
+  function configureSheet(){const h=cardSheetHeight(),style=data.settings.sheetStyle||'grid';$('sheetHeight').value=[520,800,1250,1850].includes(h)?String(h):'custom';$('sheetStyle').value=style;$('sheet').style.height=h+'px';$('sheet').className='sheet sheet-'+style;$('sheetLengthInfo').textContent=h+' px · pro Karte';$('extendSheetBtn').disabled=!selected.current||h>=4000;pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';resizeInk();}
   async function setCardSheetHeight(height){if(!selected.current)return;const h=Math.min(4000,Math.max(520,Math.round(height)));await finishInk();await saveQueue.catch(()=>{});const id=selected.current;data.cardPrefs[id]={...prefFor(id),sheetHeight:h};storeData();configureSheet();notice('Blattlänge gespeichert – deine bisherigen Skizzen bleiben erhalten.');}
   function resizeInk(){const r=pen.getBoundingClientRect();if(!r.width||!r.height)return;cssWidth=r.width;cssHeight=r.height;scale=cssWidth/1000;logicalHeight=cssHeight/scale;const dpr=Math.min(devicePixelRatio||1,2,Math.sqrt(10000000/(cssWidth*cssHeight)));pen.width=Math.round(cssWidth*dpr);pen.height=Math.round(cssHeight*dpr);ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);renderInk();}
   function coord(e,r=pen.getBoundingClientRect()){return {x:Math.max(0,Math.min(1000,(e.clientX-r.left)/scale)),y:Math.max(0,Math.min(logicalHeight,(e.clientY-r.top)/scale))};}
@@ -100,20 +101,133 @@
   function finishInk(){if(!ink.active&&!ink.erasing)return Promise.resolve();let changed=false;if(ink.active){ink.strokes.push(ink.active);ink.active=null;changed=true;}
     if(ink.erasing){ink.erasing=false;changed=changed||ink.strokes.length!==(ink.erasedBefore?.length||0);ink.erasedBefore=null;}
     if(changed){renderInk();return saveInk();}return Promise.resolve();}
-  // iPad: Safari erhält kein natives Scroll-/Zoomrecht auf der Zeichenfläche.
-  // Finger scrollt bei aktiviertem Pencil-Modus bewusst separat; Apple Pencil zeichnet.
-  pen.addEventListener('pointerdown',e=>{if(!selected.current)return;
-    if(data.settings.pencilOnly&&e.pointerType!=='pen'){
-      if(e.pointerType==='touch'&&fingerScroll===null){fingerScroll={id:e.pointerId,y:e.clientY};try{pen.setPointerCapture(e.pointerId);}catch{}}
-      return;
+  // Zuverlässiger iPad-Schreibmodus: die Seite bleibt zwischen ALLEN Stiftkontakten
+  // fest an derselben Stelle. Erst der ausdrückliche Button "Scrollen" entsperrt sie.
+  function refreshInkModeUI(){
+    const writing=inkMode==='write';
+    const btn=$('inkModeBtn');
+    btn.textContent=writing?'Scrollen':'Schreiben';
+    btn.setAttribute('aria-pressed',String(writing));
+    btn.classList.toggle('is-writing',writing);
+    $('inkModeHint').textContent=writing?'Seite gesperrt · Pencil zeichnet':'Scrollmodus · Tippe Schreiben';
+    pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';
+  }
+  function lockPage(){
+    if(inkMode==='write')return;
+    savedScrollY=window.scrollY||document.documentElement.scrollTop||0;
+    document.body.style.position='fixed';
+    document.body.style.top='-'+savedScrollY+'px';
+    document.body.style.left='0';
+    document.body.style.right='0';
+    document.body.style.width='100%';
+    document.body.classList.add('ink-locked');
+    document.documentElement.classList.add('ink-locked');
+    inkMode='write';
+    refreshInkModeUI();
+  }
+  function unlockPage(){
+    if(inkMode!=='write')return;
+    document.body.style.position='';
+    document.body.style.top='';
+    document.body.style.left='';
+    document.body.style.right='';
+    document.body.style.width='';
+    document.body.classList.remove('ink-locked');
+    document.documentElement.classList.remove('ink-locked');
+    inkMode='scroll';
+    window.scrollTo(0,savedScrollY);
+    refreshInkModeUI();
+  }
+  function toggleInkMode(){
+    if(inkMode==='write'){
+      if(ink.pointerId!==null){ink.pointerId=null;ink.inputSource=null;finishInk();}
+      unlockPage();
+    }else lockPage();
+  }
+  function beginStroke(point,id,source){
+    if(!selected.current||inkMode==='scroll'||ink.pointerId!==null)return false;
+    if(inkMode!=='write')lockPage();
+    ink.pointerId=id;ink.inputSource=source;
+    ink.undo.push(clone(ink.strokes));
+    if(ink.undo.length>35)ink.undo.shift();
+    ink.redo=[];
+    if(ink.tool==='eraser'){
+      ink.erasing=true;ink.erasedBefore=clone(ink.strokes);erase(point);
+    }else{
+      ink.active={color:ink.color,width:ink.width/scale,points:[point]};
+      ctx.fillStyle=ink.color;
+      ctx.beginPath();ctx.arc(point.x,point.y,ink.active.width/2,0,Math.PI*2);ctx.fill();
     }
-    if(ink.pointerId!==null)return;e.preventDefault();ink.pointerId=e.pointerId;try{pen.setPointerCapture(e.pointerId);}catch{}const p=coord(e);ink.undo.push(clone(ink.strokes));if(ink.undo.length>35)ink.undo.shift();ink.redo=[];
-    if(ink.tool==='eraser'){ink.erasing=true;ink.erasedBefore=clone(ink.strokes);erase(p);}else{ink.active={color:ink.color,width:ink.width/scale,points:[p]};ctx.fillStyle=ink.color;ctx.beginPath();ctx.arc(p.x,p.y,ink.active.width/2,0,Math.PI*2);ctx.fill();}});
-  pen.addEventListener('pointermove',e=>{if(fingerScroll?.id===e.pointerId){if(e.cancelable)e.preventDefault();const dy=fingerScroll.y-e.clientY;fingerScroll.y=e.clientY;if(Math.abs(dy)>0)window.scrollBy(0,dy);return;}if(ink.pointerId!==e.pointerId)return;e.preventDefault();const list=e.getCoalescedEvents?.()||[e],rect=pen.getBoundingClientRect();for(const ev of list){const p=coord(ev,rect);if(ink.erasing)erase(p);else if(ink.active){const last=ink.active.points[ink.active.points.length-1];if(last.x===p.x&&last.y===p.y)continue;ink.active.points.push(p);drawSegment(last,p,ink.active);}}});
-  function penUp(e){if(fingerScroll?.id===e.pointerId){fingerScroll=null;return;}if(ink.pointerId!==e.pointerId)return;ink.pointerId=null;finishInk();}
-  pen.addEventListener('pointerup',penUp);pen.addEventListener('pointercancel',penUp);pen.addEventListener('lostpointercapture',()=>{fingerScroll=null;if(ink.pointerId!==null){ink.pointerId=null;finishInk();}});
-  // Ergänzende Safari-Absicherung gegen Scrollen durch Pencil-TouchEvents.
-  pen.addEventListener('touchmove',e=>{const stylus=[...e.touches].some(t=>t.touchType==='stylus');if((stylus||ink.pointerId!==null)&&e.cancelable)e.preventDefault();},{passive:false});
+    return true;
+  }
+  function continueStroke(point,id,source){
+    if(ink.pointerId!==id||ink.inputSource!==source)return;
+    if(ink.erasing){erase(point);return;}
+    if(!ink.active)return;
+    const last=ink.active.points[ink.active.points.length-1];
+    if(last.x===point.x&&last.y===point.y)return;
+    ink.active.points.push(point);drawSegment(last,point,ink.active);
+  }
+  function endStroke(id,source){
+    if(ink.pointerId!==id||ink.inputSource!==source)return;
+    ink.pointerId=null;ink.inputSource=null;
+    finishInk();
+    // Absichtlich KEIN unlockPage(): Absetzen des Pencils darf NIE scrollen.
+  }
+  // Safari kann touch-action:none ignorieren. Non-passive Touch-Listener greifen
+  // daher VOR dem nativen Scroll-Recognizer – ausdrücklich auch beim Neuansetzen.
+  const stylusTouches=e=>Array.from(e.changedTouches||[]).filter(t=>t.touchType==='stylus');
+  pen.addEventListener('touchstart',e=>{
+    const pencil=stylusTouches(e);
+    if(inkMode!=='scroll'&&e.cancelable)e.preventDefault();
+    if(pencil.length&&inkMode!=='scroll'){
+      const t=pencil[0];beginStroke(coord(t),'touch-'+t.identifier,'touch');
+    }
+  },{passive:false});
+  pen.addEventListener('touchmove',e=>{
+    if(inkMode!=='scroll'&&e.cancelable)e.preventDefault();
+    if(ink.inputSource!=='touch')return;
+    const t=Array.from(e.changedTouches||[]).find(x=>'touch-'+x.identifier===ink.pointerId);
+    if(t)continueStroke(coord(t),ink.pointerId,'touch');
+  },{passive:false});
+  for(const eventName of ['touchend','touchcancel']){
+    pen.addEventListener(eventName,e=>{
+      if(ink.inputSource!=='touch')return;
+      const t=Array.from(e.changedTouches||[]).find(x=>'touch-'+x.identifier===ink.pointerId);
+      if(t)endStroke(ink.pointerId,'touch');
+    },{passive:false});
+  }
+  pen.addEventListener('pointerdown',e=>{
+    if(inkMode==='scroll'||!selected.current)return;
+    if(data.settings.pencilOnly&&e.pointerType!=='pen')return;
+    if(e.cancelable)e.preventDefault();
+    const point=coord(e);if(!beginStroke(point,e.pointerId,'pointer'))return;
+    try{pen.setPointerCapture(e.pointerId);}catch{}
+  });
+  pen.addEventListener('pointermove',e=>{
+    if(ink.pointerId!==e.pointerId||ink.inputSource!=='pointer')return;
+    if(e.cancelable)e.preventDefault();
+    const rect=pen.getBoundingClientRect();
+    for(const ev of e.getCoalescedEvents?.()||[e])continueStroke(coord(ev,rect),e.pointerId,'pointer');
+  });
+  for(const eventName of ['pointerup','pointercancel']){
+    pen.addEventListener(eventName,e=>endStroke(e.pointerId,'pointer'));
+  }
+  pen.addEventListener('lostpointercapture',()=>{if(ink.inputSource==='pointer')endStroke(ink.pointerId,'pointer');});
+  // Zweite Schutzschicht gegen iPadOS-Seitenverschiebung, inkl. Palm-Rejection.
+  document.addEventListener('touchmove',e=>{
+    if(inkMode==='write'&&e.cancelable)e.preventDefault();
+  },{passive:false,capture:true});
+  document.addEventListener('gesturestart',e=>{
+    if(inkMode==='write'&&e.cancelable)e.preventDefault();
+  },{passive:false});
+  // Browser-Scrollen durch Leertaste / Touchpad / Rad bei gesperrter Schreibfläche
+  // verhindern, ohne Tastaturbefehle in Eingabefeldern zu blockieren.
+  document.addEventListener('wheel',e=>{
+    if(inkMode==='write'&&e.cancelable)e.preventDefault();
+  },{passive:false,capture:true});
+  $('inkModeBtn').addEventListener('click',toggleInkMode);
+  refreshInkModeUI();
   function tool(t){ink.tool=t;for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}}
   function undo(){if(!ink.undo.length)return;ink.redo.push(clone(ink.strokes));ink.strokes=ink.undo.pop();renderInk();saveInk();}
   function redo(){if(!ink.redo.length)return;ink.undo.push(clone(ink.strokes));ink.strokes=ink.redo.pop();renderInk();saveInk();}
