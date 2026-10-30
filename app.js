@@ -192,12 +192,14 @@
     // Auf sehr langen Blättern wird die Pixeldichte begrenzt, damit iPadOS
     // die Canvas-Speichergrenze nicht erreicht.
     const target=Math.max(devicePixelRatio||1,3);
-    const density=Math.min(target,Math.sqrt(16000000/(cssWidth*cssHeight)));
+    const density=Math.min(target,Math.sqrt(12000000/(cssWidth*cssHeight)));
     const dpr=Math.max(1,density);
     pen.width=Math.round(cssWidth*dpr);pen.height=Math.round(cssHeight*dpr);
-    eraserOverlay.width=pen.width;eraserOverlay.height=pen.height;
+    // Eraser preview is temporary UI: CSS-pixel resolution is enough.
+    // High-DPI for BOTH canvases previously consumed up to 128 MB on iPad.
+    eraserOverlay.width=Math.round(cssWidth);eraserOverlay.height=Math.round(cssHeight);
     ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
-    eraserCtx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+    eraserCtx.setTransform(scale,0,0,scale,0,0);
     renderInk();renderEraserOverlay();
   }
   function coord(e,r=pen.getBoundingClientRect()){return {x:Math.max(0,Math.min(1000,(e.clientX-r.left)/scale)),y:Math.max(0,Math.min(logicalHeight,(e.clientY-r.top)/scale))};}
@@ -532,12 +534,22 @@
     const filename=(ses.name||'HM3-Aufnahme').replace(/[^a-zA-Z0-9 _-]/g,'').trim().replace(/\s+/g,'_').slice(0,55)||'HM3-Aufnahme';download(await zip(entries),filename+'_'+sessionId.slice(-7)+'.zip');notice(`Durchgang exportiert: ${attempts.length} Versuche, ${files.length} Skizzen.`);
   }catch(e){console.error('ZIP export',e);notice('Export fehlgeschlagen: '+e.message);}finally{exporting=false;updateRecordingUI();}}
   async function exportBackup(){await finishInk();await saveQueue.catch(()=>{});const payload={app:'HM3 Stiftkarten',version:2,exportedAt:new Date().toISOString(),data,sketches:await getAllSketches(),attempts:await listRecords('attempts'),sessions:await listRecords('sessions')};download(new Blob([JSON.stringify(payload)],{type:'application/json'}),`HM3-Gesamtbackup-${new Date().toISOString().slice(0,10)}.json`);notice('Gesamtes Backup erstellt.');}
-  async function importBackup(file){try{const input=JSON.parse(await file.text());if(input.app!=='HM3 Stiftkarten')throw Error('Keine HM3-Datensicherung');if(!confirm('Backup wiederherstellen? Bestehende Bewertungen und Notizen werden überschrieben. Erstelle vorher ein eigenes Backup.'))return;
+  async function importBackup(file){try{const input=JSON.parse(await file.text());if(input.app!=='HM3 Stiftkarten')throw Error('Keine HM3-Datensicherung');
+    if(input.version!==1&&input.version!==2)throw Error('Unbekannte Backup-Version');
+    const rawSketches=input.version===1?(input.notes||{}):(input.sketches||{});
+    if(!input.data||typeof input.data!=='object'||Array.isArray(input.data)||!rawSketches||typeof rawSketches!=='object'||Array.isArray(rawSketches)||Object.values(rawSketches).some(x=>!Array.isArray(x)))
+      throw Error('Backup unvollständig oder beschädigt – vorhandene Daten bleiben erhalten');
+    if(input.version===2&&(!Array.isArray(input.attempts)||!Array.isArray(input.sessions)))throw Error('Aufnahme-Archive fehlen – Import abgebrochen');
+    if(!confirm('Backup wiederherstellen? Bestehende Bewertungen und Notizen werden überschrieben. Erstelle vorher ein eigenes Backup.'))return;
     await finishInk();await saveQueue.catch(()=>{});let sketches,attempts=[],sessions=[];if(input.version===1){sketches=input.notes||{};data={...data,progress:input.data?.progress||{},cardPrefs:{},settings:{...data.settings,pencilOnly:input.data?.settings?.penOnly??true,sheetStyle:input.data?.settings?.paperStyle||'grid',sheetHeight:input.data?.settings?.paperHeight||800}};}else if(input.version===2){sketches=input.sketches||{};attempts=input.attempts||[];sessions=input.sessions||[];data={...data,...input.data,cardPrefs:input.data?.cardPrefs||{},settings:{...data.settings,...(input.data?.settings||{})}};}else throw Error('Unbekannte Backup-Version');
-    if(db){for(const store of ['sketches','attempts','sessions'])await new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).clear();tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}else{memory.sketches.clear();memory.attempts=[];memory.sessions=[];}
-    for(const [id,s] of Object.entries(sketches))if(Array.isArray(s))await writeRecord('sketches',id,s);
-    memory.attempts=[];for(const a of attempts){await writeRecord('attempts',a.id,a);memory.attempts.push(a);}
-    memory.sessions=[];for(const s of sessions){await writeRecord('sessions',s.id,s);memory.sessions.push(s);}
+    if(db){for(const store of ['sketches','attempts','sessions'])await new Promise((resolve,reject)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).clear();tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}else{memory.sketches.clear();memory.attempts=[];memory.sessions=[];
+      // Alte Fallback-Archive dürfen nach einem Restore nicht wieder auftauchen.
+      for(const key of ['hm3-fallback-attempts','hm3-fallback-sessions'])localStorage.removeItem(key);
+      for(const c of cards)localStorage.removeItem('hm3-note-'+c.id);
+    }
+    for(const [id,strokes] of Object.entries(sketches))if(Array.isArray(strokes)&&!await writeRecord('sketches',id,strokes))throw Error('Notiz konnte nicht gespeichert werden: '+id);
+    memory.attempts=[];for(const entry of attempts){if(!entry||typeof entry.id!=='string'||!await writeRecord('attempts',entry.id,entry))throw Error('Versuch konnte nicht gespeichert werden');if(db)memory.attempts.push(entry);}
+    memory.sessions=[];for(const entry of sessions){if(!entry||typeof entry.id!=='string'||!await writeRecord('sessions',entry.id,entry))throw Error('Aufnahme konnte nicht gespeichert werden');if(db)memory.sessions.push(entry);}
     if(!data.recordingActive){data.sessionId=null;data.recordingTouchedCards=[];}recordingTouchedCards=new Set(data.recordingTouchedCards||[]);storeData();rebuildCards();renderLibraryIfOpen();selected.seen.clear();selected.history=[];configureSheet();await advance();await updateSessionInfo();$('settingsDialog').close();notice('Backup wiederhergestellt.');
   }catch(e){console.error(e);notice('Import fehlgeschlagen: '+e.message);}}
   async function sessionList(){
