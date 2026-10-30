@@ -110,7 +110,7 @@
     btn.setAttribute('aria-pressed',String(writing));
     btn.classList.toggle('is-writing',writing);
     document.body.classList.toggle('ink-scroll',inkMode==='scroll');
-    $('inkModeHint').textContent=writing?'Seite gesperrt · Pencil zeichnet':'Scrollmodus · Tippe Schreiben';
+    $('inkModeHint').textContent=writing?'Seite gesperrt · Pencil zeichnet':inkMode==='auto'?'Pencil berühren → Schreibsperre':'Scrollmodus · Tippe Schreiben';
     pen.style.touchAction=inkMode==='scroll'?'pan-y':'none';
     $('sheet').style.touchAction=inkMode==='scroll'?'pan-y':'none';
   }
