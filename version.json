@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-30.12",
+  "version": "2026-10-30.13",
   "released": "2026-10-30",
   "features": [
     "Glatte Stiftkurven",
@@ -9,6 +9,9 @@
     "Automatische Apple-Pencil- und Finger-Unterscheidung",
     "Start-Stopp-Aufnahmen mit Namen und gezieltem ZIP-Export",
     "Stabile Pencil-Koordinaten nach Scrollen, nur-Pencil-Auto mit Navigation links",
-    "Präziser Ganzstrich-Radierer: nur ein Pencil-Zug pro Kontakt"
+    "Präziser Ganzstrich-Radierer: nur ein Pencil-Zug pro Kontakt",
+    "75 Prozent Lösungsblatt im Querformat",
+    "Finger-Scrollstreifen links",
+    "Fortlaufender Ganzstrich-Radierer mit orangener visueller Spur"
   ]
 }
