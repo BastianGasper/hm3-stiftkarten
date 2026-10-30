@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.12';
-  const OFFLINE_CACHE='hm3-stiftkarten-v12-20261030';
+  const APP_VERSION='2026-10-30.13';
+  const OFFLINE_CACHE='hm3-stiftkarten-v13-20261030';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
@@ -18,6 +18,8 @@
   let selected={mode:'due',topic:'all',type:'all',current:null,seen:new Set(),history:[],revealed:false};
   let ink={tool:'pen',color:'#182231',width:2.7,strokes:[],active:null,erasing:false,undo:[],redo:[],erasedBefore:null,pointerId:null,cardId:null};
   const pen=$('inkCanvas'),ctx=pen.getContext('2d',{alpha:true});
+  const eraserOverlay=$('eraserOverlay'),eraserCtx=eraserOverlay.getContext('2d',{alpha:true});
+  let railTouch=null;
   let appRefreshing=false;
   let inkMode='auto';
   let logicalWidth=1000,logicalHeight=1000,cssWidth=800,cssHeight=800,scale=1;
@@ -49,7 +51,7 @@
     const snapshot=ink.strokes.slice();$('noteStatus').textContent='Speichert …';
     saveQueue=saveQueue.catch(()=>{}).then(async()=>{const ok=await writeRecord('sketches',id,snapshot);if(ink.cardId===id)$('noteStatus').textContent=ok?'Gespeichert':'Speichern fehlgeschlagen';if(!ok){storageError=true;status('Notiz nicht gespeichert – exportieren!',true);}});return saveQueue;
   }
-  async function loadInk(cardId){const token=++noteLoads;ink.cardId=cardId;ink.strokes=[];ink.active=null;ink.erasing=false;ink.erasedInGesture=false;ink.undo=[];ink.redo=[];renderInk();$('noteStatus').textContent='Lade Notizen …';await saveQueue.catch(()=>{});const strokes=await readRecord('sketches',cardId);if(noteLoads!==token)return;ink.strokes=Array.isArray(strokes)?strokes:[];renderInk();$('noteStatus').textContent=ink.strokes.length?'Gespeichert':'Leeres Blatt';}
+  async function loadInk(cardId){const token=++noteLoads;ink.cardId=cardId;ink.strokes=[];ink.active=null;ink.erasing=false;ink.erasedInGesture=false;ink.eraserTrail=[];ink.eraserTip=null;ink.lastEraserPoint=null;ink.undo=[];ink.redo=[];renderInk();renderEraserOverlay();$('noteStatus').textContent='Lade Notizen …';await saveQueue.catch(()=>{});const strokes=await readRecord('sketches',cardId);if(noteLoads!==token)return;ink.strokes=Array.isArray(strokes)?strokes:[];renderInk();$('noteStatus').textContent=ink.strokes.length?'Gespeichert':'Leeres Blatt';}
 
   async function fetchCards(){let response;try{response=await fetch('cards.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);response=await response.json();}catch(e){console.warn('Deck load',e);throw Error('Karten konnten nicht geladen werden. Bitte Verbindung prüfen oder App erneut öffnen.');}
     if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=response.map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
@@ -193,7 +195,10 @@
     const density=Math.min(target,Math.sqrt(16000000/(cssWidth*cssHeight)));
     const dpr=Math.max(1,density);
     pen.width=Math.round(cssWidth*dpr);pen.height=Math.round(cssHeight*dpr);
-    ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);renderInk();
+    eraserOverlay.width=pen.width;eraserOverlay.height=pen.height;
+    ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+    eraserCtx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+    renderInk();renderEraserOverlay();
   }
   function coord(e,r=pen.getBoundingClientRect()){return {x:Math.max(0,Math.min(1000,(e.clientX-r.left)/scale)),y:Math.max(0,Math.min(logicalHeight,(e.clientY-r.top)/scale))};}
   const mid=(a,b)=>({x:(a.x+b.x)*0.5,y:(a.y+b.y)*0.5});
@@ -227,45 +232,97 @@
     ctx.stroke();
   }
   function distPointSegment(p,a,b){const dx=b.x-a.x,dy=b.y-a.y,den=dx*dx+dy*dy,t=den?Math.min(1,Math.max(0,((p.x-a.x)*dx+(p.y-a.y)*dy)/den)):0;return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));}
-  // Whole-stroke eraser like Notability: one Pencil-down/up creates one stroke.
-  // At crossings, choose the single closest stroke; other touching strokes stay.
-  // A single eraser contact removes at most ONE stroke, until Pencil lifts.
-  function strokeDistance(pt,stroke,maxRadius){
-    const points=stroke.points||[];if(!points.length)return Infinity;
-    const pad=maxRadius+(stroke.width||2)*0.5;
-    let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  // Ganzstrich-Radierer: jeder Stiftkontakt bleibt ein eigener Stroke, selbst
+  // wenn die Wege sich schneiden. Ein Radierzug kann mehrere Strokes kreuzen.
+  function segmentCross(a,b,c,d){
+    const cross=(p,q,r)=>(q.x-p.x)*(r.y-p.y)-(q.y-p.y)*(r.x-p.x);
+    const ab1=cross(a,b,c),ab2=cross(a,b,d);
+    const cd1=cross(c,d,a),cd2=cross(c,d,b);
+    return ((ab1>=0&&ab2<=0)||(ab1<=0&&ab2>=0))&&
+           ((cd1>=0&&cd2<=0)||(cd1<=0&&cd2>=0));
+  }
+  function segmentsDistance(a,b,c,d){
+    if(segmentCross(a,b,c,d))return 0;
+    return Math.min(distPointSegment(a,c,d),distPointSegment(b,c,d),
+                    distPointSegment(c,a,b),distPointSegment(d,a,b));
+  }
+  function eraserHitsStroke(from,to,stroke,radius){
+    const points=stroke.points||[];
+    if(!points.length)return false;
+    const reach=radius+(stroke.width||2)*.5;
+    const minX=Math.min(from.x,to.x)-reach,maxX=Math.max(from.x,to.x)+reach;
+    const minY=Math.min(from.y,to.y)-reach,maxY=Math.max(from.y,to.y)+reach;
+    // Ignore strokes whose bounding boxes never reach the current eraser path.
+    let candidate=false;
     for(const p of points){
-      if(p.x<minX)minX=p.x;if(p.x>maxX)maxX=p.x;
-      if(p.y<minY)minY=p.y;if(p.y>maxY)maxY=p.y;
+      if(p.x>=minX&&p.x<=maxX&&p.y>=minY&&p.y<=maxY){candidate=true;break;}
     }
-    if(pt.x<minX-pad||pt.x>maxX+pad||pt.y<minY-pad||pt.y>maxY+pad)return Infinity;
-    let dist=Infinity;
-    if(points.length===1)dist=Math.hypot(pt.x-points[0].x,pt.y-points[0].y);
-    else for(let i=1;i<points.length;i++){
-      dist=Math.min(dist,distPointSegment(pt,points[i-1],points[i]));
-      if(dist===0)break;
+    if(!candidate){
+      // A long stroke may cross the eraser corridor although both endpoints
+      // lie beyond it: use segment bounding boxes below regardless.
     }
-    return dist;
+    if(points.length===1)return distPointSegment(points[0],from,to)<=reach;
+    for(let i=1;i<points.length;i++){
+      const a=points[i-1],b=points[i];
+      if(Math.max(a.x,b.x)<minX||Math.min(a.x,b.x)>maxX||
+         Math.max(a.y,b.y)<minY||Math.min(a.y,b.y)>maxY)continue;
+      if(segmentsDistance(from,to,a,b)<=reach)return true;
+    }
+    return false;
   }
-  function erase(pt){
-    if(ink.erasedInGesture)return;
-    const radius=12/scale; // 12 visible pixels: precise near crossing strokes.
-    let best=-1,bestDist=Infinity;
+  function eraseSweep(from,to){
+    const radius=8/scale; // 8 CSS px brush radius, independent of zoom.
+    let removed=0;
     for(let i=ink.strokes.length-1;i>=0;i--){
-      const stroke=ink.strokes[i];
-      const dist=strokeDistance(pt,stroke,radius);
-      if(dist>radius+(stroke.width||2)*0.5)continue;
-      // Exact overlaps: prefer newest stroke; never erase all connected ones.
-      if(dist<bestDist-0.01){bestDist=dist;best=i;}
+      if(eraserHitsStroke(from,to,ink.strokes[i],radius)){
+        ink.strokes.splice(i,1);removed++;
+      }
     }
-    if(best<0)return;
-    ink.strokes.splice(best,1);
-    ink.erasedInGesture=true;
-    renderInk();
+    if(removed){ink.erasedInGesture=true;renderInk();}
+    return removed;
   }
-  function finishInk(){if(!ink.active&&!ink.erasing)return Promise.resolve();let changed=false;if(ink.active){ink.strokes.push(ink.active);ink.active=null;changed=true;}
-    if(ink.erasing){ink.erasing=false;changed=changed||ink.strokes.length!==(ink.erasedBefore?.length||0);ink.erasedBefore=null;ink.erasedInGesture=false;}
-    if(changed){renderInk();return saveInk();}return Promise.resolve();}
+  function renderEraserOverlay(){
+    eraserCtx.clearRect(0,0,1000,logicalHeight);
+    if(ink.tool!=='eraser'||inkMode==='scroll')return;
+    const points=ink.eraserTrail||[];
+    const tip=ink.eraserTip||points[points.length-1];
+    if(!tip)return;
+    if(points.length>1){
+      eraserCtx.save();
+      eraserCtx.strokeStyle='rgba(226,113,45,.64)';
+      eraserCtx.lineWidth=7/scale;
+      eraserCtx.lineCap='round';eraserCtx.lineJoin='round';
+      eraserCtx.beginPath();eraserCtx.moveTo(points[0].x,points[0].y);
+      for(let i=1;i<points.length;i++)eraserCtx.lineTo(points[i].x,points[i].y);
+      eraserCtx.stroke();eraserCtx.restore();
+    }
+    // Eraser cursor: small tilted two-tone rubber icon at the Pencil tip.
+    eraserCtx.save();
+    eraserCtx.translate(tip.x,tip.y);
+    eraserCtx.rotate(-Math.PI/5);
+    const w=22/scale,h=14/scale;
+    eraserCtx.fillStyle='rgba(255,255,255,.95)';
+    eraserCtx.fillRect(-w/2-1/scale,-h/2-1/scale,w+2/scale,h+2/scale);
+    eraserCtx.fillStyle='#df7835';eraserCtx.fillRect(-w/2,-h/2,w*.62,h);
+    eraserCtx.fillStyle='#f2c2a0';eraserCtx.fillRect(w*.12,-h/2,w*.38,h);
+    eraserCtx.strokeStyle='#9e4d22';eraserCtx.lineWidth=1.5/scale;
+    eraserCtx.strokeRect(-w/2,-h/2,w,h);
+    eraserCtx.restore();
+  }
+  function finishInk(){
+    if(!ink.active&&!ink.erasing)return Promise.resolve();
+    let changed=false;
+    if(ink.active){ink.strokes.push(ink.active);ink.active=null;changed=true;}
+    if(ink.erasing){
+      ink.erasing=false;
+      changed=changed||ink.strokes.length!==(ink.erasedBefore?.length||0);
+      ink.erasedBefore=null;ink.erasedInGesture=false;
+      ink.eraserTrail=[];ink.eraserTip=null;ink.lastEraserPoint=null;
+      renderEraserOverlay();
+    }
+    if(changed){renderInk();return saveInk();}
+    return Promise.resolve();
+  }
   // V11: Schreibfläche wird bei Scrollpositionen nicht mehr umpositioniert.
   // Auto und Schreiben sperren ausschließlich die native Seitennavigation.
   // Stift: zeichnen; Finger auf dem Blatt: ignorieren; Finger auf Buttons: klicken.
@@ -310,7 +367,9 @@
     ink.pointerId=id;ink.inputSource=source;
     ink.undo.push(ink.strokes.slice());if(ink.undo.length>35)ink.undo.shift();ink.redo=[];
     if(ink.tool==='eraser'){
-      ink.erasing=true;ink.erasedInGesture=false;ink.erasedBefore=ink.strokes.slice();erase(point);
+      ink.erasing=true;ink.erasedInGesture=false;ink.erasedBefore=ink.strokes.slice();
+      ink.eraserTrail=[point];ink.eraserTip=point;ink.lastEraserPoint=point;
+      eraseSweep(point,point);renderEraserOverlay();
     }else{
       ink.active={color:ink.color,width:ink.width/scale,points:[point],recordingId:data.recordingActive?data.sessionId:null};
       ctx.fillStyle=ink.color;ctx.beginPath();ctx.arc(point.x,point.y,ink.active.width/2,0,Math.PI*2);ctx.fill();
@@ -319,7 +378,12 @@
   }
   function continueStroke(point,id,source){
     if(ink.pointerId!==id||ink.inputSource!==source)return;
-    if(ink.erasing){erase(point);return;}
+    if(ink.erasing){
+      const prev=ink.lastEraserPoint||point;
+      eraseSweep(prev,point);
+      ink.eraserTrail.push(point);ink.eraserTip=point;ink.lastEraserPoint=point;
+      renderEraserOverlay();return;
+    }
     if(!ink.active)return;
     const last=ink.active.points[ink.active.points.length-1];
     if(last.x===point.x&&last.y===point.y)return;
@@ -340,6 +404,7 @@
     doc.scrollTop=target;
     // Safari/Web-App: direkte Fenster-Navigation synchronisiert den Viewport.
     if(typeof window.scrollTo==='function')window.scrollTo(0,target);
+    updateScrollRail();
   }
   const isStylus=t=>t.touchType==='stylus';
   pen.addEventListener('touchstart',e=>{
@@ -372,12 +437,16 @@
     try{pen.setPointerCapture(e.pointerId);}catch{}
   });
   pen.addEventListener('pointermove',e=>{
+    if(ink.pointerId===null&&ink.tool==='eraser'&&e.pointerType==='pen'&&inkMode!=='scroll'){
+      ink.eraserTip=coord(e);renderEraserOverlay();return;
+    }
     if(ink.pointerId!==e.pointerId||ink.inputSource!=='pointer')return;
     if(e.cancelable)e.preventDefault();
     const rect=ink.strokeRect||pen.getBoundingClientRect();
     for(const ev of e.getCoalescedEvents?.()||[e])continueStroke(coord(ev,rect),e.pointerId,'pointer');
   });
   for(const name of ['pointerup','pointercancel'])pen.addEventListener(name,e=>endStroke(e.pointerId,'pointer'));
+  pen.addEventListener('pointerleave',()=>{if(ink.pointerId===null){ink.eraserTip=null;renderEraserOverlay();}});
   pen.addEventListener('lostpointercapture',()=>{if(ink.inputSource==='pointer')endStroke(ink.pointerId,'pointer');});
   // Ein Touchstart auf normalen Bedienelementen bleibt klickbar; nur Dragging
   // sperren. In geöffneten Dialogen Listen/Editoren trotzdem frei scrollen.
@@ -396,9 +465,39 @@
   $('inkScrollBtn').addEventListener('click',()=>setInkMode('scroll'));
   $('scrollUpBtn').addEventListener('click',()=>scrollSheet(-1));
   $('scrollDownBtn').addEventListener('click',()=>scrollSheet(1));
+  // Finger-only Scrollstreifen links: unberührt von der Pencil-Sperre.
+  const rail=$('fingerScrollRail');
+  rail.addEventListener('touchstart',e=>{
+    const finger=Array.from(e.changedTouches||[]).find(t=>t.touchType!=='stylus');
+    if(!finger)return;
+    if(e.cancelable)e.preventDefault();
+    railTouch={id:finger.identifier,lastY:finger.clientY};
+  },{passive:false});
+  rail.addEventListener('touchmove',e=>{
+    if(e.cancelable)e.preventDefault();
+    if(!railTouch)return;
+    const finger=Array.from(e.changedTouches||[]).find(t=>t.identifier===railTouch.id&&t.touchType!=='stylus');
+    if(!finger)return;
+    const delta=railTouch.lastY-finger.clientY;
+    railTouch.lastY=finger.clientY;
+    if(delta)window.scrollBy(0,delta);
+    updateScrollRail();
+  },{passive:false});
+  for(const name of ['touchend','touchcancel'])rail.addEventListener(name,e=>{
+    if(railTouch&&Array.from(e.changedTouches||[]).some(t=>t.identifier===railTouch.id))railTouch=null;
+  },{passive:false});
+  rail.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();scrollSheet(e.key==='ArrowDown'?1:-1);}
+  });
+  function updateScrollRail(){
+    const d=document.scrollingElement||document.documentElement;
+    const max=Math.max(0,d.scrollHeight-(window.innerHeight||700));
+    rail.setAttribute('aria-valuenow',String(max?Math.round(Math.min(100,Math.max(0,(d.scrollTop||0)/max*100))):0));
+  }
+  window.addEventListener('scroll',updateScrollRail,{passive:true});
   // Startet mit dauerhaftem Pencil-only-Lock. Keine Layoutverschiebung!
   inkMode='auto';lockPage();refreshInkModeUI();
-  function tool(t){ink.tool=t;for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}$('eraserHint').classList.toggle('is-hidden',t!=='eraser');}
+  function tool(t){ink.tool=t;ink.eraserTip=null;ink.eraserTrail=[];renderEraserOverlay();for(const [id,val] of [['penBtn','pen'],['eraserBtn','eraser']]){$(id).classList.toggle('is-active',t===val);$(id).setAttribute('aria-pressed',t===val?'true':'false');}$('eraserHint').classList.toggle('is-hidden',t!=='eraser');}
   function undo(){if(!ink.undo.length)return;ink.redo.push(ink.strokes.slice());ink.strokes=ink.undo.pop();renderInk();saveInk();}
   function redo(){if(!ink.redo.length)return;ink.undo.push(ink.strokes.slice());ink.strokes=ink.redo.pop();renderInk();saveInk();}
 
