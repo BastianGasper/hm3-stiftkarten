@@ -286,3 +286,13 @@ body.proof-active .proof-panel{max-height:none;overflow:visible;touch-action:non
 .github-settings .dialog-actions{flex-wrap:wrap;justify-content:flex-start}
 #githubSyncStatus{min-height:0}
 .network-status,.ink-navigation{display:none!important}
+
+/* V20: source-separated Moodle tests and supplementary learning area */
+.self-learning-dialog{width:min(720px,calc(100vw - 24px));max-width:720px;max-height:min(92vh,950px);overflow:auto}
+.selflearning-group{padding:14px 0;border-bottom:1px solid var(--line)}
+.selflearning-group:last-child{border-bottom:0}
+.selflearning-group h3{margin:0 0 6px;font-size:1.04rem}
+.selflearning-group p{margin:0 0 12px;color:var(--muted);line-height:1.45}
+.selflearning-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.selflearning-option{text-align:left;justify-content:flex-start;white-space:normal;line-height:1.35;padding:10px 12px;min-height:43px}
+@media(max-width:600px){.selflearning-options{grid-template-columns:1fr}}
