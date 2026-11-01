@@ -3,9 +3,9 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-10-30.19';
-  const OFFLINE_CACHE='hm3-stiftkarten-v19-20261030';
-  const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
+  const APP_VERSION='2026-11-01.20';
+  const OFFLINE_CACHE='hm3-stiftkarten-v20-20261101';
+  const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./moodle-tests.b64','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
   const clone = v => JSON.parse(JSON.stringify(v));
@@ -83,8 +83,31 @@
   }
   async function loadInk(cardId){const token=++noteLoads;ink.cardId=cardId;ink.strokes=[];ink.active=null;ink.erasing=false;ink.erasedInGesture=false;ink.eraserTrail=[];ink.eraserTip=null;ink.lastEraserPoint=null;ink.undo=[];ink.redo=[];renderInk();renderEraserOverlay();$('noteStatus').textContent='Lade Notizen …';await saveQueue.catch(()=>{});const strokes=await readRecord('sketches',cardId);if(noteLoads!==token)return;ink.strokes=Array.isArray(strokes)?strokes:[];renderInk();$('noteStatus').textContent=ink.strokes.length?'Gespeichert':'Leeres Blatt';}
 
-  async function fetchCards(){let response;try{response=await fetch('cards.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);response=await response.json();}catch(e){console.warn('Deck load',e);throw Error('Karten konnten nicht geladen werden. Bitte Verbindung prüfen oder App erneut öffnen.');}
-    if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=response.map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Hintergrund:String(c.Hintergrund||''),Beispiel:String(c.Beispiel||''),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
+
+  // The Moodle archive is an optional, source-separated supplement. Decompression
+  // uses the native browser stream API; failed imports never erase existing cards.
+  async function fetchSelfLearningTests(){
+    try {
+      const res=await fetch('./moodle-tests.b64',{cache:'no-store'});
+      if(!res.ok)throw Error('HTTP '+res.status);
+      if(typeof DecompressionStream==='undefined')throw Error('GZIP wird von diesem Browser nicht unterstützt');
+      const base64=(await res.text()).trim();
+      const bytes=Uint8Array.from(atob(base64),ch=>ch.charCodeAt(0));
+      const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+      const result=JSON.parse(await new Response(stream).text());
+      if(!Array.isArray(result)||result.length!==52)throw Error('Moodle-Fragen unvollständig');
+      if(new Set(result.map(c=>c.id)).size!==result.length)throw Error('Moodle-IDs mehrfach vorhanden');
+      return result;
+    }catch(error){
+      console.warn('Selbstlernplattform import',error);
+      notice('Moodle-Tests konnten nicht geladen werden: '+error.message);
+      return [];
+    }
+  }
+  const SELFLEARNING='Selbstlernplattform';
+  const isSelfLearning=card=>card.Bereich===SELFLEARNING;
+\n  async function fetchCards(){let response;try{response=await fetch('cards.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);response=await response.json();}catch(e){console.warn('Deck load',e);throw Error('Karten konnten nicht geladen werden. Bitte Verbindung prüfen oder App erneut öffnen.');}
+    if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=[...response,...await fetchSelfLearningTests()].map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Hintergrund:String(c.Hintergrund||''),Beispiel:String(c.Beispiel||''),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
   function prefFor(id){return data.cardPrefs?.[id]||{};}
   function rebuildCards(){cards=[...originalCards.values()].map(c=>{const p=prefFor(c.id);return {...c,Frage:typeof p.Frage==='string'&&p.Frage.trim()?p.Frage:c.Frage,Antwort:typeof p.Antwort==='string'&&p.Antwort.trim()?p.Antwort:c.Antwort,favorite:!!p.favorite,marked:!!p.marked,disabled:!!p.disabled};});byId=new Map(cards.map(c=>[c.id,c]));}
   function mutatePref(id,patch){const p={...prefFor(id),...patch};if(!data.cardPrefs)data.cardPrefs={};if(!p.favorite&&!p.marked&&!p.disabled&&!('Frage'in p)&&!('Antwort'in p)&&!('sheetHeight'in p))delete data.cardPrefs[id];else data.cardPrefs[id]=p;storeData();rebuildCards();updateStats();}
@@ -102,7 +125,7 @@
   function resetEditor(){const id=editingCardId,original=originalCards.get(id);if(!id||!original)return;if(!confirm('Eigene Textänderungen an dieser Karte zurücksetzen? Notizen und Bewertungen bleiben erhalten.'))return;const p={...prefFor(id)};delete p.Frage;delete p.Antwort;delete data.cardPrefs[id];if(Object.keys(p).length)data.cardPrefs[id]=p;storeData();rebuildCards();syncEditedCard(id);closeEditor();notice('Originaltext wiederhergestellt.');}
 
   function due(c){const p=data.progress[c.id];return !p||!p.next||p.next<=now();}
-  function filtered(){return cards.filter(c=>!c.disabled&&(selected.topic==='all'||c.Bereich===selected.topic)&&(selected.type==='all'||c.Typ===selected.type)&&(selected.mode!=='favorites'||c.favorite));}
+  function filtered(){return cards.filter(c=>!c.disabled&&((selected.topic==='all'&&!isSelfLearning(c))||c.Bereich===selected.topic)&&(selected.type==='all'||c.Typ===selected.type)&&(selected.mode!=='favorites'||c.favorite));}
   function shuffle(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
   function eligible(){return shuffle(filtered().filter(c=>!selected.seen.has(c.id)&&(selected.mode==='all'||due(c))));}
   function updateStats(){const a=cards.filter(c=>!c.disabled).length,d=cards.filter(c=>!c.disabled&&due(c)).length;const rows=data.recordingActive?memory.attempts.filter(e=>e.sessionId===data.sessionId):[];
@@ -260,7 +283,7 @@
   function quizCheckbox(container,attribute,value){
     const label=document.createElement('label');label.className='quiz-check';
     const check=document.createElement('input');check.type='checkbox';check.value=value;
-    check.checked=true;check.setAttribute(attribute,'');check.addEventListener('change',updateQuizCount);
+    check.checked=value!==SELFLEARNING;check.setAttribute(attribute,'');check.addEventListener('change',updateQuizCount);
     const textNode=document.createElement('span');textNode.textContent=value;
     label.append(check,textNode);container.append(label);
   }
@@ -363,7 +386,7 @@
   }
   async function showCard(id){await finishInk();await saveQueue.catch(()=>{});if(selected.current&&selected.current!==id)await archiveDraftIfNeeded();selected.current=id;selected.revealed=false;const card=byId.get(id);if(!card)return showEmpty();$('workspace').classList.remove('is-hidden');$('emptyState').classList.add('is-hidden');
     $('cardTopic').textContent=`${card.Bereich} · ${card.Typ}`;$('cardSource').textContent=card.Quelle?`Quelle: ${card.Quelle}`:'';$('cardQuestion').textContent=card.Frage;$('cardAnswer').textContent=card.Antwort;
-    $('cardBackground').textContent=card.Hintergrund||'';
+    $('solutionHeading').textContent=isSelfLearning(card)&&card.Typ.startsWith('Test ')?'Originalauswertung der Selbstlernplattform':'Vollständige Musterlösung';\n    $('cardBackground').textContent=card.Hintergrund||'';
     $('cardExample').textContent=card.Beispiel||'';
     $('cardBackgroundSection').hidden=!card.Hintergrund;
     $('cardExampleSection').hidden=!card.Beispiel;
@@ -1179,14 +1202,69 @@
         const keys=await caches.keys();
         for(const key of keys.filter(k=>k.startsWith('hm3-stiftkarten-'))){
           const cache=await caches.open(key);
-          await Promise.all(['./','./index.html','./app.js','./style.css','./cards.json','./proofs.json','./manifest.webmanifest'].map(p=>cache.delete(new URL(p,location.href),{ignoreSearch:true})));
+          await Promise.all(['./','./index.html','./app.js','./style.css','./cards.json','./moodle-tests.b64','./proofs.json','./manifest.webmanifest'].map(p=>cache.delete(new URL(p,location.href),{ignoreSearch:true})));
         }
       }
       const url=new URL(location.href);url.searchParams.set('updated',String(Date.now()));window.location.replace(url.href);
     }catch(e){console.error('App update',e);notice('Aktualisierung fehlgeschlagen: '+e.message);}
     finally{appRefreshing=false;button.disabled=false;button.textContent='App aktualisieren';}
   }
-  function listeners(){
+
+  // Dedicated entry: Moodle tests share the tested quiz engine, but not the
+  // normal lecture repetition pool. All per-question attempt sheets stay intact.
+  const selfLearningTypes=()=>[...new Set(cards.filter(isSelfLearning).map(c=>c.Typ))];
+  function selfLearningButton(label,run){
+    const button=document.createElement('button');button.type='button';
+    button.className='button selflearning-option';button.textContent=label;
+    button.addEventListener('click',run);return button;
+  }
+  function renderSelfLearning(){
+    const root=$('selfLearningGroups');root.replaceChildren();
+    const types=selfLearningTypes();
+    const tests=types.filter(t=>t.startsWith('Test ')).sort((a,b)=>a.localeCompare(b,'de'));
+    const makeGroup=(heading,description,items,run)=>{
+      const section=document.createElement('section');section.className='selflearning-group';
+      const h=document.createElement('h3');h.textContent=heading;section.append(h);
+      if(description){const p=document.createElement('p');p.textContent=description;section.append(p);}
+      const list=document.createElement('div');list.className='selflearning-options';
+      for(const t of items){const n=cards.filter(c=>isSelfLearning(c)&&c.Typ===t&&!c.disabled).length;
+        list.append(selfLearningButton(t+' · '+n+' Fragen',()=>run(t)));}
+      if(!items.length){const p=document.createElement('p');p.textContent='Noch keine Inhalte eingepflegt';list.append(p);}
+      section.append(list);root.append(section);
+    };
+    makeGroup('Moodle-Tests','Originalfragen mit erst nach dem Aufdecken sichtbarer Moodle-Auswertung. Bewertung erfolgt durch dich selbst.',tests,startSelfLearningTest);
+    for(const type of ['Originalaufgaben','Methodenvergleich','Beweise & Herleitungen','Vertiefungswissen']){
+      makeGroup(type,'Getrennt vom Vorlesungsbestand und mit eigener Quellenangabe.',types.filter(t=>t===type),openSelfLearningCategory);
+    }
+    const all=cards.filter(isSelfLearning).length;
+    $('selfLearningCount').textContent=all+' Zusatzfragen · davon '+cards.filter(c=>isSelfLearning(c)&&c.Typ.startsWith('Test ')).length+' Moodle-Testfragen';
+  }
+  function selfLearningCanSwitch(){
+    if(data.quiz?.active||data.proofStudy?.active){notice('Aktuelle Abfrage oder Beweisrunde zuerst beenden.');return false;}
+    if(ink.pointerId!==null){notice('Pencil zuerst abheben.');return false;}
+    return true;
+  }
+  async function openSelfLearningCategory(type){
+    if(!selfLearningCanSwitch())return;
+    $('selfLearningDialog').close();
+    await finishInk();await saveQueue.catch(()=>{});
+    selected.topic=SELFLEARNING;selected.type=type;selected.mode='all';
+    $('topicFilter').value=SELFLEARNING;$('typeFilter').value=type;
+    document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.mode==='all'));
+    selected.seen.clear();selected.history=[];
+    await advance();
+  }
+  async function startSelfLearningTest(type){
+    if(!selfLearningCanSwitch())return;
+    const initialIds=cards.filter(c=>isSelfLearning(c)&&c.Typ===type&&!c.disabled).map(c=>c.id);
+    if(!initialIds.length){notice('Für diesen Test sind keine Fragen vorhanden.');return;}
+    await finishInk();await saveQueue.catch(()=>{});
+    $('selfLearningDialog').close();
+    data.quiz={active:true,stage:'cards',initialIds,results:{},queue:shuffle(initialIds),
+      index:0,round:1,topics:[SELFLEARNING],types:[type],startedAt:new Date().toISOString()};
+    storeData();updateQuizChrome();await advance();
+  }
+\n  function listeners(){
     $('proofStartBtn').onclick=chooseProof;
     $('proofSwitchBtn').onclick=chooseProof;
     $('proofExitBtn').onclick=exitProof;
@@ -1198,7 +1276,7 @@
     for(const id of ['cardBackgroundSection','cardExampleSection']){
       $(id).addEventListener('toggle',()=>{if($(id).open)math();});
     }
-    $('quizStartBtn').onclick=()=>{quizSelectUI();$('quizSetupDialog').showModal();};
+    $('selfLearningBtn').onclick=()=>{renderSelfLearning();$('selfLearningDialog').showModal();};\n    $('selfLearningClose').onclick=()=>$('selfLearningDialog').close();\n    $('quizStartBtn').onclick=()=>{quizSelectUI();$('quizSetupDialog').showModal();};
     $('quizSetupClose').onclick=()=>$('quizSetupDialog').close();
     $('quizSetupForm').onsubmit=beginQuiz;
     $('quizExitBtn').onclick=exitQuiz;$('quizSummaryExit').onclick=exitQuiz;
