@@ -97,7 +97,21 @@
       const result=JSON.parse(await new Response(stream).text());
       if(!Array.isArray(result)||result.length!==52)throw Error('Moodle-Fragen unvollständig');
       if(new Set(result.map(c=>c.id)).size!==result.length)throw Error('Moodle-IDs mehrfach vorhanden');
-      return result;
+      // Old Moodle exports include feedback pasted behind some questions.
+      // Remove answer leaks from the task side; the unaltered original remains
+      // available below the solution reveal (c.Antwort).
+      const sanitized=result.map(card=>{
+        let question=card.Frage;
+        if(card.id==='moodle-44-07'||card.id==='moodle-44-08'||card.id==='moodle-51-06'||card.id==='moodle-58-06'){
+          question=question.slice(0,question.lastIndexOf('- Falsch')+'- Falsch'.length).trim();
+        }
+        if(card.id==='moodle-51-04'){
+          question=question.replace(/\. Ausgewählt \/ richtig\. Richtig! Hierfür wäre \\\(\\lambda_i=1\\\) nötig\./g,'.')
+            .replace(/\. Falsch! Dies folgt aus \\\(\\lambda_\{1,2\}=0\\\)\./g,'.');
+        }
+        return {...card,Frage:question};
+      });
+      return sanitized;
     }catch(error){
       console.warn('Selbstlernplattform import',error);
       notice('Moodle-Tests konnten nicht geladen werden: '+error.message);
