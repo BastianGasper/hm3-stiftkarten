@@ -1,0 +1,192 @@
+[
+  {
+    "id": "moodle-extra-21",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "21.md · Aufgabe 1",
+    "Frage": "Transformiere die drei DGL in Systeme erster Ordnung und entscheide jeweils, ob die Darstellung \\(Y'=A(x)Y+b(x)\\) möglich ist.\n(a) \\(y'''=x^2-xy+\\frac{y''}{1+x}\\).\n(b) \\(y''=x^2-xy+\\frac{y'''}{1+x}\\).\n(c) \\(xyy'y''y'''=1\\).\nJeweils \\(y(1)=2,\\ y'(1)=-1,\\ y''(1)=1\\). Begründe die Linearitätsentscheidung und den zulässigen Definitionsbereich.",
+    "Antwort": "Setze \\(Y=(y,y',y'')^T\\), also \\(Y'=(Y_2,Y_3,y''')^T\\). Anfangsvektor: \\(Y(1)=(2,-1,1)^T\\).\n\n(a) \\(Y'=\\begin{pmatrix}0&1&0\\\\0&0&1\\\\-x&0&(1+x)^{-1}\\end{pmatrix}Y+\\begin{pmatrix}0\\\\0\\\\x^2\\end{pmatrix}\\). Linear-inhomogen auf Intervallen ohne \\(x=-1\\), hier zum Beispiel \\(x>-1\\).\n\n(b) Multipliziere mit \\(1+x\\): \\(y'''=(1+x)y''-(1+x)x^2+(1+x)xy\\). Daher \\(Y'=\\begin{pmatrix}0&1&0\\\\0&0&1\\\\x(1+x)&0&1+x\\end{pmatrix}Y+\\begin{pmatrix}0\\\\0\\\\-(1+x)x^2\\end{pmatrix}\\). Gültig auf einem Intervall mit \\(x\\neq-1\\), das \\(x_0=1\\) enthält.\n\n(c) \\(Y_3'=\\frac1{xY_1Y_2Y_3}\\). Das System existiert lokal, wo der Nenner nicht null ist, ist aber nicht linear. Am Anfangspunkt ist der Nenner \\(1\\cdot2\\cdot(-1)\\cdot1\\neq0\\). Eine Darstellung \\(A(x)Y+b(x)\\) gibt es im Allgemeinen nicht.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-22",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "22.md · Aufgabe 2",
+    "Frage": "Für \\(L(y)=y'''-\\frac3xy''+\\frac6{x^2}y'-\\frac6{x^3}y\\) und \\(L(y)=-2/x^3\\), \\(y(1)=y'(1)=1,\\ y''(1)=0\\):\n(a) Beweise die Linearität von \\(L\\).\n(b) Stelle das Anfangswertproblem in Matrix-Vektor-Form dar.\n(c) Prüfe kritisch die in der Originalquelle genannte Abbildung \\(L:C^3(\\mathbb R_+)\\to C(\\mathbb R)\\).",
+    "Antwort": "(a) Für \\(\\alpha,\\beta\\in\\mathbb R\\) und \\(u,v\\in C^3(\\mathbb R_+)\\) gilt wegen der Linearität jeder Ableitung \\(L(\\alpha u+\\beta v)=\\alpha L(u)+\\beta L(v)\\).\n\n(b) \\(Y=(y,y',y'')^T\\) und \\(Y'=\\begin{pmatrix}0&1&0\\\\0&0&1\\\\6/x^3&-6/x^2&3/x\\end{pmatrix}Y+\\begin{pmatrix}0\\\\0\\\\-2/x^3\\end{pmatrix}\\), \\(Y(1)=(1,1,0)^T\\).\n\n(c) Die Abbildung ist mit dieser Zielmenge ohne weitere Festlegungen problematisch: Die Funktion \\(L(y)\\) ist wegen der Koeffizienten mit \\(1/x^k\\) zunächst auf \\(\\mathbb R_+\\) definiert, nicht zwingend auf ganz \\(\\mathbb R\\). Sachgerecht wäre beispielsweise \\(L:C^3(\\mathbb R_+)\\to C(\\mathbb R_+)\\).",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-31",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "31.md · Aufgabe 1",
+    "Frage": "Gib für \\(y'=2+x-y^2,\\ y(1)=2\\) ein konkret durch Peano garantiertes Existenzintervall an. Wähle selbst ein Rechteck um \\((1,2)\\), begründe die Abschätzung von \\(|f|\\) und nenne eine allgemeine Formel für andere Rechteckbreiten.",
+    "Antwort": "Für \\(R=\\{|x-1|\\le a,\\ |y-2|\\le b\\}\\) gilt wegen \\(|x|\\le1+a\\), \\(|y|\\le2+b\\):\n\\[\n|2+x-y^2|\\le 2+(1+a)+(2+b)^2=:M.\n\\]\nDer Existenzsatz von Peano garantiert mindestens das Intervall \\(|x-1|\\le h\\) mit \\(h=\\min\\{a,b/M\\}\\), sofern das Rechteck im Definitionsbereich liegt.\n\nEine zulässige Wahl ist \\(a=b=1\\): \\(M=13\\), \\(h=1/13\\), also \\([12/13,14/13]\\). Das ist ein garantiertes, nicht zwingend maximales Existenzintervall.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": "Andere Rechtecke liefern andere, möglicherweise größere garantierte Intervalle. Die Stetigkeit von \\(f\\) sichert Existenz, aber nicht allein Eindeutigkeit."
+  },
+  {
+    "id": "moodle-extra-32",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "32.md · Aufgabe 2",
+    "Frage": "Untersuche \\(y'=x-y,\\ y(0)=1\\) auf \\([0,2]\\): exakte Lösung, explizite und implizite Euler-Iterierte für \\(h=1/2\\). Begründe, wieso das implizite Verfahren hier explizit nach \\(y_{k+1}\\) auflösbar ist, und vergleiche an den Knoten.",
+    "Antwort": "Exakte Lösung: \\(y(x)=x-1+2e^{-x}\\).\n\nExplizit: \\(Y_{k+1}=Y_k+\\frac12(x_k-Y_k)=\\frac12Y_k+\\frac12x_k\\), \\(x_k=k/2\\). Damit\n\\[\n(Y_0,Y_1,Y_2,Y_3,Y_4)=(1,\\tfrac12,\\tfrac12,\\tfrac34,\\tfrac98).\n\\]\n\nImplizit: \\(Y_{k+1}=Y_k+\\frac12(x_{k+1}-Y_{k+1})\\), also\n\\[\nY_{k+1}=\\tfrac23Y_k+\\tfrac13x_{k+1}.\n\\]\nEs folgt \\((Y_0,\\ldots,Y_4)=(1,\\frac56,\\frac89,\\frac{59}{54},\\frac{113}{81})\\).\n\nEine allgemeine rechte Seite \\(f(x,Y)\\) führt zu einer nichtlinearen impliziten Gleichung in \\(Y_{k+1}\\), für die oft ein Nullstellenverfahren notwendig ist. Hier ist die rechte Seite affin-linear in \\(Y\\) und unmittelbar auflösbar.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-38",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "38.md · Aufgabe 1",
+    "Frage": "Weise für das AWP \\(y'=x^2-y^2,\\ y(1)=1\\) auf dem Rechteck \\(|x-1|\\le1,\\ |y-1|\\le1\\) Existenz und lokale Eindeutigkeit nach. Bestimme ein konkretes garantiertes Intervall und die Lipschitzkonstante bezüglich \\(y\\).",
+    "Antwort": "Auf \\(R=[0,2]\\times[0,2]\\) gilt \\(f(x,y)=x^2-y^2\\in C(R)\\) und \\(|f|\\le x^2+y^2\\le8\\). Daher liefert Peano die Existenz auf \\(|x-1|\\le\\min\\{1,1/8\\}=1/8\\).\n\nFür \\(y,z\\in[0,2]\\):\n\\[\n|f(x,y)-f(x,z)|=|y^2-z^2|=|y+z||y-z|\\le4|y-z|.\n\\]\nDamit ist \\(f\\) auf \\(R\\) Lipschitz-stetig in \\(y\\) mit \\(L=4\\). Picard–Lindelöf sichert die lokale Eindeutigkeit.\n\nEine kleine garantierte Intervalllänge bedeutet nicht, dass die tatsächliche Lösung nur dort existiert.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-39",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "39.md · Aufgabe 2",
+    "Frage": "Berechne für jedes AWP drei Picard-Iterierte, formuliere eine Formel für \\(\\varphi_n\\), beweise sie induktiv und untersuche Grenzfunktion sowie Eindeutigkeit:\n(a) \\(y'=2xy,\\ y(0)=1\\);\n(b) \\(y'=y-x,\\ y(0)=1\\);\n(c) \\(y'=y,\\ y(1)=1\\).\nTrenne ausdrücklich Startfunktion, Rekursion und Induktionsschritt.",
+    "Antwort": "Allgemein gilt \\(\\varphi_{n+1}(x)=y_0+\\int_{x_0}^{x}f(t,\\varphi_n(t))\\,dt\\) für \\(\\varphi_0\\equiv y_0\\).\n\n(a) \\(\\varphi_n(x)=\\sum_{k=0}^{n}\\frac{x^{2k}}{k!}\\). Der Induktionsschritt folgt aus \\(2t\\cdot t^{2k}/k!=\\frac{d}{dt}(t^{2k+2}/(k+1)!)\\). Grenzwert: \\(e^{x^2}\\).\n\n(b) \\(\\varphi_0=1\\), und für \\(n\\ge1\\): \\(\\varphi_n(x)=1+x-\\frac{x^{n+1}}{(n+1)!}\\). Einsetzen in die Integralrekursion beweist den Übergang \\(n\\to n+1\\). Grenzwert: \\(1+x\\).\n\n(c) \\(\\varphi_n(x)=\\sum_{k=0}^{n}\\frac{(x-1)^k}{k!}\\). Integriere gliedweise in der Iterationsvorschrift mit Basis \\(\\varphi_0=1\\). Grenzwert: \\(e^{x-1}\\).\n\nAlle drei rechten Seiten sind stetig und lokal Lipschitz in \\(y\\); die jeweiligen Lösungen sind lokal eindeutig.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": "Bei (b) kann die Picard-Folge ab \\(n=1\\) die exakte Lösung nicht für alle \\(x\\) schon nach endlich vielen Schritten erreichen, obwohl sie für \\(n\\to\\infty\\) konvergiert."
+  },
+  {
+    "id": "moodle-extra-45",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "45.md · Aufgabe 1",
+    "Frage": "Untersuche \\(1,\\cos(\\ln x),\\sin(\\ln x)\\) für \\(x>0\\), die Lösungen von \\(x^3y'''+3x^2y''+2xy'=0\\): (a) Probe aller Lösungen, (b) lineare Unabhängigkeit über die Definition, (c) \\(W'\\) durch direkte Rechnung und Abelsche Identität.",
+    "Antwort": "Die Differentiationen zeigen für \\(c=\\cos(\\ln x),\\,s=\\sin(\\ln x)\\):\n\\[\nc'=-s/x,\\quad s'=c/x,\\quad c''=(s-c)/x^2,\\quad s''=-(s+c)/x^2.\n\\]\nWeiteres Ableiten und Einsetzen ergibt jeweils \\(x^3y'''+3x^2y''+2xy'=0\\); für \\(y=1\\) ist dies sofort klar.\n\nFür die Unabhängigkeit nehme \\(a+bc+ds\\equiv0\\) auf \\(\\mathbb R_+\\). Setze \\(x=1\\): \\(a+b=0\\). Ableitung bei \\(x=1\\): \\(d=0\\); zweite Ableitung bei \\(x=1\\): \\(-b-d=0\\). Somit \\(a=b=d=0\\).\n\nDie Wronski-Determinante ist\n\\[\nW(x)=\\begin{vmatrix}1&c&s\\\\0&-s/x&c/x\\\\0&(s-c)/x^2&-(s+c)/x^2\\end{vmatrix}=x^{-3},\n\\]\nfolglich \\(W'=-3x^{-4}\\). Aus der normierten DGL \\(y'''+\\frac3x y''+\\frac2{x^2}y'=0\\) liefert Abel \\(W'+\\frac3xW=0\\) dasselbe Ergebnis.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-46",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "46.md · Aufgabe 2",
+    "Frage": "Beweise die lineare Unabhängigkeit von \\(e^x,xe^x,x^2e^x\\) mithilfe der Wronski-Matrix und erkläre, warum der Faktor \\(e^x\\) die Unabhängigkeit nicht zerstört.",
+    "Antwort": "Der Raum wird von \\(e^x\\cdot(1,x,x^2)\\) aufgespannt. Für den Wronskian gilt hier (über sukzessive Zeilenoperationen):\n\\[\nW(e^x,xe^x,x^2e^x)=e^{3x}W(1,x,x^2)=2e^{3x}\\neq0.\n\\]\nDamit sind die drei Funktionen auf jedem Intervall linear unabhängig. Alternativ: \\(e^x(a+bx+cx^2)=0\\) für alle \\(x\\) und \\(e^x\\neq0\\) erzwingt das identisch verschwindende Polynom \\(a+bx+cx^2\\), also \\(a=b=c=0\\).",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-47",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "47.md · Aufgabe 3",
+    "Frage": "Zeige für \\(L(y)=y'''-\\frac3x y''+\\frac6{x^2}y'-\\frac6{x^3}y\\), \\(x>0\\), dass \\(\\{x,x^2,x^3\\}\\) ein Fundamentalsystem ist. Bestimme \\(W\\) sowohl direkt als auch über die Abelsche Identität und begründe, was jede Methode alleine zeigt.",
+    "Antwort": "(1) \\(x,x^2,x^3\\) erfüllen jeweils \\(L(y)=0\\), wie durch direkte Substitution überprüft wird.\n\n(2) \\(\\sum_{j=1}^3 c_jx^j=0\\) für alle \\(x>0\\) impliziert nach Division durch \\(x\\), dass \\(c_1+c_2x+c_3x^2\\) das Nullpolynom ist; daher alle \\(c_j=0\\).\n\n(3) Direkt:\n\\[\nW(x)=\\begin{vmatrix}x&x^2&x^3\\\\1&2x&3x^2\\\\0&2&6x\\end{vmatrix}=2x^3\\neq0.\n\\]\n(4) Da der Koeffizient vor \\(y''\\) gleich \\(-3/x\\) ist, folgt nach Abel \\(W'-3W/x=0\\), somit \\(W=Cx^3\\). Bei \\(x=1\\) ist \\(W(1)=2\\), also \\(C=2\\).\n\nDie Abel-Gleichung alleine liefert den konstanten Vorfaktor nicht; dafür benötigt man eine Auswertung an einem Punkt.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-52",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "52.md · Aufgabe 1",
+    "Frage": "Für \\(y^{(4)}-4y'''+8y''-8y'+4y=0\\) ist \\(1+i\\) eine Nullstelle. Bestimme das vollständige reelle Fundamentalsystem mit korrekten Vielfachheiten und begründe ohne Ausrechnen der 4×4-Wronski-Determinante, warum \\(V(10)\\) regulär ist.",
+    "Antwort": "Das charakteristische Polynom faktorisiert als\n\\[\np(\\lambda)=(\\lambda^2-2\\lambda+2)^2=(\\lambda-(1+i))^2(\\lambda-(1-i))^2.\n\\]\nDas reelle Fundamentalsystem lautet\n\\[\ne^x\\cos x,\\quad e^x\\sin x,\\quad xe^x\\cos x,\\quad xe^x\\sin x.\n\\]\nDie vier Funktionen sind die reellen und imaginären Teile der komplexen Lösungen zu den beiden mehrfachen konjugierten Nullstellen, mit zusätzlichem \\(x\\)-Faktor wegen der Zweifachheit. Sie sind linear unabhängig und lösen die homogene DGL. Also ist die Wronski-Matrix im gesamten Definitionsintervall regulär, insbesondere bei \\(x=10\\).",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-53",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "53.md · Aufgabe 2",
+    "Frage": "(a) Bestimme ein reelles Fundamentalsystem zu \\(p(\\lambda)=(\\lambda^2-4\\lambda+5)^2\\).\n(b) Konstruiere eine skalare lineare DGL mit konstanten Koeffizienten, deren Fundamentalsystem genau \\(\\{1,x,e^x\\cos x,e^x\\sin x\\}\\) ist. Begründe beide Antworten anhand der Nullstellen und ihrer Vielfachheit.",
+    "Antwort": "(a) \\(p(\\lambda)=[(\\lambda-2)^2+1]^2\\) besitzt \\(2\\pm i\\) jeweils zweifach. Ein reelles Fundamentalsystem ist\n\\[\ne^{2x}\\cos x,\\quad e^{2x}\\sin x,\\quad xe^{2x}\\cos x,\\quad xe^{2x}\\sin x.\n\\]\n\n(b) \\(1,x\\) entsprechen der doppelten Nullstelle \\(0\\); \\(e^x\\cos x,e^x\\sin x\\) dem Paar \\(1\\pm i\\). Somit\n\\[\np(\\lambda)=\\lambda^2((\\lambda-1)^2+1)=\\lambda^4-2\\lambda^3+2\\lambda^2.\n\\]\nDie gesuchte DGL lautet \\(y^{(4)}-2y'''+2y''=0\\).",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-54",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Originalaufgaben",
+    "Quelle": "54.md · Aufgabe 3",
+    "Frage": "Für \\(L(y)=y'''-\\frac3x y''+\\frac6{x^2}y'-\\frac6{x^3}y\\), \\(x>0\\), zeige:\n(c) \\(x,x^2,x^3\\in\\ker L\\).\n(d) \\(y_p=x+1/3\\) löst \\(L(y)=-2/x^3\\).\nErkläre, weshalb der Störterm den Kern nicht verändert.",
+    "Antwort": "Für \\(y=x^m\\) gilt\n\\[\nL(x^m)=[m(m-1)(m-2)-3m(m-1)+6m-6]x^{m-3}.\n\\]\nFür \\(m=1,2,3\\) ist der Ausdruck in eckigen Klammern jeweils 0. Also sind alle drei Funktionen im Kern.\n\nWegen der Linearität und \\(L(x)=0\\) gilt\n\\[\nL(x+1/3)=L(x)+\\tfrac13L(1)=0+\\tfrac13(-6/x^3)=-2/x^3.\n\\]\nDer Kern ist die Lösungsmenge von \\(L(y)=0\\), hängt daher nicht von der gewählten Störfunktion ab.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-59-66",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Methodenvergleich",
+    "Quelle": "59.md / 66.md · gleiche DGL",
+    "Frage": "Löse \\(y''-2y'+2y=e^x\\cos x\\) auf zwei Wegen: (a) Variation der Konstanten mit einem reellen Fundamentalsystem, (b) Reduktion der Ordnung über die komplexe Fundamentallösung \\(e^{(1+i)x}\\). Vergleiche die Rechnungen und überprüfe dieselbe partikuläre Lösung.",
+    "Antwort": "Homogenes Fundamentalsystem: \\(y_1=e^x\\cos x,\\ y_2=e^x\\sin x\\). Wronskian: \\(W=e^{2x}\\).\n\n(a) Variation der Konstanten liefert bei normierter DGL \\(c_1'=-y_2s/W=-\\sin x\\cos x\\), \\(c_2'=y_1s/W=\\cos^2x\\). Eine Wahl der Stammfunktionen ist \\(c_1=-\\sin^2x/2\\), \\(c_2=x/2+\\sin(2x)/4\\). Dann heben sich in \\(c_1y_1+c_2y_2\\) die nichtresonanten Terme auf:\n\\[\ny_p(x)=\\tfrac{x}{2}e^x\\sin x.\n\\]\n\n(b) Schreibe die rechte Seite als \\(\\operatorname{Re}e^{(1+i)x}\\) und suche \\(z_p=c(x)e^{(1+i)x}\\). Für \\(\\lambda=1+i\\) gilt \\(p(\\lambda)=0\\); der reduzierte Operator wirkt als \\(c''+2ic'\\). Daher\n\\[\nc''+2ic'=1.\n\\]\nEine Wahl \\(c=x/(2i)\\) erfüllt das. Somit \\(z_p=\\frac{x}{2i}e^{(1+i)x}\\). Sein Realteil ist \\(\\tfrac{x}{2}e^x\\sin x\\).\n\nProbe: Mit \\(y=e^xu\\) wird \\(L(y)=e^x(u''+u)\\). Für \\(u=x\\sin x/2\\) ist \\(u''+u=\\cos x\\).",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": "Die Reduktion über eine komplexe Fundamentallösung vermeidet das zweidimensionale Variationsgleichungssystem."
+  },
+  {
+    "id": "moodle-extra-60-67",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Methodenvergleich",
+    "Quelle": "60.md / 67.md · gleiche DGL",
+    "Frage": "Löse \\(y''+5y'+6y=e^{-x}+e^{-2x}\\) durch (a) Variation der Konstanten, (b) Reduktion der Ordnung mit \\(y_1=e^{-2x}\\). Nenne die allgemeine Lösung und erläutere den Resonanzanteil.",
+    "Antwort": "Homogenes Fundamentalsystem: \\(e^{-2x},e^{-3x}\\), Wronskian \\(W=-e^{-5x}\\).\n\n(a) Variation der Konstanten: \\(c_1'=-y_2s/W=e^x+1\\), \\(c_2'=y_1s/W=-(e^{2x}+e^x)\\). Wähle \\(c_1=e^x+x+1\\), \\(c_2=-e^{2x}/2-e^x\\). Dann\n\\[\ny_p=\\tfrac12e^{-x}+xe^{-2x}.\n\\]\n\n(b) Ansatz \\(y=e^{-2x}c\\). Die linke Seite wird \\(e^{-2x}(c''+c')\\); rechts durch \\(e^{-2x}\\) teilen: \\(c''+c'=e^x+1\\). Mit \\(d=c'\\) erhält man \\(d'+d=e^x+1\\). Eine partikuläre Lösung ist \\(d=e^x/2+1\\), somit \\(c=e^x/2+x\\) und dieselbe \\(y_p\\).\n\nAllgemein:\n\\[\ny=C_1e^{-2x}+C_2e^{-3x}+\\tfrac12e^{-x}+xe^{-2x}.\n\\]\nDer \\(xe^{-2x}\\)-Term entsteht, weil \\(e^{-2x}\\) bereits zur homogenen Lösung gehört.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-43",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Beweise & Herleitungen",
+    "Quelle": "43.md · Abelsche Identität",
+    "Frage": "Beweise für \\(n\\) Lösungen der normierten homogenen DGL \\(y^{(n)}+a_1(x)y^{(n-1)}+\\cdots+a_n(x)y=0\\), dass \\(W'(x)+a_1(x)W(x)=0\\). Begründe die Zeilenargumentation genau und behandle den Fall \\(W(x_0)=0\\) ohne Division durch \\(W\\).",
+    "Antwort": "Bezeichne die Zeilen der Wronski-Matrix mit \\(r_0,r_1,\\ldots,r_{n-1}\\), wobei \\(r_j\\) die \\(j\\)-ten Ableitungen der Lösungen enthält.\n\nNach der Produktregel für Determinanten ist \\(W'=\\sum_{j=0}^{n-1}\\det(r_0,\\ldots,r_j',\\ldots,r_{n-1})\\). Für \\(j<n-1\\) gilt \\(r_j'=r_{j+1}\\); damit haben die entsprechenden Determinanten zwei identische Zeilen und verschwinden. Nur der Term mit abgeleiteter letzter Zeile bleibt.\n\nAus der DGL folgt\n\\[\nr_{n-1}'=r_n=-a_1r_{n-1}-a_2r_{n-2}-\\cdots-a_nr_0.\n\\]\nMultilinearität der Determinante: Die Summanden mit \\(r_0,\\ldots,r_{n-2}\\) führen erneut zu doppelten Zeilen, also bleibt nur \\(-a_1\\det(r_0,\\ldots,r_{n-1})=-a_1W\\).\n\nDamit \\(W'=-a_1W\\). Über den integrierenden Faktor ergibt sich direkt\n\\[\nW(x)=W(x_0)\\exp\\!\\left(-\\int_{x_0}^x a_1(t)\\,dt\\right).\n\\]\nDas gilt auch für \\(W(x_0)=0\\); dann ist \\(W\\equiv0\\). Kein Schritt hat durch \\(W\\) dividiert. Für \\(W(x_0)\\ne0\\) verschwindet \\(W\\) nirgends auf dem zusammenhängenden Intervall.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-57",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Beweise & Herleitungen",
+    "Quelle": "57.md · Variation der Konstanten",
+    "Frage": "Leite für eine normierte lineare DGL dritter Ordnung aus \\(y_p(x)=\\sum_{j=1}^3 c_j(x)y_j(x)\\) das vollständige Gleichungssystem \\(V(x)c'(x)=(0,0,s(x))^T\\) her. Erkläre jede Nebenbedingung und die Rolle der homogenen Differentialgleichung.",
+    "Antwort": "Schreibe \\(y=(y_1,y_2,y_3)^T\\), \\(c=(c_1,c_2,c_3)^T\\). Mit der Produktregel: \\(y_p'=\\langle y',c\\rangle+\\langle y,c'\\rangle\\). Wähle als erste Nebenbedingung \\(\\langle y,c'\\rangle=0\\); damit \\(y_p'=\\langle y',c\\rangle\\).\n\nDifferenziere erneut: \\(y_p''=\\langle y'',c\\rangle+\\langle y',c'\\rangle\\). Wähle \\(\\langle y',c'\\rangle=0\\). Somit \\(y_p''=\\langle y'',c\\rangle\\).\n\nDann \\(y_p'''=\\langle y''',c\\rangle+\\langle y'',c'\\rangle\\). Einsetzen in \\(y_p'''+a_1y_p''+a_2y_p'+a_3y_p=s\\):\n\\[\n\\langle y'''+a_1y''+a_2y'+a_3y,c\\rangle+\\langle y'',c'\\rangle=s.\n\\]\nDer erste Summand ist null, da \\(y_j\\) homogene Lösungen sind. Die drei Bedingungen ergeben:\n\\[\n\\begin{pmatrix}y_1&y_2&y_3\\\\y_1'&y_2'&y_3'\\\\y_1''&y_2''&y_3''\\end{pmatrix}c'=\n\\begin{pmatrix}0\\\\0\\\\s\\end{pmatrix}.\n\\]\nBei Leitkoeffizient \\(a_0(x)\\ne1\\) muss unten \\(s(x)/a_0(x)\\) stehen.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-62",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Beweise & Herleitungen",
+    "Quelle": "62.md / 63.md · Reduktion der Ordnung",
+    "Frage": "Begründe die Reduktion der Ordnung \\(n\\to n-1\\) für \\(L(y)=p(D)y=s(x)\\) mit konstanten Koeffizienten und bekannter exponentieller homogener Lösung \\(e^{\\lambda x}\\). Leite den transformierten Operator her und beurteile kritisch die Quellbehauptung, \\(\\lambda=0\\) müsse grundsätzlich ausgeschlossen werden.",
+    "Antwort": "Da \\(p(\\lambda)=0\\), gilt für \\(y=e^{\\lambda x}c(x)\\) die Verschiebungsformel\n\\[\nL(e^{\\lambda x}c)=e^{\\lambda x}p(D+\\lambda)c.\n\\]\nAls Polynom in \\(D\\) besitzt \\(p(D+\\lambda)\\) wegen \\(p(\\lambda)=0\\) keinen Term der Ordnung \\(D^0\\). Daher enthält \\(p(D+\\lambda)c\\) nur \\(c',c'',\\ldots,c^{(n)}\\).\n\nMit \\(d=c'\\) folgt eine lineare inhomogene DGL höchstens \\((n-1)\\)-ter Ordnung für \\(d\\), deren rechte Seite \\(s(x)e^{-\\lambda x}\\) ist. Anschließend erhält man \\(c\\) durch Integration und \\(y_p=e^{\\lambda x}c\\).\n\nAuch \\(\\lambda=0\\) ist mathematisch zulässig. Dann ist \\(e^{0x}=1\\) und \\(p(0)=0\\), also hat der ursprüngliche Operator selbst keinen \\(D^0\\)-Term. Mit \\(d=y'\\) sinkt die Ordnung bereits unmittelbar. Die Quelle beschreibt den Fall als rechnerisch nicht lohnend, darf aber nicht als generelles Verbot verstanden werden.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-69-73",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Vertiefungswissen",
+    "Quelle": "69–73.md · Ansatz vom Typ der rechten Seite",
+    "Frage": "Erkläre, warum für konstante Koeffizienten und \\(s(x)=p_m(x)e^{\\lambda x}\\) ein Ansatz \\(y_p=x^re^{\\lambda x}q_m(x)\\) verwendet wird. Definiere \\(r\\) und den Grad von \\(q_m\\). Erweitere die Begründung auf Sinus-/Cosinus-Störfunktionen und formuliere ein Resonanz-Gegenbeispiel zum naiven Ansatz.",
+    "Antwort": "Sei \\(L=p(D)\\) mit konstanten Koeffizienten und \\(p\\) das charakteristische Polynom. Der Ansatz ist\n\\[\ny_p=x^re^{\\lambda x}q_m(x),\\qquad q_m\\in\\mathbb P_m,\n\\]\nwobei \\(r\\) die algebraische Vielfachheit von \\(\\lambda\\) als Nullstelle von \\(p\\) ist (\\(r=0\\), falls \\(p(\\lambda)\\ne0\\)). \\(q_m\\) hat freie Koeffizienten bis zum Grad \\(m\\).\n\nDie Verschiebungsidentität \\(p(D)(e^{\\lambda x}q)=e^{\\lambda x}p(D+\\lambda)q\\) zeigt, dass bei einer \\(r\\)-fachen Nullstelle die ersten \\(r\\) Ableitungsordnungen fehlen. Der Faktor \\(x^r\\) kompensiert die Resonanz.\n\nFür \\(e^{\\alpha x}\\cos(\\beta x)\\) bzw. \\(\\sin\\) verwendet man \\(\\lambda=\\alpha+i\\beta\\), löst komplex und nimmt bei reellem \\(L\\) den Real- bzw. Imaginärteil.\n\nBeispiel: \\(y''-y=e^x\\) hat \\(p(1)=0\\); \\(Ae^x\\) liegt im homogenen Kern und kann die rechte Seite niemals erzeugen. Korrekt ist \\(y_p=Axe^x\\), und Einsetzen ergibt \\(A=1/2\\).",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  },
+  {
+    "id": "moodle-extra-73",
+    "Bereich": "Selbstlernplattform",
+    "Typ": "Vertiefungswissen",
+    "Quelle": "73.md · Videoaufgabe (Rechnung nicht im PDF)",
+    "Frage": "Die Moodle-Seite nennt \\(4y^{(4)}-3y''-y=xe^x\\), zeigt aber die eigentliche Videorechnung nicht. Bestimme unabhängig davon den minimalen Ansatz vom Typ der rechten Seite und berechne eine partikuläre Lösung vollständig. Kennzeichne die selbst ergänzte Rechnung.",
+    "Antwort": "Eigenständig ausgearbeitete Rechnung; im hochgeladenen PDF stehen nur die DGL und das Video-Vorschaubild.\n\nCharakteristisches Polynom: \\(p(\\lambda)=4\\lambda^4-3\\lambda^2-1\\). Es gilt \\(p(1)=0\\), \\(p'(1)=16-6=10\\ne0\\); \\(\\lambda=1\\) ist einfach. Daher:\n\\[\ny_p=e^x x(Ax+B)=e^x(Ax^2+Bx).\n\\]\nMit \\(q=Ax^2+Bx\\) und \\(L(e^xq)=e^x p(D+1)q\\) gilt wegen \\(p(1)=0\\):\n\\[\np(D+1)q=p'(1)q'+\\tfrac{p''(1)}2q''=10(2Ax+B)+21(2A).\n\\]\nVergleiche mit \\(x\\): \\(20A=1\\Rightarrow A=1/20\\); \\(10B+42A=0\\Rightarrow B=-21/100\\).\nSomit\n\\[\n\\boxed{y_p=e^x\\left(\\frac{x^2}{20}-\\frac{21x}{100}\\right)}.\n\\]\nDiese Lösung stammt aus der zusätzlichen Herleitung und nicht aus der PDF-Transkription.",
+    "Hintergrund": "Eigenständig ausgearbeitete Lösung (nicht Bestandteil des hochgeladenen Moodle-PDFs).",
+    "Beispiel": ""
+  }
+]
