@@ -118,9 +118,11 @@
       return [];
     }
   }
-\n  const SELFLEARNING='Selbstlernplattform';
+
+  const SELFLEARNING='Selbstlernplattform';
   const isSelfLearning=card=>card.Bereich===SELFLEARNING;
-\n  async function fetchCards(){let response;try{response=await fetch('cards.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);response=await response.json();}catch(e){console.warn('Deck load',e);throw Error('Karten konnten nicht geladen werden. Bitte Verbindung prüfen oder App erneut öffnen.');}
+
+  async function fetchCards(){let response;try{response=await fetch('cards.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);response=await response.json();}catch(e){console.warn('Deck load',e);throw Error('Karten konnten nicht geladen werden. Bitte Verbindung prüfen oder App erneut öffnen.');}
     if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=[...response,...await fetchSelfLearningTests(),...await fetchSelfLearningExtras()].map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Hintergrund:String(c.Hintergrund||''),Beispiel:String(c.Beispiel||''),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
   function prefFor(id){return data.cardPrefs?.[id]||{};}
   function rebuildCards(){cards=[...originalCards.values()].map(c=>{const p=prefFor(c.id);return {...c,Frage:typeof p.Frage==='string'&&p.Frage.trim()?p.Frage:c.Frage,Antwort:typeof p.Antwort==='string'&&p.Antwort.trim()?p.Antwort:c.Antwort,favorite:!!p.favorite,marked:!!p.marked,disabled:!!p.disabled};});byId=new Map(cards.map(c=>[c.id,c]));}
@@ -400,7 +402,8 @@
   }
   async function showCard(id){await finishInk();await saveQueue.catch(()=>{});if(selected.current&&selected.current!==id)await archiveDraftIfNeeded();selected.current=id;selected.revealed=false;const card=byId.get(id);if(!card)return showEmpty();$('workspace').classList.remove('is-hidden');$('emptyState').classList.add('is-hidden');
     $('cardTopic').textContent=`${card.Bereich} · ${card.Typ}`;$('cardSource').textContent=card.Quelle?`Quelle: ${card.Quelle}`:'';$('cardQuestion').textContent=card.Frage;$('cardAnswer').textContent=card.Antwort;
-    $('solutionHeading').textContent=isSelfLearning(card)&&card.Typ.startsWith('Test ')?'Originalauswertung der Selbstlernplattform':'Vollständige Musterlösung';\n    $('cardBackground').textContent=card.Hintergrund||'';
+    $('solutionHeading').textContent=isSelfLearning(card)&&card.Typ.startsWith('Test ')?'Originalauswertung der Selbstlernplattform':'Vollständige Musterlösung';
+    $('cardBackground').textContent=card.Hintergrund||'';
     $('cardExample').textContent=card.Beispiel||'';
     $('cardBackgroundSection').hidden=!card.Hintergrund;
     $('cardExampleSection').hidden=!card.Beispiel;
@@ -1278,7 +1281,8 @@
       index:0,round:1,topics:[SELFLEARNING],types:[type],startedAt:new Date().toISOString()};
     storeData();updateQuizChrome();await advance();
   }
-\n  function listeners(){
+
+  function listeners(){
     $('proofStartBtn').onclick=chooseProof;
     $('proofSwitchBtn').onclick=chooseProof;
     $('proofExitBtn').onclick=exitProof;
@@ -1290,7 +1294,9 @@
     for(const id of ['cardBackgroundSection','cardExampleSection']){
       $(id).addEventListener('toggle',()=>{if($(id).open)math();});
     }
-    $('selfLearningBtn').onclick=()=>{renderSelfLearning();$('selfLearningDialog').showModal();};\n    $('selfLearningClose').onclick=()=>$('selfLearningDialog').close();\n    $('quizStartBtn').onclick=()=>{quizSelectUI();$('quizSetupDialog').showModal();};
+    $('selfLearningBtn').onclick=()=>{renderSelfLearning();$('selfLearningDialog').showModal();};
+    $('selfLearningClose').onclick=()=>$('selfLearningDialog').close();
+    $('quizStartBtn').onclick=()=>{quizSelectUI();$('quizSetupDialog').showModal();};
     $('quizSetupClose').onclick=()=>$('quizSetupDialog').close();
     $('quizSetupForm').onsubmit=beginQuiz;
     $('quizExitBtn').onclick=exitQuiz;$('quizSummaryExit').onclick=exitQuiz;
