@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-01.20",
+  "version": "2026-11-01.21",
   "released": "2026-11-01",
   "features": [
     "Glatte Stiftkurven",
@@ -20,6 +20,7 @@
     "Mathematische Notation in Kartentexten korrigiert; 1142 LaTeX-Ausdrücke validiert",
     "Unsichtbare linke 20%-Scrollzone in allen Eingabemodi; 58 mathematische Vorbereitungsseiten vor 145 Beweisschritten; 25 umfassendere Testatfragen mit Zusatzwissen und Transferbeispielen",
     "Fragen separat markieren und in Kartenverwaltung filtern; leeres Stiftblatt je neuem Kartenversuch; entfernte Scroll-/Blatttasten und Netzwerkstatus; optionaler autorisierter GitHub-Aufnahmenabgleich nach Online-Rückkehr",
-    "Selbstlernplattform mit 52 ursprünglichen Moodle-Testfragen in 9 separaten Tests, quellentreuer Auswertung und Hinweisen zu problematischen Quellen"
+    "Selbstlernplattform mit 52 ursprünglichen Moodle-Testfragen in 9 separaten Tests, quellentreuer Auswertung und Hinweisen zu problematischen Quellen",
+    "12 vollständige Originalaufgaben, 2 Methodenvergleiche, 3 vertiefte Beweis-/Herleitungsaufgaben und 2 Zusatzthemen; alle als unabhängiger Moodle-Lernbereich"
   ]
 }
