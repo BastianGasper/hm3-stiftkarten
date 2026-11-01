@@ -3,9 +3,9 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-11-01.20';
-  const OFFLINE_CACHE='hm3-stiftkarten-v20-20261101';
-  const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./moodle-tests.b64','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
+  const APP_VERSION='2026-11-01.21';
+  const OFFLINE_CACHE='hm3-stiftkarten-v21-20261101';
+  const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./moodle-tests.b64','./selflearning-extra.json','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
   const clone = v => JSON.parse(JSON.stringify(v));
@@ -104,10 +104,24 @@
       return [];
     }
   }
-  const SELFLEARNING='Selbstlernplattform';
+
+  async function fetchSelfLearningExtras(){
+    try {
+      const response=await fetch('./selflearning-extra.json',{cache:'no-store'});
+      if(!response.ok)throw Error('HTTP '+response.status);
+      const content=await response.json();
+      if(!Array.isArray(content)||content.length!==19)throw Error('Zusatzaufgaben unvollständig');
+      return content;
+    }catch(error){
+      console.warn('Selflearning exercises import',error);
+      notice('Zusatzaufgaben nicht verfügbar: '+error.message);
+      return [];
+    }
+  }
+\n  const SELFLEARNING='Selbstlernplattform';
   const isSelfLearning=card=>card.Bereich===SELFLEARNING;
 \n  async function fetchCards(){let response;try{response=await fetch('cards.json',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);response=await response.json();}catch(e){console.warn('Deck load',e);throw Error('Karten konnten nicht geladen werden. Bitte Verbindung prüfen oder App erneut öffnen.');}
-    if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=[...response,...await fetchSelfLearningTests()].map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Hintergrund:String(c.Hintergrund||''),Beispiel:String(c.Beispiel||''),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
+    if(!Array.isArray(response))throw Error('Ungültige Kartendatei');const seen=new Set();const originals=[...response,...await fetchSelfLearningTests(),...await fetchSelfLearningExtras()].map(c=>{if(!c.id||seen.has(c.id)||!c.Frage||!c.Antwort)throw Error('Ungültige oder doppelte Karten-ID: '+c.id);seen.add(c.id);return {id:String(c.id),Frage:String(c.Frage),Antwort:String(c.Antwort),Hintergrund:String(c.Hintergrund||''),Beispiel:String(c.Beispiel||''),Bereich:String(c.Bereich||'Sonstige'),Typ:String(c.Typ||'Theorie'),Quelle:String(c.Quelle||'')} });originalCards=new Map(originals.map(c=>[c.id,c]));rebuildCards();}
   function prefFor(id){return data.cardPrefs?.[id]||{};}
   function rebuildCards(){cards=[...originalCards.values()].map(c=>{const p=prefFor(c.id);return {...c,Frage:typeof p.Frage==='string'&&p.Frage.trim()?p.Frage:c.Frage,Antwort:typeof p.Antwort==='string'&&p.Antwort.trim()?p.Antwort:c.Antwort,favorite:!!p.favorite,marked:!!p.marked,disabled:!!p.disabled};});byId=new Map(cards.map(c=>[c.id,c]));}
   function mutatePref(id,patch){const p={...prefFor(id),...patch};if(!data.cardPrefs)data.cardPrefs={};if(!p.favorite&&!p.marked&&!p.disabled&&!('Frage'in p)&&!('Antwort'in p)&&!('sheetHeight'in p))delete data.cardPrefs[id];else data.cardPrefs[id]=p;storeData();rebuildCards();updateStats();}
@@ -1202,7 +1216,7 @@
         const keys=await caches.keys();
         for(const key of keys.filter(k=>k.startsWith('hm3-stiftkarten-'))){
           const cache=await caches.open(key);
-          await Promise.all(['./','./index.html','./app.js','./style.css','./cards.json','./moodle-tests.b64','./proofs.json','./manifest.webmanifest'].map(p=>cache.delete(new URL(p,location.href),{ignoreSearch:true})));
+          await Promise.all(['./','./index.html','./app.js','./style.css','./cards.json','./moodle-tests.b64','./selflearning-extra.json','./proofs.json','./manifest.webmanifest'].map(p=>cache.delete(new URL(p,location.href),{ignoreSearch:true})));
         }
       }
       const url=new URL(location.href);url.searchParams.set('updated',String(Date.now()));window.location.replace(url.href);
