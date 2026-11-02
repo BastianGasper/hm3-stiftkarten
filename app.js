@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const LEGACY = 'hm3-stiftkarten-v1';
   const SETTINGS_KEY = 'hm3-stiftkarten-v2';
-  const APP_VERSION='2026-11-01.21';
-  const OFFLINE_CACHE='hm3-stiftkarten-v21-20261101';
+  const APP_VERSION='2026-11-02.22';
+  const OFFLINE_CACHE='hm3-stiftkarten-v22-20261102';
   const OFFLINE_FILES=['./','./index.html','./style.css','./app.js','./cards.json','./moodle-tests.b64','./selflearning-extra.json','./proofs.json','./version.json','./manifest.webmanifest','./assets/mathjax-tex-svg.js','./assets/icon-180.png','./assets/icon-192.png','./assets/icon-512.png'];
   let checkingUpdates=false,lastUpdateCheck=0;
   const memory = {sketches:new Map(),attempts:[],sessions:[]};
@@ -124,7 +124,7 @@
       const response=await fetch('./selflearning-extra.json',{cache:'no-store'});
       if(!response.ok)throw Error('HTTP '+response.status);
       const content=await response.json();
-      if(!Array.isArray(content)||content.length!==19)throw Error('Zusatzaufgaben unvollständig');
+      if(!Array.isArray(content)||content.length!==20)throw Error('Zusatzaufgaben unvollständig');
       return content;
     }catch(error){
       console.warn('Selflearning exercises import',error);
@@ -184,12 +184,18 @@
     if(data.quiz?.active){notice('Zuerst Abfrage beenden.');return;}
     if(data.recordingActive){notice('Zuerst Aufnahme stoppen.');return;}
     const select=$('proofSelect');select.replaceChildren();
+    const lectureGroup=document.createElement('optgroup');
+    lectureGroup.label='Vorlesung & Übungen';
+    const selfGroup=document.createElement('optgroup');
+    selfGroup.label='Selbstlernplattform – zusätzliche Beweise';
     for(const p of proofs){
       const option=document.createElement('option');
       option.value=p.id;
       option.textContent=p.title+' · '+p.source;
-      select.append(option);
+      (p.source.startsWith('Selbstlernplattform')?selfGroup:lectureGroup).append(option);
     }
+    if(lectureGroup.children.length)select.append(lectureGroup);
+    if(selfGroup.children.length)select.append(selfGroup);
     if(data.proofStudy?.active)select.value=data.proofStudy.id;
     $('proofSelectDialog').showModal();
   }
