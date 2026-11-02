@@ -1,6 +1,6 @@
 {
-  "version": "2026-11-01.21",
-  "released": "2026-11-01",
+  "version": "2026-11-02.22",
+  "released": "2026-11-02",
   "features": [
     "Glatte Stiftkurven",
     "Höhere Stiftauflösung",
@@ -21,6 +21,7 @@
     "Unsichtbare linke 20%-Scrollzone in allen Eingabemodi; 58 mathematische Vorbereitungsseiten vor 145 Beweisschritten; 25 umfassendere Testatfragen mit Zusatzwissen und Transferbeispielen",
     "Fragen separat markieren und in Kartenverwaltung filtern; leeres Stiftblatt je neuem Kartenversuch; entfernte Scroll-/Blatttasten und Netzwerkstatus; optionaler autorisierter GitHub-Aufnahmenabgleich nach Online-Rückkehr",
     "Selbstlernplattform mit 52 ursprünglichen Moodle-Testfragen in 9 separaten Tests, quellentreuer Auswertung und Hinweisen zu problematischen Quellen",
-    "12 vollständige Originalaufgaben, 2 Methodenvergleiche, 3 vertiefte Beweis-/Herleitungsaufgaben und 2 Zusatzthemen; alle als unabhängiger Moodle-Lernbereich"
+    "12 vollständige Originalaufgaben, 2 Methodenvergleiche, 3 vertiefte Beweis-/Herleitungsaufgaben und 2 Zusatzthemen; alle als unabhängiger Moodle-Lernbereich",
+    "Neues vollständiges Beweismodul Nr. 30: Green’sche Funktion und Nachweis der partikulären Lösung mit zwei Theorie-Infoseiten, fünf Beweisstufen, vollständiger Leibniz-Rechnung, Randtermen und Beispiel; ebenfalls in Selbstlernplattform / Beweise & Herleitungen"
   ]
 }
