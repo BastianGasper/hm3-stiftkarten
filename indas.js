@@ -9,7 +9,8 @@
     filter: 'all', query: '', shuffle: false
   };
   let cards = [];
-  let activeStroke = null;
+  let ink = null;
+  let summaryVisible = false;
   let toastTimer = 0;
   const notify = message => {
     const el = $('notice'); el.textContent = message;
@@ -76,10 +77,18 @@
     return values;
   }
   function startRound(ids) {
+    // A new learning round always starts with empty writing and typing fields.
+    // Recorded attempts contain independent snapshots and are not affected.
+    ink?.finish();
     const selected = ids || available().map(c => c.id);
     const order = state.shuffle && !ids ? shuffle([...selected]) : [...selected];
+    state.typed = {};
+    state.strokes = {};
     state.round = {ids:order,index:0,grades:{},startedAt:now()};
-    persist(); render();
+    summaryVisible = false;
+    ink?.newCard();
+    persist();
+    render();
   }
   function updateCategories() {
     const selected = state.lecture;
@@ -95,51 +104,114 @@
     const hand = state.mode === 'hand';
     $('typingArea').hidden = hand;
     $('handwritingArea').hidden = !hand;
-    $('typingBtn').classList.toggle('is-active', !hand);
-    $('handwritingBtn').classList.toggle('is-active', hand);
+    $('typingBtn').classList.toggle('is-active',!hand);
+    $('handwritingBtn').classList.toggle('is-active',hand);
     $('typingBtn').setAttribute('aria-pressed',String(!hand));
     $('handwritingBtn').setAttribute('aria-pressed',String(hand));
-    if (hand) drawCurrent();
+    ink?.setEnabled(hand && !summaryVisible && !!current());
   }
   function render() {
-    const card = current();
-    $('studyPanel').hidden = !card;
-    $('emptyState').hidden = !!card;
+    const card=current();
+    $('studyPanel').hidden = !card || summaryVisible;
+    $('roundSummary').hidden = !summaryVisible;
+    $('emptyState').hidden = !!card || summaryVisible;
     $('recordIndicator').hidden = !state.activeRecording;
     $('recordStart').disabled = !!state.activeRecording;
     $('recordStop').disabled = !state.activeRecording;
     applyMode();
-    if (!card) {
-      $('remainingCount').textContent = '0';
-      return;
-    }
-    const items = state.round.ids;
-    const grades = Object.values(state.round.grades);
-    const done = grades.length;
-    $('currentCategory').textContent = card.category;
-    $('currentSource').textContent = card.source || 'Lecture notes';
-    $('cardSubject').textContent = card.category.replace(/^VL\d\d\s*[–-]\s*/,'');
-    $('cardPosition').textContent = 'Karte ' + (state.round.index + 1) + ' von ' + items.length;
-    $('percentDone').textContent = Math.round(100 * done / Math.max(items.length,1)) + '% bewertet';
-    $('progressFill').style.width = 100 * done / Math.max(items.length,1) + '%';
-    $('questionText').textContent = card.question;
-    $('solutionText').textContent = card.answer;
-    $('solutionPanel').hidden = true;
-    $('revealBtn').textContent = '◉ Antwort ansehen';
+    if(summaryVisible) { renderSummary(); return; }
+    if(!card) { $('remainingCount').textContent='0'; return; }
+    const ids=state.round.ids;
+    const grades=Object.values(state.round.grades);
+    const done=grades.length;
+    $('currentCategory').textContent=card.category;
+    $('currentSource').textContent=card.source||'Lecture notes';
+    $('cardSubject').textContent=card.category.replace(/^VL\d\d\s*[–-]\s*/,'');
+    $('cardPosition').textContent='Karte '+(state.round.index+1)+' von '+ids.length;
+    $('percentDone').textContent=Math.round(100*done/Math.max(ids.length,1))+'% bewertet';
+    $('progressFill').style.width=100*done/Math.max(ids.length,1)+'%';
+    $('questionText').textContent=card.question;
+    $('solutionText').textContent=card.answer;
+    $('solutionPanel').hidden=true;
+    $('revealBtn').textContent='◉ Antwort ansehen';
     $('revealBtn').setAttribute('aria-expanded','false');
-    $('typedAnswer').value = state.typed[card.id] || '';
-    $('favoriteBtn').textContent = state.prefs[card.id]?.favorite ? '★' : '☆';
+    $('typedAnswer').value=state.typed[card.id]||'';
+    $('favoriteBtn').textContent=state.prefs[card.id]?.favorite?'★':'☆';
     $('favoriteBtn').classList.toggle('selected',!!state.prefs[card.id]?.favorite);
-    $('excludeBtn').textContent = state.prefs[card.id]?.disabled ? '⊕' : '⊘';
-    $('excludeBtn').title = state.prefs[card.id]?.disabled ? 'Aktivieren' : 'Deaktivieren';
-    $('prevCard').disabled = state.round.index === 0;
-    $('nextCard').disabled = state.round.index === items.length - 1;
-    $('ratedCount').textContent = done;
-    $('goodCount').textContent = grades.filter(x => x === 'good').length;
-    $('partialCount').textContent = grades.filter(x => x === 'partial').length;
-    $('wrongCount').textContent = grades.filter(x => x === 'wrong').length;
-    $('remainingCount').textContent = Math.max(0,items.length-done);
-    if (state.mode === 'hand') drawCurrent();
+    $('excludeBtn').textContent=state.prefs[card.id]?.disabled?'⊕':'⊘';
+    $('excludeBtn').title=state.prefs[card.id]?.disabled?'Aktivieren':'Deaktivieren';
+    $('prevCard').disabled=state.round.index===0;
+    $('nextCard').disabled=state.round.index===ids.length-1;
+    $('ratedCount').textContent=done;
+    $('goodCount').textContent=grades.filter(x=>x==='good').length;
+    $('partialCount').textContent=grades.filter(x=>x==='partial').length;
+    $('wrongCount').textContent=grades.filter(x=>x==='wrong').length;
+    $('remainingCount').textContent=Math.max(0,ids.length-done);
+    ink?.newCard();
+  }
+
+  function showSummary() {
+    if(!state.round?.ids?.length) {notify('Keine Karten in dieser Abfrage.');return;}
+    ink?.finish();
+    summaryVisible=true;
+    persist();
+    render();
+    $('roundSummary').scrollIntoView({block:'start',behavior:'auto'});
+  }
+
+  function renderSummary() {
+    const ids=state.round?.ids||[];
+    const grades=state.round?.grades||{};
+    const groups={good:[],partial:[],wrong:[],skipped:[]};
+    for(const id of ids)if(groups[grades[id]])groups[grades[id]].push(id);
+    const asked=Object.values(groups).reduce((sum,a)=>sum+a.length,0);
+    const remain=ids.length-asked;
+    const percent=asked?Math.round(groups.good.length/asked*100):0;
+    const set=(id,n)=>$(id).textContent=String(n);
+    set('summaryPercent',percent+'%');set('sumAsked',asked);set('sumGood',groups.good.length);
+    set('sumPartial',groups.partial.length);set('sumWrong',groups.wrong.length);
+    set('sumSkipped',groups.skipped.length);set('sumRemaining',remain);
+    set('actionRemaining',remain);set('actionWrong',groups.wrong.length);
+    set('actionPartial',groups.partial.length);set('actionAsked',asked);
+    const due=allCards().filter(c=>!state.prefs[c.id]?.disabled && (!state.prefs[c.id]?.nextDue||state.prefs[c.id].nextDue<=Date.now())).length;
+    set('actionDue',due);
+    $('summaryContinue').disabled=remain===0;
+    $('summaryRetryWrong').disabled=!groups.wrong.length;
+    $('summaryRetryPartial').disabled=!groups.partial.length;
+    $('summaryRetryAsked').disabled=asked===0;
+    $('summaryDue').disabled=due===0;
+    const a=groups.good.length,p=groups.partial.length,w=groups.wrong.length,s=groups.skipped.length;
+    const arc=(n)=>Math.round(n/Math.max(asked,1)*100*100)/100;
+    $('summaryDonut').style.background='conic-gradient(#20b797 0% '+arc(a)+'%, #eba044 '+arc(a)+'% '+arc(a+p)+'%, #e34d53 '+arc(a+p)+'% '+arc(a+p+w)+'%, #aab3bf '+arc(a+p+w)+'% '+arc(a+p+w+s)+'%, #e9edf2 '+arc(a+p+w+s)+'% 100%)';
+    const definitions=[
+      ['good','breakdownGood','breakdownGoodCount'],
+      ['partial','breakdownPartial','breakdownPartialCount'],
+      ['wrong','breakdownWrong','breakdownWrongCount'],
+      ['skipped','breakdownSkip','breakdownSkipCount']
+    ];
+    for(const [kind,target,countId] of definitions){
+      set(countId,groups[kind].length);
+      const root=$(target);root.replaceChildren();
+      if(!groups[kind].length){const empty=document.createElement('p');empty.className='breakdown-empty';empty.textContent='Keine Karten in dieser Kategorie.';root.append(empty);continue;}
+      for(const id of groups[kind]){
+        const card=byId(id);if(!card)continue;
+        const item=document.createElement('div');item.className='breakdown-row';
+        const text=document.createElement('div');
+        const title=document.createElement('strong');title.textContent=card.question;
+        const meta=document.createElement('small');meta.textContent=card.category+' · '+card.source;
+        text.append(title,meta);
+        const button=document.createElement('button');button.className='btn compact';button.textContent='Karte öffnen';
+        button.onclick=()=>{
+          const index=state.round.ids.indexOf(id);
+          summaryVisible=false;
+          state.round.index=index;
+          ink?.newCard();
+          persist();render();
+          $('studyPanel').scrollIntoView({block:'start'});
+        };
+        item.append(text,button);root.append(item);
+      }
+    }
   }
   function showSolution() {
     const show = $('solutionPanel').hidden;
@@ -148,94 +220,43 @@
     $('revealBtn').setAttribute('aria-expanded',String(show));
   }
   function changeCard(direction) {
-    if (!state.round) return;
-    state.round.index = Math.min(state.round.ids.length-1,Math.max(0,state.round.index + direction));
-    persist(); render();
+    if(!state.round)return;
+    ink?.finish();
+    state.round.index=Math.min(state.round.ids.length-1,Math.max(0,state.round.index+direction));
+    persist();render();
   }
   function grade(value) {
-    const card = current();
-    if (!card || !['wrong','partial','good'].includes(value)) return;
-    const p = pref(card.id);
-    const oldGrade = state.round.grades[card.id];
-    state.round.grades[card.id] = value;
-    p.lastGrade = value; p.lastReviewed = now();
-    p.reviews = (p.reviews || 0) + 1;
-    p.streak = value === 'good' ? (p.streak || 0) + 1 : 0;
-    const days = value === 'wrong' ? 0 : value === 'partial' ? 1 : Math.min(30, Math.max(2, 2**p.streak));
-    p.nextDue = Date.now() + (value === 'wrong' ? 0 : days * DAY);
-    if (state.activeRecording) {
-      const snapshot = {
-        cardId:card.id,category:card.category,source:card.source,question:card.question,modelAnswer:card.answer,
-        inputMode:state.mode,typedAnswer:state.typed[card.id] || '',
-        strokes:JSON.parse(JSON.stringify(state.strokes[card.id] || [])),grade:value,answeredAt:now()
+    const card=current();
+    if(!card||!['wrong','partial','good','skipped'].includes(value))return;
+    ink?.finish();
+    const p=pref(card.id);
+    const oldGrade=state.round.grades[card.id];
+    state.round.grades[card.id]=value;
+    if(value!=='skipped'){
+      p.lastGrade=value;p.lastReviewed=now();p.reviews=(p.reviews||0)+1;
+      p.streak=value==='good'?(p.streak||0)+1:0;
+      const days=value==='wrong'?0:value==='partial'?1:Math.min(30,Math.max(2,2**p.streak));
+      p.nextDue=Date.now()+(days*DAY);
+    }
+    if(state.activeRecording){
+      const snapshot={
+        cardId:card.id,category:card.category,source:card.source,
+        question:card.question,modelAnswer:card.answer,inputMode:state.mode,
+        typedAnswer:state.typed[card.id]||'',
+        strokes:JSON.parse(JSON.stringify(state.strokes[card.id]||[])),
+        grade:value,answeredAt:now()
       };
       state.activeRecording.attempts.push(snapshot);
     }
     persist();
-    if (Object.keys(state.round.grades).length === state.round.ids.length) {
-      render();
-      $('finishStats').textContent = 'Gewusst: ' + Object.values(state.round.grades).filter(x=>x==='good').length
-        + ' · Teilweise: ' + Object.values(state.round.grades).filter(x=>x==='partial').length
-        + ' · Nicht gewusst: ' + Object.values(state.round.grades).filter(x=>x==='wrong').length;
-      $('roundFinishDialog').showModal();
-    } else {
-      let next = state.round.ids.findIndex((id,idx) => idx > state.round.index && !state.round.grades[id]);
-      if (next < 0) next = state.round.ids.findIndex(id => !state.round.grades[id]);
-      if (next >= 0) state.round.index = next;
-      persist(); render();
-      if (oldGrade) notify('Bewertung aktualisiert.');
-    }
+    if(Object.keys(state.round.grades).length===state.round.ids.length){showSummary();return;}
+    let next=state.round.ids.findIndex((id,index)=>index>state.round.index&&!state.round.grades[id]);
+    if(next<0)next=state.round.ids.findIndex(id=>!state.round.grades[id]);
+    if(next>=0)state.round.index=next;
+    persist();render();
+    if(oldGrade)notify('Bewertung aktualisiert.');
   }
-  function point(event) {
-    const rect = $('drawingCanvas').getBoundingClientRect();
-    return [
-      Math.max(0,Math.min(1100,(event.clientX-rect.left)*1100/rect.width)),
-      Math.max(0,Math.min(430,(event.clientY-rect.top)*430/rect.height))
-    ];
-  }
-  function paintStroke(context, stroke) {
-    if (!stroke?.points?.length) return;
-    context.lineCap = 'round';context.lineJoin = 'round';
-    context.strokeStyle = stroke.color || '#273249';
-    context.fillStyle = context.strokeStyle;
-    context.lineWidth = Number(stroke.width || 2.5) * 2.1;
-    const points = stroke.points;
-    if (points.length === 1) {
-      context.beginPath();context.arc(points[0][0],points[0][1],context.lineWidth/2,0,2*Math.PI);context.fill();
-    } else {
-      context.beginPath();context.moveTo(points[0][0],points[0][1]);
-      for (let i=1;i<points.length;i++) context.lineTo(points[i][0],points[i][1]);
-      context.stroke();
-    }
-  }
-  function drawCurrent() {
-    const canvas = $('drawingCanvas'), context = canvas.getContext('2d');
-    context.clearRect(0,0,canvas.width,canvas.height);
-    const card = current();
-    if (!card) return;
-    for (const stroke of (state.strokes[card.id] || [])) paintStroke(context,stroke);
-  }
-  function onPenDown(event) {
-    if (state.mode !== 'hand' || event.button > 0) return;
-    const card = current(); if (!card) return;
-    event.preventDefault();
-    try { $('drawingCanvas').setPointerCapture(event.pointerId); } catch (err) {}
-    const stroke = {color:$('inkColor').value,width:Number($('inkWidth').value),points:[point(event)]};
-    (state.strokes[card.id] ||= []).push(stroke);
-    activeStroke = {id:event.pointerId,stroke};
-    drawCurrent();
-  }
-  function onPenMove(event) {
-    if (!activeStroke || activeStroke.id !== event.pointerId) return;
-    event.preventDefault();
-    activeStroke.stroke.points.push(point(event));
-    drawCurrent();
-  }
-  function onPenUp(event) {
-    if (!activeStroke || activeStroke.id !== event.pointerId) return;
-    activeStroke = null;
-    persist();
-  }
+  
   function download(name, content, mime='application/json') {
     const blob = new Blob([content], {type:mime + ';charset=utf-8'});
     const url = URL.createObjectURL(blob), a = document.createElement('a');
@@ -254,12 +275,18 @@
     notify('Aufnahme mit '+rec.attempts.length+' Antworten gespeichert.');
   }
   function drawingSVG(strokes) {
-    if (!strokes?.length) return '';
-    const paths = strokes.map(s => {
-      const coords=s.points.map(p => Number(p[0]).toFixed(1)+','+Number(p[1]).toFixed(1)).join(' ');
-      return '<polyline points="'+escapeHTML(coords)+'" fill="none" stroke="'+escapeHTML(s.color)+'" stroke-width="'+(Number(s.width)||2.5)*2.1+'" stroke-linecap="round" stroke-linejoin="round"/>';
+    if(!strokes?.length)return '';
+    const points=[];
+    const paths=strokes.map(s=>{
+      const values=(s.points||[]).map(p=>Array.isArray(p)?{x:Number(p[0]),y:Number(p[1])}:{x:Number(p.x),y:Number(p.y)});
+      points.push(...values);
+      const coords=values.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+      return '<polyline points="'+escapeHTML(coords)+'" fill="none" stroke="'+escapeHTML(s.color||'#273249')+'" stroke-width="'+(Number(s.width)||2.5)+'" stroke-linecap="round" stroke-linejoin="round"/>';
     }).join('');
-    return '<svg viewBox="0 0 1100 430" xmlns="http://www.w3.org/2000/svg" style="width:100%;background:#fff;border:1px solid #ddd;border-radius:8px">'+paths+'</svg>';
+    const legacy=strokes.some(s=>(s.points||[]).some(p=>Array.isArray(p)));
+    const width=legacy?1100:1000;
+    const height=legacy?430:Math.max(430,Math.ceil(points.reduce((m,p)=>Math.max(m,p.y),0)+35));
+    return '<svg viewBox="0 0 '+width+' '+height+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;background:#fff;border:1px solid #ddd;border-radius:8px">'+paths+'</svg>';
   }
   function downloadRecording(rec) {
     const articles=rec.attempts.map((a,i)=>'<article><small>'+escapeHTML(a.category)+' · '+escapeHTML(a.source)+' · '+escapeHTML(a.answeredAt)+'</small><h2>'+(i+1)+'. '+escapeHTML(a.question)+'</h2><h3>Eigene Antwort · '+escapeHTML(a.grade)+'</h3><pre>'+escapeHTML(a.typedAnswer)+'</pre>'+drawingSVG(a.strokes)+'<details><summary>Musterantwort</summary><p>'+escapeHTML(a.modelAnswer)+'</p></details></article>').join('');
@@ -355,12 +382,25 @@
     $('typingBtn').onclick=()=>{state.mode='type';persist();applyMode();};
     $('handwritingBtn').onclick=()=>{state.mode='hand';persist();applyMode();};
     $('typedAnswer').addEventListener('input',event=>{const card=current();if(card){state.typed[card.id]=event.target.value;persist();}});
-    $('drawingCanvas').addEventListener('pointerdown',onPenDown);
-    $('drawingCanvas').addEventListener('pointermove',onPenMove);
-    $('drawingCanvas').addEventListener('pointerup',onPenUp);
-    $('drawingCanvas').addEventListener('pointercancel',onPenUp);
-    $('penUndo').onclick=()=>{const card=current();if(card&&state.strokes[card.id]?.length){state.strokes[card.id].pop();persist();drawCurrent();}};
-    $('penClear').onclick=()=>{const card=current();if(card&&confirm('Handschrift auf dieser Karte löschen?')){state.strokes[card.id]=[];persist();drawCurrent();}};
+    ink=new window.InDaSInk({
+      canvas:$('drawingCanvas'),overlay:$('eraserOverlay'),sheet:$('inkSheet'),
+      getCardId:()=>current()?.id||null,
+      getStrokes:()=>{const card=current();return card?(state.strokes[card.id] ||= []):[];},
+      setStrokes:strokes=>{const card=current();if(card)state.strokes[card.id]=strokes;},
+      onChange:persist
+    });
+    $('inkAutoBtn').onclick=()=>ink.setMode('auto');
+    $('inkModeBtn').onclick=()=>ink.setMode('write');
+    $('inkScrollBtn').onclick=()=>ink.setMode('scroll');
+    $('inkUpBtn').onclick=()=>ink.scrollPage(-1);
+    $('inkDownBtn').onclick=()=>ink.scrollPage(1);
+    $('penBtn').onclick=()=>ink.setTool('pen');
+    $('eraserBtn').onclick=()=>ink.setTool('eraser');
+    $('penUndo').onclick=()=>ink.undo();
+    $('penRedo').onclick=()=>ink.redo();
+    $('penClear').onclick=()=>{if(current()&&confirm('Handschrift auf dieser Karte löschen?'))ink.clear();};
+    $('inkColor').onchange=e=>{ink.color=e.target.value;ink.setTool('pen');};
+    $('inkWidth').onchange=e=>ink.width=Number(e.target.value);
     $('revealBtn').onclick=showSolution;
     document.querySelectorAll('[data-grade]').forEach(button=>button.onclick=()=>grade(button.dataset.grade));
     $('prevCard').onclick=()=>changeCard(-1);$('nextCard').onclick=()=>changeCard(1);
@@ -374,6 +414,16 @@
     $('studyFilter').value=state.filter;
     $('searchBox').value=state.query;
     $('newRoundBtn').onclick=()=>startRound();
+    $('finishRoundBtn').onclick=showSummary;
+    $('skipCard').onclick=()=>grade('skipped');
+    const repeat=kind=>{const ids=state.round?.ids.filter(id=>state.round.grades[id]===kind)||[];if(ids.length)startRound(ids);};
+    $('summaryContinue').onclick=()=>{const ids=state.round?.ids.filter(id=>!state.round.grades[id])||[];if(ids.length)startRound(ids);};
+    $('summaryRetryWrong').onclick=()=>repeat('wrong');
+    $('summaryRetryPartial').onclick=()=>repeat('partial');
+    $('summaryRetryAsked').onclick=()=>{const ids=state.round?.ids.filter(id=>!!state.round.grades[id])||[];if(ids.length)startRound(ids);};
+    $('summaryRestart').onclick=()=>{const ids=[...(state.round?.ids||[])];startRound(ids);};
+    $('summaryDue').onclick=()=>{state.filter='due';$('studyFilter').value='due';state.lecture='all';$('lectureSelect').value='all';state.query='';$('searchBox').value='';startRound();};
+    $('summaryReturn').onclick=()=>{summaryVisible=false;render();$('studyPanel').scrollIntoView({block:'start'});};
     $('resetFilters').onclick=()=>{state.lecture='all';state.filter='all';state.query='';$('lectureSelect').value='all';$('studyFilter').value='all';$('searchBox').value='';startRound();};
     $('recordStart').onclick=()=>{
       if(state.activeRecording)return;
@@ -402,11 +452,7 @@
       event.target.value='';
     };
     $('cardsImport').onchange=async event=>{const file=event.target.files?.[0];if(file)await importCards(file);event.target.value='';};
-    $('repeatWrong').onclick=()=>{
-      const ids=state.round.ids.filter(id=>state.round.grades[id]==='wrong');
-      $('roundFinishDialog').close();startRound(ids);
-    };
-    $('repeatAll').onclick=()=>{$('roundFinishDialog').close();startRound([...state.round.ids]);};
+
   }
   window.addEventListener('DOMContentLoaded',setup);
 })();
