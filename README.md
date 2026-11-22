@@ -5,10 +5,10 @@
 Zusätzlich zur unveränderten HöMa3-App gibt es eine eigene Lernseite: **[InDaS-Karteikarten](https://bastiangasper.github.io/hm3-stiftkarten/indas.html)**. Sie ist auch über den Button **InDaS lernen** oben auf der HöMa3-Seite erreichbar.
 
 - 128 englische Lernkarten aus VL01–VL06 in **sieben Vorlesungskategorien** (Data Warehousing und MapReduce getrennt).
-- Antworten wahlweise **tippen oder mit Apple Pencil/Maus/Finger zeichnen**, pro Karte lokal gespeichert.
+- Antworten wahlweise **tippen oder handschriftlich** mit der bewährten HöMa3-Eingabelogik (Apple Pencil auf iPad, Maus am PC). Finger/Handballen zeichnen nicht; linke 20%-Finger-Scrollzone, Auto/Schreiben/Scrollen, Ganzstrich-Radierer und Undo/Redo.
 - Antworten aufdecken und selbst bewerten: **Nicht gewusst / Teilweise / Gewusst**; Filter für fällige Karten, Favoriten und Fehler; Fortschritt je Abfragerunde.
 - **Aufnahme starten/stoppen:** Jede während der Aufnahme bewertete Antwort wird mit Text, Handschrift, Frage, Musterlösung und Bewertung archiviert. Der HTML-Bericht enthält die gezeichneten Striche als SVG; zusätzlich JSON-Export.
-- **Kartenverwaltung**, JSON/CSV-Kartenimport, lokale Backups und Wiederherstellung.
+- Nach Abfrage: **Lernstatistik mit Kreisdiagramm, Ergebnislisten und Wiederholungsaktionen**; jede **neue Abfrage** leert Text- und Handschrifteingaben, behält aber Bewertungen und aufgezeichnete Versuche.\n- **Kartenverwaltung**, JSON/CSV-Kartenimport, lokale Backups und Wiederherstellung.
 - Alle InDaS-Lerndaten liegen lokal im Browser (`indas-study-v1`) und sind vollständig von den HöMa3-Daten getrennt. Keine automatische Texterkennung oder automatische Korrektur. **Vor dem Löschen von Browserdaten Backup exportieren.**
 
 Kartensatz: [indas-cards.json](indas-cards.json). Oberfläche: [indas.html](indas.html), [indas.js](indas.js), [indas.css](indas.css).
