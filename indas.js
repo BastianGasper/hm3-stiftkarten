@@ -147,7 +147,6 @@
     $('partialCount').textContent=grades.filter(x=>x==='partial').length;
     $('wrongCount').textContent=grades.filter(x=>x==='wrong').length;
     $('remainingCount').textContent=Math.max(0,ids.length-done);
-    ink?.newCard();
   }
 
   function showSummary() {
@@ -223,6 +222,7 @@
     if(!state.round)return;
     ink?.finish();
     state.round.index=Math.min(state.round.ids.length-1,Math.max(0,state.round.index+direction));
+    ink?.newCard();
     persist();render();
   }
   function grade(value) {
@@ -252,7 +252,7 @@
     if(Object.keys(state.round.grades).length===state.round.ids.length){showSummary();return;}
     let next=state.round.ids.findIndex((id,index)=>index>state.round.index&&!state.round.grades[id]);
     if(next<0)next=state.round.ids.findIndex(id=>!state.round.grades[id]);
-    if(next>=0)state.round.index=next;
+    if(next>=0){state.round.index=next;ink?.newCard();}
     persist();render();
     if(oldGrade)notify('Bewertung aktualisiert.');
   }
@@ -422,6 +422,7 @@
       if(index<0)return;
       summaryVisible=false;
       state.round.index=index;
+      ink?.newCard();
       persist();render();
       $('studyPanel').scrollIntoView({block:'start',behavior:'auto'});
     };
