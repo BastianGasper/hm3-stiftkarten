@@ -1,5 +1,19 @@
 # HM3 Stiftkarten
 
+## Industrial Data Science I (InDaS)
+
+Zusätzlich zur unveränderten HöMa3-App gibt es eine eigene Lernseite: **[InDaS-Karteikarten](https://bastiangasper.github.io/hm3-stiftkarten/indas.html)**. Sie ist auch über den Button **InDaS lernen** oben auf der HöMa3-Seite erreichbar.
+
+- 128 englische Lernkarten aus VL01–VL06 in **sieben Vorlesungskategorien** (Data Warehousing und MapReduce getrennt).
+- Antworten wahlweise **tippen oder mit Apple Pencil/Maus/Finger zeichnen**, pro Karte lokal gespeichert.
+- Antworten aufdecken und selbst bewerten: **Nicht gewusst / Teilweise / Gewusst**; Filter für fällige Karten, Favoriten und Fehler; Fortschritt je Abfragerunde.
+- **Aufnahme starten/stoppen:** Jede während der Aufnahme bewertete Antwort wird mit Text, Handschrift, Frage, Musterlösung und Bewertung archiviert. Der HTML-Bericht enthält die gezeichneten Striche als SVG; zusätzlich JSON-Export.
+- **Kartenverwaltung**, JSON/CSV-Kartenimport, lokale Backups und Wiederherstellung.
+- Alle InDaS-Lerndaten liegen lokal im Browser (`indas-study-v1`) und sind vollständig von den HöMa3-Daten getrennt. Keine automatische Texterkennung oder automatische Korrektur. **Vor dem Löschen von Browserdaten Backup exportieren.**
+
+Kartensatz: [indas-cards.json](indas-cards.json). Oberfläche: [indas.html](indas.html), [indas.js](indas.js), [indas.css](indas.css).
+
+
 Kostenlose, schlichte, offlinefähige iPad-Web-App für Höhere Mathematik III (TU Dortmund). **Keine Animationen, keine Handschrifterkennung, keine automatische Bewertung.** Handgezeichnete Lösungen werden je Karte gespeichert und bei jeder Bewertung als separater Versuch archiviert.
 
 ## Start
