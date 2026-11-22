@@ -6,7 +6,7 @@
 (() => {
   'use strict';
   class InDaSInk {
-    constructor({canvas, overlay, sheet, getCardId, getStrokes, onChange}) {
+    constructor({canvas, overlay, sheet, getCardId, getStrokes, setStrokes, onChange}) {
       Object.assign(this,{canvas,overlay,sheet,getCardId,getStrokes,onChange});
       this.ctx=canvas.getContext('2d',{alpha:true});
       this.ectx=overlay.getContext('2d',{alpha:true});
@@ -14,7 +14,7 @@
       this.pointerId=null;this.inputSource=null;this.active=null;this.erasing=false;
       this.strokeRect=null;this.eraserTrail=[];this.eraserTip=null;this.lastEraserPoint=null;
       this.undoStack=[];this.redoStack=[];this.scale=1;this.logicalHeight=430;
-      this.bound=[];this._setStrokes=arguments[0].setStrokes;
+      this.bound=[];this._setStrokes=setStrokes;
       this.bindInput();
       if ('ResizeObserver' in window) this.observer=new ResizeObserver(()=>{if(this.enabled)this.resize();});
       this.observer?.observe(sheet);
