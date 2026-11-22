@@ -417,7 +417,14 @@
     $('finishRoundBtn').onclick=showSummary;
     $('skipCard').onclick=()=>grade('skipped');
     const repeat=kind=>{const ids=state.round?.ids.filter(id=>state.round.grades[id]===kind)||[];if(ids.length)startRound(ids);};
-    $('summaryContinue').onclick=()=>{const ids=state.round?.ids.filter(id=>!state.round.grades[id])||[];if(ids.length)startRound(ids);};
+    $('summaryContinue').onclick=()=>{
+      const index=state.round?.ids.findIndex(id=>!state.round.grades[id])??-1;
+      if(index<0)return;
+      summaryVisible=false;
+      state.round.index=index;
+      persist();render();
+      $('studyPanel').scrollIntoView({block:'start',behavior:'auto'});
+    };
     $('summaryRetryWrong').onclick=()=>repeat('wrong');
     $('summaryRetryPartial').onclick=()=>repeat('partial');
     $('summaryRetryAsked').onclick=()=>{const ids=state.round?.ids.filter(id=>!!state.round.grades[id])||[];if(ids.length)startRound(ids);};
