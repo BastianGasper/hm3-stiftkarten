@@ -160,6 +160,7 @@
       const locked=this.enabled&&this.mode!=='scroll';
       document.documentElement.classList.toggle('indas-ink-locked',locked);
       document.body.classList.toggle('indas-ink-locked',locked);
+      document.body.classList.toggle('indas-ink-scroll',this.enabled&&this.mode==='scroll');
       this.canvas.style.touchAction=this.mode==='scroll'?'pan-y':'none';
     }
     setTool(tool){
