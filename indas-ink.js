@@ -78,10 +78,12 @@
       const reach=radius+(stroke.width||2)/2;
       const left=Math.min(from.x,to.x)-reach,right=Math.max(from.x,to.x)+reach,
       top=Math.min(from.y,to.y)-reach,bottom=Math.max(from.y,to.y)+reach;
-      if(!points.some(p=>p.x>=left&&p.x<=right&&p.y>=top&&p.y<=bottom)){
-        const xs=points.map(p=>p.x),ys=points.map(p=>p.y);
-        if(Math.max(...xs)<left||Math.min(...xs)>right||Math.max(...ys)<top||Math.min(...ys)>bottom)return false;
+      let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+      for(const p of points){
+        if(p.x<minX)minX=p.x;if(p.x>maxX)maxX=p.x;
+        if(p.y<minY)minY=p.y;if(p.y>maxY)maxY=p.y;
       }
+      if(maxX<left||minX>right||maxY<top||minY>bottom)return false;
       if(points.length===1)return this.dist(points[0],from,to)<=reach;
       for(let i=1;i<points.length;i++){
         const a=points[i-1],b=points[i];
