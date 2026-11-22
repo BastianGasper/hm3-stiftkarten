@@ -77,3 +77,5 @@ body.indas-ink-locked .ink-sheet{touch-action:none!important}
 }
 /* Respect the native HTML hidden attribute even on CSS-decorated sections. */
 [hidden]{display:none!important}
+
+body.indas-ink-scroll .ink-sheet,body.indas-ink-scroll .ink-sheet #drawingCanvas{touch-action:pan-y!important;overscroll-behavior:auto!important}
