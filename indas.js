@@ -194,6 +194,7 @@
     $('recordIndicator').hidden = !state.activeRecording;
     $('recordStart').disabled = !!state.activeRecording;
     $('recordStop').disabled = !state.activeRecording;
+    $('summaryRecordControls').hidden = !state.activeRecording;
     applyMode();
     if(state.setupVisible) return;
     if(summaryVisible) { renderSummary(); return; }
@@ -594,6 +595,7 @@
       persist();render();notify('Aufnahme läuft. Bewertete Karten werden archiviert.');
     };
     $('recordStop').onclick=()=>{if(state.activeRecording){$('recordName').value='InDaS – '+new Date().toLocaleDateString('de-DE');$('finishDialog').showModal();}};
+    $('summaryRecordStop').onclick=()=>{if(state.activeRecording)$('recordStop').onclick();};
     $('saveRecording').onclick=()=>saveRecord(false);
     $('saveAndExportRecording').onclick=()=>saveRecord(true);
     $('cancelRecordingFinish').onclick=()=>$('finishDialog').close();
