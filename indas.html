@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="indas.css">
   <title>InDaS · Lernkarten</title>
   <script defer src="indas-ink.js"></script>
+  <script defer src="indas-rounds.js"></script>
   <script defer src="indas.js"></script>
 </head>
 <body>
@@ -33,7 +34,7 @@
           <div class="mode-switch" role="group" aria-label="Antwortmodus"><button class="is-active" id="typingBtn" aria-pressed="true">⌨ Tippen</button><button id="handwritingBtn" aria-pressed="false">✎ Handschrift</button></div>
           <span class="record-indicator" id="recordIndicator" hidden>● Aufnahme läuft</span>
           <button class="btn" id="recordStart">● Aufnahme starten</button><button class="btn" id="recordStop" disabled>■ Aufnahme beenden</button>
-          <button class="btn" id="finishRoundBtn">Abfrage beenden</button><button class="btn primary" id="newRoundBtn">Neue Abfrage</button>
+          <button class="btn" id="finishRoundBtn">Zwischenstand anzeigen</button><button class="btn primary" id="newRoundBtn">Neuen Lernstapel starten</button>
         </div>
       </section>
 
@@ -67,15 +68,16 @@
         <div class="summary-head"><h2>▥ Lernstatistik</h2><span id="summaryTitle">Abfrage abgeschlossen</span></div>
         <div class="summary-grid">
           <div class="donut-block"><div class="donut" id="summaryDonut" role="img" aria-label="Anteil gewusster Karten"><div class="donut-center"><strong id="summaryPercent">0%</strong><span>Anteil gewusst</span></div></div></div>
-          <div class="summary-numbers"><p><strong id="sumAsked">0</strong> Karten abgefragt</p><p class="summary-good">✓ <strong id="sumGood">0</strong> Karten gewusst</p><p class="summary-partial">◐ <strong id="sumPartial">0</strong> Karten teilweise gewusst</p><p class="summary-wrong">✕ <strong id="sumWrong">0</strong> Karten nicht gewusst</p><p>↪ <strong id="sumSkipped">0</strong> Karten übersprungen</p><p><strong id="sumRemaining">0</strong> Karten noch offen</p></div>
+          <div class="summary-numbers"><p><strong id="sumTotal">0</strong> Karten im Lernstapel</p><p><strong id="sumAsked">0</strong> Karten bewertet</p><p class="summary-good">✓ <strong id="sumGood">0</strong> Karten gewusst</p><p class="summary-partial">◐ <strong id="sumPartial">0</strong> Karten teilweise gewusst</p><p class="summary-wrong">✕ <strong id="sumWrong">0</strong> Karten nicht gewusst</p><p>↪ <strong id="sumSkipped">0</strong> Karten übersprungen</p><p class="summary-open">↻ <strong id="sumOpen">0</strong> Karten noch zu lernen</p><p><strong id="sumRemaining">0</strong> Karten noch nicht abgefragt</p></div>
           <div class="summary-actions">
             <button class="summary-action" id="summaryContinue">▶ Weiter lernen (<span id="actionRemaining">0</span>)</button>
             <button class="summary-action danger" id="summaryRetryWrong">✕ Nicht gewusste nochmal (<span id="actionWrong">0</span>)</button>
             <button class="summary-action warning" id="summaryRetryPartial">◔ Teilw. gewusste nochmal (<span id="actionPartial">0</span>)</button>
-            <button class="summary-action" id="summaryRetryAsked">⏮ Wiederhole abgefragte (<span id="actionAsked">0</span>)</button>
-            <button class="summary-action" id="summaryRestart">⟲ Von vorne</button>
+            <button class="summary-action" id="summaryRetryAsked">⏮ Unvollständig gewusste wiederholen (<span id="actionAsked">0</span>)</button>
+            <button class="summary-action" id="summaryRestart">⟲ Von vorne (Neustart)</button>
             <button class="summary-action" id="summaryDue">▦ Zeitplan (<span id="actionDue">0</span>)</button>
             <button class="summary-action secondary" id="summaryReturn">▣ Zum Kartensatz</button>
+            <button class="summary-action secondary" id="summaryFinalize">✓ Lernstapel abschließen</button>
           </div>
         </div>
         <div class="summary-breakdowns">
