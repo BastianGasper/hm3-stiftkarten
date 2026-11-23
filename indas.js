@@ -197,14 +197,15 @@
     set('summaryPercent',percent+'%');set('sumTotal',total);set('sumAsked',asked);
     set('sumGood',good);set('sumPartial',partial);set('sumWrong',wrong);
     set('sumSkipped',skipped);set('sumRemaining',unseen);set('sumOpen',outstanding.length);
-    set('actionRemaining',outstanding.length);set('actionWrong',wrong);
+    const continueCount=tally.unreviewedPass.length||outstanding.length;
+    set('actionRemaining',continueCount);set('actionWrong',wrong);
     set('actionPartial',partial);set('actionAsked',review.length);
     const due=allCards().filter(c=>!state.prefs[c.id]?.disabled&&(!state.prefs[c.id]?.nextDue||state.prefs[c.id].nextDue<=Date.now())).length;
     set('actionDue',due);
     $('summaryTitle').textContent=completed
       ? 'Lernstapel abgeschlossen · '+total+' Karten'
       : 'Lernstapel mit '+total+' Karten · Durchlauf '+round.passNumber;
-    $('summaryContinue').disabled=completed||outstanding.length===0;
+    $('summaryContinue').disabled=completed||continueCount===0;
     $('summaryRetryWrong').disabled=completed||!wrong;
     $('summaryRetryPartial').disabled=completed||!partial;
     $('summaryRetryAsked').disabled=completed||!review.length;
@@ -476,7 +477,24 @@
     $('finishRoundBtn').onclick=showSummary;
     $('skipCard').onclick=()=>grade('skipped');
     const repeat=kind=>startRepeat(R.stats(state.round)?.groups[kind]||[]);
-    $('summaryContinue').onclick=()=>startRepeat(R.stats(state.round)?.outstanding||[]);
+    $('summaryContinue').onclick=()=>{
+      const tally=R.stats(state.round);
+      if(!tally||state.round.completedAt)return;
+      if(tally.unreviewedPass.length){
+        const pending=new Set(tally.unreviewedPass);
+        const index=state.round.pass.ids.findIndex(id=>pending.has(id));
+        if(index<0)return;
+        ink?.finish();
+        state.round.pass.index=index;
+        state.round.summaryVisible=false;
+        summaryVisible=false;
+        ink?.newCard();
+        persist();render();
+        $('studyPanel').scrollIntoView({block:'start',behavior:'auto'});
+      }else{
+        startRepeat(tally.outstanding);
+      }
+    };
     $('summaryRetryWrong').onclick=()=>repeat('wrong');
     $('summaryRetryPartial').onclick=()=>repeat('partial');
     $('summaryRetryAsked').onclick=()=>startRepeat(R.stats(state.round)?.review||[]);
