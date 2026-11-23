@@ -6,7 +6,7 @@
   const state = {
     prefs: {}, typed: {}, strokes: {}, imported: [], recordings: [],
     activeRecording: null, round: null, mode: 'type', lecture: 'all',
-    filter: 'all', query: '', shuffle: false, completedRounds: []
+    filter: 'all', query: '', shuffle: false, roundSize: 0, completedRounds: []
   };
   const R = window.InDaSRounds;
   if (!R) throw new Error("InDaS Lernstapel-Modul fehlt.");
@@ -42,6 +42,7 @@
       if (!Array.isArray(state.imported)) state.imported = [];
       if (!Array.isArray(state.recordings)) state.recordings = [];
       if (!Array.isArray(state.completedRounds)) state.completedRounds = [];
+      state.roundSize = Math.max(0,Math.floor(Number(state.roundSize)||0));
       state.round = R.migrate(state.round);
       summaryVisible = !!state.round?.summaryVisible;
       if (!state.prefs || typeof state.prefs !== 'object') state.prefs = {};
@@ -85,7 +86,8 @@
     // A genuinely new stack starts from scratch; recorded attempts/history survive.
     ink?.finish();
     const selected = ids || available().map(c => c.id);
-    const order = state.shuffle && !ids ? shuffle([...selected]) : [...selected];
+    const ordered = state.shuffle && !ids ? shuffle([...selected]) : [...selected];
+    const order = !ids && state.roundSize > 0 ? ordered.slice(0,state.roundSize) : ordered;
     state.typed = {};
     state.strokes = {};
     state.round = R.create(order, now());
@@ -464,6 +466,12 @@
     $('shuffleCheck').onchange=e=>{state.shuffle=e.target.checked;persist();};
     $('studyFilter').value=state.filter;
     $('searchBox').value=state.query;
+    $('roundSize').value=state.roundSize ? String(state.roundSize) : '';
+    $('roundSize').onchange=e=>{
+      state.roundSize=Math.max(0,Math.floor(Number(e.target.value)||0));
+      persist();
+      notify('Kartenanzahl für den nächsten Lernstapel vorgemerkt.');
+    };
     $('newRoundBtn').onclick=askForNewStack;
     $('finishRoundBtn').onclick=showSummary;
     $('skipCard').onclick=()=>grade('skipped');
