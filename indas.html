@@ -15,17 +15,21 @@
 <body>
   <div class="site">
     <header class="topbar">
-      <div class="identity"><span class="logo" aria-hidden="true">∑</span><div><strong>InDaS · Lernkarten</strong><small>Industrial Data Science I · TU Dortmund</small></div></div>
+      <div class="identity"><span class="logo" aria-hidden="true">∑</span><div><strong>InDaS · Lernkarten</strong></div></div>
       <nav class="site-nav" aria-label="Studienfach"><a href="./index.html">HöMa3</a><a class="active" href="./indas.html" aria-current="page">InDaS</a></nav>
       <div class="top-actions"><button class="btn light" id="libraryBtn">Karten verwalten</button><button class="btn light" id="recordingsBtn">Aufnahmen</button><button class="btn light" id="backupBtn">Backup</button></div>
     </header>
 
     <main class="content">
-      <section class="headline"><div><span class="kicker">KARTEIKARTEN · AKTIVES ABFRAGEN</span><h1>Industrial Data Science I</h1><p>Antwort selbst formulieren, mit der Musterlösung vergleichen und den eigenen Lernstand bewerten.</p></div><div class="headline-count"><strong id="totalCards">–</strong><span id="totalCardsLabel">aktive Karteikarten</span><small id="hiddenCardsInfo" class="hidden-cards-info">22 für später ausgeblendet</small></div></section>
-
-      <section class="toolbar" aria-label="Lernoptionen">
+      <section class="toolbar" id="setupPanel" aria-label="Lernoptionen">
         <div class="toolbar-row">
-          <label class="select-wrap">Vorlesung <select id="lectureSelect"><option value="all">Alle Vorlesungen</option></select></label>
+          <div class="select-wrap lecture-picker-wrap">
+            <label id="lecturePickerLabel">Vorlesungen</label>
+            <details id="lecturePicker" class="lecture-picker">
+              <summary id="lecturePickerSummary" aria-labelledby="lecturePickerLabel lecturePickerSummary">Alle Vorlesungen</summary>
+              <div id="lectureOptions" class="lecture-options" role="group" aria-label="Vorlesungen wählen"></div>
+            </details>
+          </div>
           <label class="select-wrap">Lernumfang <select id="studyFilter"><option value="all">Alle Karten</option><option value="due">Fällige Karten</option><option value="wrong">Nicht gewusst</option><option value="favorites">Favoriten</option></select></label>
           <label class="count-wrap">Kartenanzahl <input id="roundSize" type="number" inputmode="numeric" min="1" max="500" placeholder="Alle" title="Leer lassen für alle Karten"></label>
           <label class="search-wrap">Suche <input id="searchBox" type="search" placeholder="Thema oder Begriff …" autocomplete="off"></label>
@@ -33,21 +37,16 @@
           <label class="check-inline" title="VL06 (20.11.) bei neuen Abfragen ausblenden"><input type="checkbox" id="excludeNov20Check" checked> Nur bis 13.11. (VL06 aus)</label>
         </div>
         <div class="toolbar-row toolbar-actions">
-          <div class="mode-switch" role="group" aria-label="Antwortmodus"><button class="is-active" id="typingBtn" aria-pressed="true">⌨ Tippen</button><button id="handwritingBtn" aria-pressed="false">✎ Handschrift</button></div>
-          <span class="record-indicator" id="recordIndicator" hidden>● Aufnahme läuft</span>
-          <button class="btn" id="recordStart">● Aufnahme starten</button><button class="btn" id="recordStop" disabled>■ Aufnahme beenden</button>
-          <button class="btn" id="finishRoundBtn">Zwischenstand anzeigen</button><button class="btn primary" id="newRoundBtn">Neuen Lernstapel starten</button>
+          <button class="btn light" id="resumeRoundBtn" hidden>Aktuellen Stapel fortsetzen</button>
+          <button class="btn primary" id="newRoundBtn">Abfrage starten</button>
         </div>
       </section>
 
       <section class="study-panel" id="studyPanel" aria-label="Karteikarten lernen">
-        <div class="study-meta">
-          <div><span id="currentCategory" class="category">VL01</span><span class="meta-separator">·</span><span id="currentSource">Slide 1</span></div>
-          <div class="statusline"><span id="cardPosition">Karte 1 / 1</span><span> · </span><span id="percentDone">0% bewertet</span></div>
-        </div>
+        <div class="study-meta"><span id="cardPosition">Karte 1 von 1 · Stapel 1</span></div>
         <div class="progress"><div id="progressFill"></div></div>
         <article class="question-card">
-          <header class="card-tools"><span id="cardSubject">Industrial Data Science</span><div><button id="favoriteBtn" class="icon-btn" title="Favorit speichern" aria-label="Favorit speichern">☆</button><button id="excludeBtn" class="icon-btn" title="Karte deaktivieren" aria-label="Karte deaktivieren">⊘</button></div></header>
+          <header class="card-tools"><div class="card-tools-right"><button id="favoriteBtn" class="icon-btn" title="Favorit speichern" aria-label="Favorit speichern">☆</button><button id="excludeBtn" class="icon-btn" title="Karte deaktivieren" aria-label="Karte deaktivieren">⊘</button></div></header>
           <div class="question" id="questionText">Fragen werden geladen …</div>
           <div class="answer-workspace">
             <div class="workspace-head"><span>Deine Antwort</span><span class="autosave" id="autosaveText">Lokal gespeichert</span></div>
@@ -59,11 +58,18 @@
               <div class="drawing-help">Auto: Apple Pencil zeichnet, Finger und Handballen schreiben nicht. Am PC funktioniert auch die Maus. Speichern pro Karte und Aufnahme.</div>
             </div>
           </div>
-          <div class="answer-actions"><button class="btn reveal" id="revealBtn">◉ Antwort ansehen</button><span class="hint">Shortcuts außerhalb von Eingabefeldern: <strong>1</strong> Aufdecken · <strong>2</strong> Gewusst · <strong>3</strong> Teilweise · <strong>4</strong> Nicht gewusst. Bewertungen auch ohne Aufdecken.</span></div>
+          <div class="answer-actions"><button class="btn reveal" id="revealBtn">◉ Antwort ansehen</button></div>
           <section class="solution" id="solutionPanel" hidden><h2>Musterantwort</h2><div id="solutionText" class="solution-text"></div><div class="ratings"><span>Wie gut wusstest du es?</span><div><button class="btn wrong" data-grade="wrong">✕ Nicht gewusst</button><button class="btn partial" data-grade="partial">◐ Teilweise</button><button class="btn good" data-grade="good">✓ Gewusst</button></div></div></section>
         </article>
         <div class="card-nav"><button class="btn" id="prevCard">← Vorherige</button><div class="card-nav-right"><button class="btn" id="skipCard">Überspringen</button><button class="btn" id="nextCard">Nächste →</button></div></div>
         <div class="session-stats"><span><strong id="ratedCount">0</strong> bewertet</span><span class="good-text"><strong id="goodCount">0</strong> gewusst</span><span class="partial-text"><strong id="partialCount">0</strong> teilweise</span><span class="wrong-text"><strong id="wrongCount">0</strong> nicht gewusst</span><span><strong id="remainingCount">0</strong> offen</span></div>
+        <div class="study-controls" id="studyControls">
+          <div class="mode-switch" role="group" aria-label="Antwortmodus"><button class="is-active" id="typingBtn" aria-pressed="true">⌨ Tippen</button><button id="handwritingBtn" aria-pressed="false">✎ Handschrift</button></div>
+          <span class="record-indicator" id="recordIndicator" hidden>● Aufnahme läuft</span>
+          <button class="btn" id="recordStart">● Aufnahme starten</button><button class="btn" id="recordStop" disabled>■ Aufnahme beenden</button>
+          <button class="btn" id="finishRoundBtn">Zwischenstand</button>
+          <button class="btn light" id="changeSetupBtn">Abfrage wechseln</button>
+        </div>
       </section>
 
       <section id="roundSummary" class="study-summary" hidden aria-label="Lernstatistik">
@@ -79,6 +85,7 @@
             <button class="summary-action" id="summaryRestart">⟲ Von vorne (Neustart)</button>
             <button class="summary-action" id="summaryDue">▦ Zeitplan (<span id="actionDue">0</span>)</button>
             <button class="summary-action secondary" id="summaryReturn">▣ Zum Kartensatz</button>
+            <button class="summary-action secondary" id="summaryChangeSetup">↩ Neue Abfrage auswählen</button>
             <button class="summary-action secondary" id="summaryFinalize">✓ Lernstapel abschließen</button>
           </div>
         </div>
@@ -90,7 +97,6 @@
         </div>
       </section>
       <section class="empty" id="emptyState" hidden><h2>Keine Karten für diese Auswahl</h2><p>Bitte Filter ändern oder eine neue Abfrage starten.</p><button class="btn primary" id="resetFilters">Alle Karten anzeigen</button></section>
-      <p class="footer-note">Fortschritt, handschriftliche Notizen und Aufnahmen werden nur auf diesem Gerät im Browser gespeichert. Keine automatische Antwortbewertung.</p>
     </main>
   </div>
 
