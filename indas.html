@@ -21,7 +21,7 @@
     </header>
 
     <main class="content">
-      <section class="headline"><div><span class="kicker">KARTEIKARTEN · AKTIVES ABFRAGEN</span><h1>Industrial Data Science I</h1><p>Antwort selbst formulieren, mit der Musterlösung vergleichen und den eigenen Lernstand bewerten.</p></div><div class="headline-count"><strong id="totalCards">–</strong><span>Karteikarten</span></div></section>
+      <section class="headline"><div><span class="kicker">KARTEIKARTEN · AKTIVES ABFRAGEN</span><h1>Industrial Data Science I</h1><p>Antwort selbst formulieren, mit der Musterlösung vergleichen und den eigenen Lernstand bewerten.</p></div><div class="headline-count"><strong id="totalCards">–</strong><span id="totalCardsLabel">aktive Karteikarten</span><small id="hiddenCardsInfo" class="hidden-cards-info">22 für später ausgeblendet</small></div></section>
 
       <section class="toolbar" aria-label="Lernoptionen">
         <div class="toolbar-row">
@@ -30,6 +30,7 @@
           <label class="count-wrap">Kartenanzahl <input id="roundSize" type="number" inputmode="numeric" min="1" max="500" placeholder="Alle" title="Leer lassen für alle Karten"></label>
           <label class="search-wrap">Suche <input id="searchBox" type="search" placeholder="Thema oder Begriff …" autocomplete="off"></label>
           <label class="check-inline"><input type="checkbox" id="shuffleCheck"> Zufällige Reihenfolge</label>
+          <label class="check-inline" title="VL06 (20.11.) bei neuen Abfragen ausblenden"><input type="checkbox" id="excludeNov20Check" checked> Nur bis 13.11. (VL06 aus)</label>
         </div>
         <div class="toolbar-row toolbar-actions">
           <div class="mode-switch" role="group" aria-label="Antwortmodus"><button class="is-active" id="typingBtn" aria-pressed="true">⌨ Tippen</button><button id="handwritingBtn" aria-pressed="false">✎ Handschrift</button></div>
