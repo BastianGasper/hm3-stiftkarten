@@ -6,8 +6,10 @@
   const state = {
     prefs: {}, typed: {}, strokes: {}, imported: [], recordings: [],
     activeRecording: null, round: null, mode: 'type', lecture: 'all',
-    filter: 'all', query: '', shuffle: false
+    filter: 'all', query: '', shuffle: false, completedRounds: []
   };
+  const R = window.InDaSRounds;
+  if (!R) throw new Error("InDaS Lernstapel-Modul fehlt.");
   let cards = [];
   let ink = null;
   let summaryVisible = false;
@@ -39,6 +41,9 @@
       if (!['type','hand'].includes(state.mode)) state.mode = 'type';
       if (!Array.isArray(state.imported)) state.imported = [];
       if (!Array.isArray(state.recordings)) state.recordings = [];
+      if (!Array.isArray(state.completedRounds)) state.completedRounds = [];
+      state.round = R.migrate(state.round);
+      summaryVisible = !!state.round?.summaryVisible;
       if (!state.prefs || typeof state.prefs !== 'object') state.prefs = {};
     } catch (err) { notify('Der letzte Lernstand konnte nicht gelesen werden.'); }
   }
@@ -56,7 +61,7 @@
   function allCards() { return cards.concat(state.imported.map((c,i) => normalize(c, i, 'custom'))); }
   function byId(id) { return allCards().find(c => c.id === id); }
   function pref(id) { return state.prefs[id] || (state.prefs[id] = {}); }
-  function current() { return state.round ? byId(state.round.ids[state.round.index]) : null; }
+  function current() { return state.round?.pass ? byId(state.round.pass.ids[state.round.pass.index]) : null; }
   function available() {
     let pool = allCards().filter(c => !state.prefs[c.id]?.disabled);
     if (state.lecture !== 'all') pool = pool.filter(c => c.category === state.lecture);
@@ -77,18 +82,38 @@
     return values;
   }
   function startRound(ids) {
-    // A new learning round always starts with empty writing and typing fields.
-    // Recorded attempts contain independent snapshots and are not affected.
+    // A genuinely new stack starts from scratch; recorded attempts/history survive.
     ink?.finish();
     const selected = ids || available().map(c => c.id);
     const order = state.shuffle && !ids ? shuffle([...selected]) : [...selected];
     state.typed = {};
     state.strokes = {};
-    state.round = {ids:order,index:0,grades:{},startedAt:now()};
+    state.round = R.create(order, now());
     summaryVisible = false;
     ink?.newCard();
     persist();
     render();
+  }
+  function askForNewStack() {
+    const active = state.round && !state.round.completedAt &&
+      (R.stats(state.round)?.asked > 0 || state.activeRecording?.attempts?.length);
+    if(active && !confirm('Den bisherigen Lernstapel wirklich verlassen und eine neue Abfrage beginnen? Die Bewertungen des aktuellen Stapels werden dann zurückgesetzt. Bereits gespeicherte Aufnahmen bleiben erhalten.')) return false;
+    startRound();
+    return true;
+  }
+  function startRepeat(ids) {
+    if(!state.round || state.round.completedAt)return;
+    ink?.finish();
+    const selected = R.startPass(state.round, ids, now());
+    if(!selected.length) {notify('Keine Karten mehr in dieser Auswahl.'); return;}
+    // Each repeat attempt gets an empty input sheet, but the root ratings stay.
+    for(const id of selected) {delete state.typed[id]; delete state.strokes[id];}
+    summaryVisible = false;
+    state.round.summaryVisible = false;
+    ink?.newCard();
+    persist();
+    render();
+    $('studyPanel').scrollIntoView({block:'start',behavior:'auto'});
   }
   function updateCategories() {
     const selected = state.lecture;
@@ -121,15 +146,17 @@
     applyMode();
     if(summaryVisible) { renderSummary(); return; }
     if(!card) { $('remainingCount').textContent='0'; return; }
-    const ids=state.round.ids;
+    const total=state.round.ids.length;
+    const pass=state.round.pass;
+    const counts=R.stats(state.round);
     const grades=Object.values(state.round.grades);
-    const done=grades.length;
+    const done=counts.passDone;
     $('currentCategory').textContent=card.category;
     $('currentSource').textContent=card.source||'Lecture notes';
     $('cardSubject').textContent=card.category.replace(/^VL\d\d\s*[–-]\s*/,'');
-    $('cardPosition').textContent='Karte '+(state.round.index+1)+' von '+ids.length;
-    $('percentDone').textContent=Math.round(100*done/Math.max(ids.length,1))+'% bewertet';
-    $('progressFill').style.width=100*done/Math.max(ids.length,1)+'%';
+    $('cardPosition').textContent='Karte '+(pass.index+1)+' von '+pass.ids.length+' · Stapel '+total;
+    $('percentDone').textContent=counts.good+' / '+total+' dauerhaft gewusst';
+    $('progressFill').style.width=100*done/Math.max(pass.ids.length,1)+'%';
     $('questionText').textContent=card.question;
     $('solutionText').textContent=card.answer;
     $('solutionPanel').hidden=true;
@@ -140,48 +167,52 @@
     $('favoriteBtn').classList.toggle('selected',!!state.prefs[card.id]?.favorite);
     $('excludeBtn').textContent=state.prefs[card.id]?.disabled?'⊕':'⊘';
     $('excludeBtn').title=state.prefs[card.id]?.disabled?'Aktivieren':'Deaktivieren';
-    $('prevCard').disabled=state.round.index===0;
-    $('nextCard').disabled=state.round.index===ids.length-1;
-    $('ratedCount').textContent=done;
+    $('prevCard').disabled=pass.index===0;
+    $('nextCard').disabled=pass.index===pass.ids.length-1;
+    $('ratedCount').textContent=counts.asked;
     $('goodCount').textContent=grades.filter(x=>x==='good').length;
     $('partialCount').textContent=grades.filter(x=>x==='partial').length;
     $('wrongCount').textContent=grades.filter(x=>x==='wrong').length;
-    $('remainingCount').textContent=Math.max(0,ids.length-done);
+    $('remainingCount').textContent=counts.outstanding.length;
   }
 
   function showSummary() {
     if(!state.round?.ids?.length) {notify('Keine Karten in dieser Abfrage.');return;}
     ink?.finish();
     summaryVisible=true;
+    state.round.summaryVisible=true;
     persist();
     render();
     $('roundSummary').scrollIntoView({block:'start',behavior:'auto'});
   }
 
   function renderSummary() {
-    const ids=state.round?.ids||[];
-    const grades=state.round?.grades||{};
-    const groups={good:[],partial:[],wrong:[],skipped:[]};
-    for(const id of ids)if(groups[grades[id]])groups[grades[id]].push(id);
-    const asked=Object.values(groups).reduce((sum,a)=>sum+a.length,0);
-    const remain=ids.length-asked;
-    const percent=asked?Math.round(groups.good.length/asked*100):0;
-    const set=(id,n)=>$(id).textContent=String(n);
-    set('summaryPercent',percent+'%');set('sumAsked',asked);set('sumGood',groups.good.length);
-    set('sumPartial',groups.partial.length);set('sumWrong',groups.wrong.length);
-    set('sumSkipped',groups.skipped.length);set('sumRemaining',remain);
-    set('actionRemaining',remain);set('actionWrong',groups.wrong.length);
-    set('actionPartial',groups.partial.length);set('actionAsked',asked);
-    const due=allCards().filter(c=>!state.prefs[c.id]?.disabled && (!state.prefs[c.id]?.nextDue||state.prefs[c.id].nextDue<=Date.now())).length;
+    const round=state.round;
+    const tally=R.stats(round);
+    if(!tally)return;
+    const {groups,total,asked,good,partial,wrong,skipped,unseen,outstanding,review,percent,completed}=tally;
+    const set=(id,value)=>$(id).textContent=String(value);
+    set('summaryPercent',percent+'%');set('sumTotal',total);set('sumAsked',asked);
+    set('sumGood',good);set('sumPartial',partial);set('sumWrong',wrong);
+    set('sumSkipped',skipped);set('sumRemaining',unseen);set('sumOpen',outstanding.length);
+    set('actionRemaining',outstanding.length);set('actionWrong',wrong);
+    set('actionPartial',partial);set('actionAsked',review.length);
+    const due=allCards().filter(c=>!state.prefs[c.id]?.disabled&&(!state.prefs[c.id]?.nextDue||state.prefs[c.id].nextDue<=Date.now())).length;
     set('actionDue',due);
-    $('summaryContinue').disabled=remain===0;
-    $('summaryRetryWrong').disabled=!groups.wrong.length;
-    $('summaryRetryPartial').disabled=!groups.partial.length;
-    $('summaryRetryAsked').disabled=asked===0;
-    $('summaryDue').disabled=due===0;
-    const a=groups.good.length,p=groups.partial.length,w=groups.wrong.length,s=groups.skipped.length;
-    const arc=(n)=>Math.round(n/Math.max(asked,1)*100*100)/100;
-    $('summaryDonut').style.background='conic-gradient(#20b797 0% '+arc(a)+'%, #eba044 '+arc(a)+'% '+arc(a+p)+'%, #e34d53 '+arc(a+p)+'% '+arc(a+p+w)+'%, #aab3bf '+arc(a+p+w)+'% '+arc(a+p+w+s)+'%, #e9edf2 '+arc(a+p+w+s)+'% 100%)';
+    $('summaryTitle').textContent=completed
+      ? 'Lernstapel abgeschlossen · '+total+' Karten'
+      : 'Lernstapel mit '+total+' Karten · Durchlauf '+round.passNumber;
+    $('summaryContinue').disabled=completed||outstanding.length===0;
+    $('summaryRetryWrong').disabled=completed||!wrong;
+    $('summaryRetryPartial').disabled=completed||!partial;
+    $('summaryRetryAsked').disabled=completed||!review.length;
+    $('summaryDue').disabled=!due;
+    $('summaryFinalize').disabled=completed;
+    $('summaryFinalize').textContent=completed?'✓ Lernstapel abgeschlossen':'✓ Lernstapel abschließen';
+    $('summaryRestart').textContent=completed?'⟲ Neuen Durchgang mit diesen Karten':'⟲ Von vorne (Neustart)';
+    const arc=n=>Math.round(n/Math.max(total,1)*10000)/100;
+    const a=arc(good),p=arc(partial),w=arc(wrong),sk=arc(skipped);
+    $('summaryDonut').style.background='conic-gradient(#20b797 0% '+a+'%, #eba044 '+a+'% '+(a+p)+'%, #e34d53 '+(a+p)+'% '+(a+p+w)+'%, #aab3bf '+(a+p+w)+'% '+(a+p+w+sk)+'%, #e9edf2 '+(a+p+w+sk)+'% 100%)';
     const definitions=[
       ['good','breakdownGood','breakdownGoodCount'],
       ['partial','breakdownPartial','breakdownPartialCount'],
@@ -195,22 +226,38 @@
       for(const id of groups[kind]){
         const card=byId(id);if(!card)continue;
         const item=document.createElement('div');item.className='breakdown-row';
-        const text=document.createElement('div');
+        const desc=document.createElement('div');
         const title=document.createElement('strong');title.textContent=card.question;
         const meta=document.createElement('small');meta.textContent=card.category+' · '+card.source;
-        text.append(title,meta);
-        const button=document.createElement('button');button.className='btn compact';button.textContent='Karte öffnen';
+        desc.append(title,meta);
+        const button=document.createElement('button');button.className='btn compact';button.textContent='Ansehen';
         button.onclick=()=>{
-          const index=state.round.ids.indexOf(id);
-          summaryVisible=false;
-          state.round.index=index;
-          ink?.newCard();
-          persist();render();
-          $('studyPanel').scrollIntoView({block:'start'});
+          $('previewQuestion').textContent=card.question;
+          $('previewAnswer').textContent=card.answer;
+          $('previewSource').textContent=card.category+' · '+card.source;
+          $('summaryPreviewDialog').showModal();
         };
-        item.append(text,button);root.append(item);
+        item.append(desc,button);root.append(item);
       }
     }
+  }
+  function finalizeStack() {
+    if(!state.round||state.round.completedAt)return;
+    if(!confirm('Diesen Lernstapel wirklich abschließen? Die aktuelle Gesamtstatistik wird gespeichert. Wiederholungen sind danach nur mit einem neuen Stapel möglich.'))return;
+    ink?.finish();
+    state.round.completedAt=now();
+    state.round.summaryVisible=true;
+    const tally=R.stats(state.round);
+    state.completedRounds.unshift({
+      startedAt:state.round.startedAt,completedAt:state.round.completedAt,
+      ids:[...state.round.ids],grades:{...state.round.grades},
+      total:tally.total,good:tally.good,partial:tally.partial,
+      wrong:tally.wrong,skipped:tally.skipped,unseen:tally.unseen
+    });
+    state.completedRounds=state.completedRounds.slice(0,100);
+    summaryVisible=true;
+    persist();render();
+    notify('Gesamtstapel mit '+tally.total+' Karten abgeschlossen.');
   }
   function showSolution() {
     const show = $('solutionPanel').hidden;
@@ -219,44 +266,43 @@
     $('revealBtn').setAttribute('aria-expanded',String(show));
   }
   function changeCard(direction) {
-    if(!state.round)return;
+    if(!state.round?.pass)return;
     ink?.finish();
-    state.round.index=Math.min(state.round.ids.length-1,Math.max(0,state.round.index+direction));
+    const pass=state.round.pass;
+    pass.index=Math.min(pass.ids.length-1,Math.max(0,pass.index+direction));
     ink?.newCard();
     persist();render();
   }
   function grade(value) {
     const card=current();
-    if(!card||!['wrong','partial','good','skipped'].includes(value))return;
+    if(!card||!['wrong','partial','good','skipped'].includes(value)||state.round.completedAt)return;
     ink?.finish();
     const p=pref(card.id);
-    const oldGrade=state.round.grades[card.id];
-    state.round.grades[card.id]=value;
+    const before=state.round.grades[card.id];
+    const result=R.mark(state.round,card.id,value);
+    if(!result.accepted)return;
     if(value!=='skipped'){
       p.lastGrade=value;p.lastReviewed=now();p.reviews=(p.reviews||0)+1;
       p.streak=value==='good'?(p.streak||0)+1:0;
       const days=value==='wrong'?0:value==='partial'?1:Math.min(30,Math.max(2,2**p.streak));
-      p.nextDue=Date.now()+(days*DAY);
+      p.nextDue=Date.now()+days*DAY;
     }
     if(state.activeRecording){
-      const snapshot={
+      state.activeRecording.attempts.push({
         cardId:card.id,category:card.category,source:card.source,
         question:card.question,modelAnswer:card.answer,inputMode:state.mode,
         typedAnswer:state.typed[card.id]||'',
         strokes:JSON.parse(JSON.stringify(state.strokes[card.id]||[])),
-        grade:value,answeredAt:now()
-      };
-      state.activeRecording.attempts.push(snapshot);
+        grade:value,answeredAt:now(),
+        poolId:state.round.startedAt,passNumber:state.round.passNumber
+      });
     }
     persist();
-    if(Object.keys(state.round.grades).length===state.round.ids.length){showSummary();return;}
-    let next=state.round.ids.findIndex((id,index)=>index>state.round.index&&!state.round.grades[id]);
-    if(next<0)next=state.round.ids.findIndex(id=>!state.round.grades[id]);
-    if(next>=0){state.round.index=next;ink?.newCard();}
+    if(result.passFinished){showSummary();return;}
+    ink?.newCard();
     persist();render();
-    if(oldGrade)notify('Bewertung aktualisiert.');
+    if(before&&before!==value)notify('Karte im Gesamtstapel aktualisiert.');
   }
-  
   function download(name, content, mime='application/json') {
     const blob = new Blob([content], {type:mime + ';charset=utf-8'});
     const url = URL.createObjectURL(blob), a = document.createElement('a');
@@ -319,7 +365,7 @@
       desc.append(title,small);
       const controls=document.createElement('div');
       const open=document.createElement('button');open.className='btn';open.textContent='Öffnen';
-      open.onclick=()=>{state.lecture='all';state.filter='all';state.query='';$('lectureSelect').value='all';$('studyFilter').value='all';$('searchBox').value='';startRound([card.id]);$('libraryDialog').close();};
+      open.onclick=()=>{$('previewQuestion').textContent=card.question;$('previewAnswer').textContent=card.answer;$('previewSource').textContent=card.category+' · '+card.source;$('summaryPreviewDialog').showModal();};
       const fav=document.createElement('button');fav.className='btn';fav.textContent=state.prefs[card.id]?.favorite?'★':'☆';
       fav.onclick=()=>{pref(card.id).favorite=!pref(card.id).favorite;persist();displayLibrary();};
       const disable=document.createElement('button');disable.className='btn';disable.textContent=state.prefs[card.id]?.disabled?'Aktivieren':'Deaktivieren';
@@ -360,7 +406,7 @@
         oldQuestions.add(item.question.toLowerCase());
         state.imported.push({...card,id:'custom-'+Date.now()+'-'+(count++),categories:[item.category]});
       }
-      persist(); updateCategories(); startRound();
+      persist(); updateCategories(); if(!state.round?.ids?.length)startRound();else render();
       $('importStatus').textContent=count+' Karten importiert ('+(incoming.length-count)+' übersprungen).';
       notify(count+' Karteikarten importiert.');
     } catch(err){$('importStatus').textContent='Importfehler: '+err.message;}
@@ -375,7 +421,12 @@
       updateCategories();
       if(state.round && Array.isArray(state.round.ids)) {
         state.round.ids=state.round.ids.filter(id=>byId(id));
-        state.round.index=Math.min(state.round.index,Math.max(0,state.round.ids.length-1));
+        state.round=R.migrate(state.round);
+        state.round.pass.ids=state.round.pass.ids.filter(id=>byId(id));
+        state.round.pass.index=Math.min(state.round.pass.index,Math.max(0,state.round.pass.ids.length-1));
+        if(!state.round.pass.ids.length&&state.round.ids.length){
+          state.round.pass={ids:[...state.round.ids],index:0,completed:{},startedAt:now()};
+        }
       }
       if(!state.round?.ids?.length)startRound();else render();
     }).catch(err=>{notify('Karteikarten konnten nicht geladen werden: '+err.message);$('questionText').textContent='Bitte die Seite neu laden.';});
@@ -406,33 +457,34 @@
     $('prevCard').onclick=()=>changeCard(-1);$('nextCard').onclick=()=>changeCard(1);
     $('favoriteBtn').onclick=()=>{const card=current();if(!card)return;pref(card.id).favorite=!pref(card.id).favorite;persist();render();};
     $('excludeBtn').onclick=()=>{const card=current();if(!card)return;pref(card.id).disabled=!pref(card.id).disabled;persist();render();};
-    $('lectureSelect').onchange=e=>{state.lecture=e.target.value;startRound();};
-    $('studyFilter').onchange=e=>{state.filter=e.target.value;startRound();};
-    $('searchBox').oninput=e=>{state.query=e.target.value;startRound();};
+    $('lectureSelect').onchange=e=>{state.lecture=e.target.value;persist();notify('Auswahl vorgemerkt. Mit „Neuen Lernstapel starten“ übernehmen.');};
+    $('studyFilter').onchange=e=>{state.filter=e.target.value;persist();notify('Filter für den nächsten Lernstapel vorgemerkt.');};
+    $('searchBox').oninput=e=>{state.query=e.target.value;persist();};
     $('shuffleCheck').checked=state.shuffle;
-    $('shuffleCheck').onchange=e=>{state.shuffle=e.target.checked;startRound();};
+    $('shuffleCheck').onchange=e=>{state.shuffle=e.target.checked;persist();};
     $('studyFilter').value=state.filter;
     $('searchBox').value=state.query;
-    $('newRoundBtn').onclick=()=>startRound();
+    $('newRoundBtn').onclick=askForNewStack;
     $('finishRoundBtn').onclick=showSummary;
     $('skipCard').onclick=()=>grade('skipped');
-    const repeat=kind=>{const ids=state.round?.ids.filter(id=>state.round.grades[id]===kind)||[];if(ids.length)startRound(ids);};
-    $('summaryContinue').onclick=()=>{
-      const index=state.round?.ids.findIndex(id=>!state.round.grades[id])??-1;
-      if(index<0)return;
-      summaryVisible=false;
-      state.round.index=index;
-      ink?.newCard();
-      persist();render();
-      $('studyPanel').scrollIntoView({block:'start',behavior:'auto'});
-    };
+    const repeat=kind=>startRepeat(R.stats(state.round)?.groups[kind]||[]);
+    $('summaryContinue').onclick=()=>startRepeat(R.stats(state.round)?.outstanding||[]);
     $('summaryRetryWrong').onclick=()=>repeat('wrong');
     $('summaryRetryPartial').onclick=()=>repeat('partial');
-    $('summaryRetryAsked').onclick=()=>{const ids=state.round?.ids.filter(id=>!!state.round.grades[id])||[];if(ids.length)startRound(ids);};
-    $('summaryRestart').onclick=()=>{const ids=[...(state.round?.ids||[])];startRound(ids);};
-    $('summaryDue').onclick=()=>{state.filter='due';$('studyFilter').value='due';state.lecture='all';$('lectureSelect').value='all';state.query='';$('searchBox').value='';startRound();};
-    $('summaryReturn').onclick=()=>{summaryVisible=false;render();$('studyPanel').scrollIntoView({block:'start'});};
-    $('resetFilters').onclick=()=>{state.lecture='all';state.filter='all';state.query='';$('lectureSelect').value='all';$('studyFilter').value='all';$('searchBox').value='';startRound();};
+    $('summaryRetryAsked').onclick=()=>startRepeat(R.stats(state.round)?.review||[]);
+    $('summaryRestart').onclick=()=>{
+      if(!state.round?.ids?.length)return;
+      if(!state.round.completedAt && !confirm('Den bisherigen Lernfortschritt dieses Stapels wirklich zurücksetzen und alle '+state.round.ids.length+' Karten erneut beginnen?'))return;
+      startRound([...state.round.ids]);
+    };
+    $('summaryDue').onclick=()=>{
+      if(!state.round?.completedAt && !confirm('Den aktuellen Lernstapel verlassen und mit den weltweit fälligen Karten neu anfangen?'))return;
+      state.filter='due';$('studyFilter').value='due';state.lecture='all';$('lectureSelect').value='all';
+      state.query='';$('searchBox').value='';startRound();
+    };
+    $('summaryReturn').onclick=()=>{displayLibrary();$('libraryDialog').showModal();};
+    $('summaryFinalize').onclick=finalizeStack;
+    $('resetFilters').onclick=()=>{state.lecture='all';state.filter='all';state.query='';$('lectureSelect').value='all';$('studyFilter').value='all';$('searchBox').value='';askForNewStack();};
     $('recordStart').onclick=()=>{
       if(state.activeRecording)return;
       state.activeRecording={id:'record-'+Date.now(),startedAt:now(),attempts:[],title:'',category:state.lecture};
