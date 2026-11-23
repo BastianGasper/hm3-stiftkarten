@@ -5,7 +5,7 @@
   const DAY = 86400000;
   const state = {
     prefs: {}, typed: {}, strokes: {}, imported: [], recordings: [],
-    activeRecording: null, round: null, mode: 'type', lecture: 'all',
+    activeRecording: null, round: null, mode: 'type', lecture: 'all', lectures: [], setupVisible: true,
     filter: 'all', query: '', shuffle: false, roundSize: 0, hideAfter13: true, completedRounds: []
   };
   const R = window.InDaSRounds;
@@ -38,6 +38,10 @@
       if (!raw) return;
       const data = JSON.parse(raw);
       for (const key of Object.keys(state)) if (data[key] !== undefined) state[key] = data[key];
+      // Preserve existing users' unfinished sessions when upgrading the layout.
+      if (data.setupVisible === undefined) state.setupVisible = !data.round?.ids?.length;
+      if (!Array.isArray(data.lectures)) state.lectures = data.lecture && data.lecture !== 'all' ? [data.lecture] : [];
+      if (!Array.isArray(state.lectures)) state.lectures = [];
       if (!['type','hand'].includes(state.mode)) state.mode = 'type';
       if (!Array.isArray(state.imported)) state.imported = [];
       if (!Array.isArray(state.recordings)) state.recordings = [];
@@ -67,7 +71,7 @@
   function current() { return state.round?.pass ? byId(state.round.pass.ids[state.round.pass.index]) : null; }
   function available() {
     let pool = activeCards().filter(c => !state.prefs[c.id]?.disabled);
-    if (state.lecture !== 'all') pool = pool.filter(c => c.category === state.lecture);
+    if (state.lectures.length) pool = pool.filter(c => state.lectures.includes(c.category));
     if (state.filter === 'favorites') pool = pool.filter(c => !!state.prefs[c.id]?.favorite);
     if (state.filter === 'wrong') pool = pool.filter(c => state.prefs[c.id]?.lastGrade === 'wrong');
     if (state.filter === 'due') pool = pool.filter(c => !state.prefs[c.id]?.nextDue || state.prefs[c.id].nextDue <= Date.now());
@@ -93,6 +97,7 @@
     state.typed = {};
     state.strokes = {};
     state.round = R.create(order, now());
+    state.setupVisible = false;
     summaryVisible = false;
     ink?.newCard();
     persist();
@@ -121,20 +126,53 @@
     $('studyPanel').scrollIntoView({block:'start',behavior:'auto'});
   }
   function updateCategories() {
-    const selected = state.lecture;
-    const select = $('lectureSelect');
     const categories = [...new Set(activeCards().map(c => c.category))];
-    select.replaceChildren(new Option('Alle Vorlesungen','all'));
-    for (const category of categories) select.add(new Option(category,category));
-    state.lecture = categories.includes(selected) ? selected : 'all';
-    select.value = state.lecture;
+    // [] represents all lecture categories. Keep only currently available selections.
+    const selected = [...new Set(state.lectures)].filter(c => categories.includes(c));
+    state.lectures = selected.length === categories.length ? [] : selected;
+    const root = $('lectureOptions');
+    root.replaceChildren();
+    function addChoice(value, label, checked, handler) {
+      const wrapper = document.createElement('label');
+      wrapper.className = 'lecture-option';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = checked;
+      input.value = value;
+      input.addEventListener('change', handler);
+      const span = document.createElement('span');
+      span.textContent = label;
+      wrapper.append(input, span);
+      root.append(wrapper);
+    }
+    addChoice('all', 'Alle Vorlesungen', state.lectures.length === 0, () => {
+      state.lectures = [];
+      updateCategories();
+      persist();
+    });
+    for (const category of categories) {
+      addChoice(category, category, state.lectures.includes(category), () => {
+        const set = new Set(state.lectures);
+        if (!set.size) set.add(category); // First selection replaces the "all" state.
+        else if (set.has(category)) set.delete(category);
+        else set.add(category);
+        state.lectures = !set.size || set.size === categories.length ? [] : [...set];
+        updateCategories();
+        persist();
+      });
+    }
+    const count = state.lectures.length;
+    $('lecturePickerSummary').textContent = count === 0 ? 'Alle Vorlesungen (' + categories.length + ')' :
+      count === 1 ? state.lectures[0] : count + ' Vorlesungen ausgewählt';
     $('excludeNov20Check').checked = state.hideAfter13;
-    const total = allCards().length;
-    const visible = activeCards().length;
-    $('totalCards').textContent = visible.toLocaleString('de-DE');
-    $('totalCardsLabel').textContent = 'aktive Karteikarten';
-    const hidden = total - visible;
-    $('hiddenCardsInfo').textContent = hidden ? hidden + ' für später ausgeblendet' : 'Alle ' + total + ' Karten aktiv';
+  }
+  function showSetup() {
+    ink?.finish();
+    state.setupVisible = true;
+    updateCategories();
+    persist();
+    render();
+    $('setupPanel').scrollIntoView({block:'start',behavior:'auto'});
   }
   function applyMode() {
     const hand = state.mode === 'hand';
@@ -144,17 +182,20 @@
     $('handwritingBtn').classList.toggle('is-active',hand);
     $('typingBtn').setAttribute('aria-pressed',String(!hand));
     $('handwritingBtn').setAttribute('aria-pressed',String(hand));
-    ink?.setEnabled(hand && !summaryVisible && !!current());
+    ink?.setEnabled(hand && !state.setupVisible && !summaryVisible && !!current());
   }
   function render() {
     const card=current();
-    $('studyPanel').hidden = !card || summaryVisible;
-    $('roundSummary').hidden = !summaryVisible;
-    $('emptyState').hidden = !!card || summaryVisible;
+    $('setupPanel').hidden = !state.setupVisible;
+    $('studyPanel').hidden = state.setupVisible || !card || summaryVisible;
+    $('roundSummary').hidden = state.setupVisible || !summaryVisible;
+    $('emptyState').hidden = state.setupVisible || !!card || summaryVisible;
+    $('resumeRoundBtn').hidden = !state.round?.ids?.length;
     $('recordIndicator').hidden = !state.activeRecording;
     $('recordStart').disabled = !!state.activeRecording;
     $('recordStop').disabled = !state.activeRecording;
     applyMode();
+    if(state.setupVisible) return;
     if(summaryVisible) { renderSummary(); return; }
     if(!card) { $('remainingCount').textContent='0'; return; }
     const total=state.round.ids.length;
@@ -162,11 +203,7 @@
     const counts=R.stats(state.round);
     const grades=Object.values(state.round.grades);
     const done=counts.passDone;
-    $('currentCategory').textContent=card.category;
-    $('currentSource').textContent=card.source||'Lecture notes';
-    $('cardSubject').textContent=card.category.replace(/^VL\d\d\s*[–-]\s*/,'');
     $('cardPosition').textContent='Karte '+(pass.index+1)+' von '+pass.ids.length+' · Stapel '+total;
-    $('percentDone').textContent=counts.good+' / '+total+' dauerhaft gewusst';
     $('progressFill').style.width=100*done/Math.max(pass.ids.length,1)+'%';
     $('questionText').textContent=card.question;
     $('solutionText').textContent=card.answer;
@@ -418,7 +455,7 @@
         oldQuestions.add(item.question.toLowerCase());
         state.imported.push({...card,id:'custom-'+Date.now()+'-'+(count++),categories:[item.category]});
       }
-      persist(); updateCategories(); if(!state.round?.ids?.length)startRound();else render();
+      persist(); updateCategories(); render();
       $('importStatus').textContent=count+' Karten importiert ('+(incoming.length-count)+' übersprungen).';
       notify(count+' Karteikarten importiert.');
     } catch(err){$('importStatus').textContent='Importfehler: '+err.message;}
@@ -440,7 +477,8 @@
           state.round.pass={ids:[...state.round.ids],index:0,completed:{},startedAt:now()};
         }
       }
-      if(!state.round?.ids?.length)startRound();else render();
+      if(!state.round?.ids?.length)state.setupVisible=true;
+      render();
     }).catch(err=>{notify('Karteikarten konnten nicht geladen werden: '+err.message);$('questionText').textContent='Bitte die Seite neu laden.';});
     $('typingBtn').onclick=()=>{state.mode='type';persist();applyMode();};
     $('handwritingBtn').onclick=()=>{state.mode='hand';persist();applyMode();};
@@ -487,7 +525,7 @@
     $('prevCard').onclick=()=>changeCard(-1);$('nextCard').onclick=()=>changeCard(1);
     $('favoriteBtn').onclick=()=>{const card=current();if(!card)return;pref(card.id).favorite=!pref(card.id).favorite;persist();render();};
     $('excludeBtn').onclick=()=>{const card=current();if(!card)return;pref(card.id).disabled=!pref(card.id).disabled;persist();render();};
-    $('lectureSelect').onchange=e=>{state.lecture=e.target.value;persist();notify('Auswahl vorgemerkt. Mit „Neuen Lernstapel starten“ übernehmen.');};
+    // Lecture checkbox dropdown is built by updateCategories().
     $('studyFilter').onchange=e=>{state.filter=e.target.value;persist();notify('Filter für den nächsten Lernstapel vorgemerkt.');};
     $('searchBox').oninput=e=>{state.query=e.target.value;persist();};
     $('shuffleCheck').checked=state.shuffle;
@@ -510,6 +548,9 @@
       notify('Kartenanzahl für den nächsten Lernstapel vorgemerkt.');
     };
     $('newRoundBtn').onclick=askForNewStack;
+    $('resumeRoundBtn').onclick=()=>{if(!state.round?.ids?.length)return;state.setupVisible=false;persist();render();};
+    $('changeSetupBtn').onclick=showSetup;
+    $('summaryChangeSetup').onclick=showSetup;
     $('finishRoundBtn').onclick=showSummary;
     $('skipCard').onclick=()=>grade('skipped');
     const repeat=kind=>startRepeat(R.stats(state.round)?.groups[kind]||[]);
@@ -541,15 +582,15 @@
     };
     $('summaryDue').onclick=()=>{
       if(!state.round?.completedAt && !confirm('Den aktuellen Lernstapel verlassen und mit den weltweit fälligen Karten neu anfangen?'))return;
-      state.filter='due';$('studyFilter').value='due';state.lecture='all';$('lectureSelect').value='all';
+      state.filter='due';$('studyFilter').value='due';state.lectures=[];updateCategories();
       state.query='';$('searchBox').value='';startRound();
     };
     $('summaryReturn').onclick=()=>{displayLibrary();$('libraryDialog').showModal();};
     $('summaryFinalize').onclick=finalizeStack;
-    $('resetFilters').onclick=()=>{state.lecture='all';state.filter='all';state.query='';$('lectureSelect').value='all';$('studyFilter').value='all';$('searchBox').value='';askForNewStack();};
+    $('resetFilters').onclick=()=>{state.lectures=[];state.filter='all';state.query='';updateCategories();$('studyFilter').value='all';$('searchBox').value='';showSetup();};
     $('recordStart').onclick=()=>{
       if(state.activeRecording)return;
-      state.activeRecording={id:'record-'+Date.now(),startedAt:now(),attempts:[],title:'',category:state.lecture};
+      state.activeRecording={id:'record-'+Date.now(),startedAt:now(),attempts:[],title:'',category:state.lectures.length?state.lectures.join(', '):'all'};
       persist();render();notify('Aufnahme läuft. Bewertete Karten werden archiviert.');
     };
     $('recordStop').onclick=()=>{if(state.activeRecording){$('recordName').value='InDaS – '+new Date().toLocaleDateString('de-DE');$('finishDialog').showModal();}};
@@ -569,6 +610,8 @@
         if(data.app!=='indas-study'||!data.state||!Array.isArray(data.state.recordings))throw Error('Kein InDaS-Backup.');
         if(!confirm('Alle aktuellen InDaS-Lerndaten durch dieses Backup ersetzen?'))return;
         for(const key of Object.keys(state))if(data.state[key]!==undefined)state[key]=data.state[key];
+        state.lectures=Array.isArray(state.lectures)?state.lectures:[];
+        state.setupVisible=!!state.setupVisible;
         persist();updateCategories();render();notify('InDaS-Backup wiederhergestellt.');
       }catch(err){notify('Backup ungültig: '+err.message);}
       event.target.value='';
