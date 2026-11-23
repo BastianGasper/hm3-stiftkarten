@@ -86,3 +86,5 @@ body.indas-ink-scroll .ink-sheet,body.indas-ink-scroll .ink-sheet #drawingCanvas
 .summary-action.secondary:disabled{background:#d4e2da;color:#5b746d;opacity:1}
 .preview-question{font-weight:700;font-size:1.03rem;line-height:1.5;padding:13px 14px;border-left:4px solid #3c9adc;background:#f2f6fb;border-radius:6px}
 .preview-answer{white-space:pre-wrap;font-size:.91rem;line-height:1.6;padding:13px 14px;border:1px solid #e1e6ed;border-radius:7px}
+
+.hidden-cards-info{display:block;color:#8b96a7;font-size:.64rem;margin-top:3px;white-space:nowrap}
