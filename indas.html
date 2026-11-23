@@ -27,6 +27,7 @@
         <div class="toolbar-row">
           <label class="select-wrap">Vorlesung <select id="lectureSelect"><option value="all">Alle Vorlesungen</option></select></label>
           <label class="select-wrap">Lernumfang <select id="studyFilter"><option value="all">Alle Karten</option><option value="due">Fällige Karten</option><option value="wrong">Nicht gewusst</option><option value="favorites">Favoriten</option></select></label>
+          <label class="count-wrap">Kartenanzahl <input id="roundSize" type="number" inputmode="numeric" min="1" max="500" placeholder="Alle" title="Leer lassen für alle Karten"></label>
           <label class="search-wrap">Suche <input id="searchBox" type="search" placeholder="Thema oder Begriff …" autocomplete="off"></label>
           <label class="check-inline"><input type="checkbox" id="shuffleCheck"> Zufällige Reihenfolge</label>
         </div>
@@ -92,6 +93,12 @@
     </main>
   </div>
 
+  <dialog id="summaryPreviewDialog" class="modal small-modal" aria-labelledby="previewTitle">
+    <div class="modal-head"><div><h2 id="previewTitle">Karteikarte ansehen</h2><p id="previewSource"></p></div>
+    <button class="btn" data-close="summaryPreviewDialog">Schließen</button></div>
+    <div class="preview-question" id="previewQuestion"></div>
+    <h3>Musterantwort</h3><div class="preview-answer" id="previewAnswer"></div>
+  </dialog>
   <dialog id="libraryDialog" class="modal"><div class="modal-head"><div><h2>Karten verwalten</h2><p>Suche, Kategorien und persönliche Favoriten</p></div><button class="btn" data-close="libraryDialog">Schließen</button></div><label>Suche <input id="librarySearch" type="search" placeholder="Frage oder Begriff" /></label><div id="libraryCount" class="muted"></div><div id="libraryList" class="library-list"></div></dialog>
 
   <dialog id="recordingsDialog" class="modal"><div class="modal-head"><div><h2>Gespeicherte Aufnahmen</h2><p>Jede Bewertung wird mit deiner damaligen Antwort aufgezeichnet.</p></div><button class="btn" data-close="recordingsDialog">Schließen</button></div><div id="recordingsList" class="recording-list"></div></dialog>
