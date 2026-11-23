@@ -457,6 +457,24 @@
     $('inkColor').onchange=e=>{ink.color=e.target.value;ink.setTool('pen');};
     $('inkWidth').onchange=e=>ink.width=Number(e.target.value);
     $('revealBtn').onclick=showSolution;
+    // Shortcuts are active only during a visible card, outside any editable field.
+    // Rating with 2/3/4 intentionally does not require revealing the solution first.
+    document.addEventListener('keydown',event=>{
+      if(event.defaultPrevented || event.repeat || event.isComposing ||
+         event.ctrlKey || event.altKey || event.metaKey || event.shiftKey)return;
+      const key=event.key;
+      if(!['1','2','3','4'].includes(key))return;
+      if(!current() || summaryVisible || state.round?.completedAt || $('studyPanel').hidden)return;
+      if(document.querySelector('dialog[open]'))return;
+      const editing='input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]';
+      if(event.target?.closest?.(editing) || document.activeElement?.closest?.(editing))return;
+      event.preventDefault();
+      if(key==='1'){
+        if($('solutionPanel').hidden)showSolution();
+      }else{
+        grade({'2':'good','3':'partial','4':'wrong'}[key]);
+      }
+    });
     document.querySelectorAll('[data-grade]').forEach(button=>button.onclick=()=>grade(button.dataset.grade));
     $('prevCard').onclick=()=>changeCard(-1);$('nextCard').onclick=()=>changeCard(1);
     $('favoriteBtn').onclick=()=>{const card=current();if(!card)return;pref(card.id).favorite=!pref(card.id).favorite;persist();render();};
