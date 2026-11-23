@@ -6,7 +6,7 @@
   const state = {
     prefs: {}, typed: {}, strokes: {}, imported: [], recordings: [],
     activeRecording: null, round: null, mode: 'type', lecture: 'all',
-    filter: 'all', query: '', shuffle: false, roundSize: 0, completedRounds: []
+    filter: 'all', query: '', shuffle: false, roundSize: 0, hideAfter13: true, completedRounds: []
   };
   const R = window.InDaSRounds;
   if (!R) throw new Error("InDaS Lernstapel-Modul fehlt.");
@@ -60,11 +60,13 @@
     };
   }
   function allCards() { return cards.concat(state.imported.map((c,i) => normalize(c, i, 'custom'))); }
+  const isPostCutoff = card => /^VL06(?:\s|\b)/i.test(card.category);
+  const activeCards = () => allCards().filter(card => !(state.hideAfter13 && isPostCutoff(card)));
   function byId(id) { return allCards().find(c => c.id === id); }
   function pref(id) { return state.prefs[id] || (state.prefs[id] = {}); }
   function current() { return state.round?.pass ? byId(state.round.pass.ids[state.round.pass.index]) : null; }
   function available() {
-    let pool = allCards().filter(c => !state.prefs[c.id]?.disabled);
+    let pool = activeCards().filter(c => !state.prefs[c.id]?.disabled);
     if (state.lecture !== 'all') pool = pool.filter(c => c.category === state.lecture);
     if (state.filter === 'favorites') pool = pool.filter(c => !!state.prefs[c.id]?.favorite);
     if (state.filter === 'wrong') pool = pool.filter(c => state.prefs[c.id]?.lastGrade === 'wrong');
@@ -121,12 +123,18 @@
   function updateCategories() {
     const selected = state.lecture;
     const select = $('lectureSelect');
-    const categories = [...new Set(allCards().map(c => c.category))];
+    const categories = [...new Set(activeCards().map(c => c.category))];
     select.replaceChildren(new Option('Alle Vorlesungen','all'));
     for (const category of categories) select.add(new Option(category,category));
     state.lecture = categories.includes(selected) ? selected : 'all';
     select.value = state.lecture;
-    $('totalCards').textContent = allCards().length.toLocaleString('de-DE');
+    $('excludeNov20Check').checked = state.hideAfter13;
+    const total = allCards().length;
+    const visible = activeCards().length;
+    $('totalCards').textContent = visible.toLocaleString('de-DE');
+    $('totalCardsLabel').textContent = 'aktive Karteikarten';
+    const hidden = total - visible;
+    $('hiddenCardsInfo').textContent = hidden ? hidden + ' für später ausgeblendet' : 'Alle ' + total + ' Karten aktiv';
   }
   function applyMode() {
     const hand = state.mode === 'hand';
@@ -201,7 +209,7 @@
     const continueCount=tally.unreviewedPass.length||outstanding.length;
     set('actionRemaining',continueCount);set('actionWrong',wrong);
     set('actionPartial',partial);set('actionAsked',review.length);
-    const due=allCards().filter(c=>!state.prefs[c.id]?.disabled&&(!state.prefs[c.id]?.nextDue||state.prefs[c.id].nextDue<=Date.now())).length;
+    const due=activeCards().filter(c=>!state.prefs[c.id]?.disabled&&(!state.prefs[c.id]?.nextDue||state.prefs[c.id].nextDue<=Date.now())).length;
     set('actionDue',due);
     $('summaryTitle').textContent=completed
       ? 'Lernstapel abgeschlossen · '+total+' Karten'
@@ -484,6 +492,15 @@
     $('searchBox').oninput=e=>{state.query=e.target.value;persist();};
     $('shuffleCheck').checked=state.shuffle;
     $('shuffleCheck').onchange=e=>{state.shuffle=e.target.checked;persist();};
+    $('excludeNov20Check').checked=state.hideAfter13;
+    $('excludeNov20Check').onchange=e=>{
+      state.hideAfter13=e.target.checked;
+      updateCategories();
+      persist();
+      notify(state.hideAfter13
+        ? 'VL06 ausgeblendet. Der Filter gilt für neue Lernstapel; der aktuelle bleibt unverändert.'
+        : 'VL06 wieder aktiv. Der Filter gilt für neue Lernstapel.');
+    };
     $('studyFilter').value=state.filter;
     $('searchBox').value=state.query;
     $('roundSize').value=state.roundSize ? String(state.roundSize) : '';
