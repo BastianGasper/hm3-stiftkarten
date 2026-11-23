@@ -1,6 +1,6 @@
 {
-  "version": "2026-11-22.23",
-  "released": "2026-11-22",
+  "version": "2026-11-23.24",
+  "released": "2026-11-23",
   "features": [
     "Glatte Stiftkurven",
     "Höhere Stiftauflösung",
@@ -24,6 +24,8 @@
     "12 vollständige Originalaufgaben, 2 Methodenvergleiche, 3 vertiefte Beweis-/Herleitungsaufgaben und 2 Zusatzthemen; alle als unabhängiger Moodle-Lernbereich",
     "Neues vollständiges Beweismodul Nr. 30: Green’sche Funktion und Nachweis der partikulären Lösung mit zwei Theorie-Infoseiten, fünf Beweisstufen, vollständiger Leibniz-Rechnung, Randtermen und Beispiel; ebenfalls in Selbstlernplattform / Beweise & Herleitungen",
     "InDaS: eigene zweite Lernseite mit HM3-abgeleiteter Apple-Pencil-, Handballen- und Finger-Navigationslogik; karierte Fläche, Ganzstrich-Radierer und Undo/Redo",
-    "InDaS: Lernstatistik nach Abfrage mit Kreisdiagramm, Ergebnis-Kategorien, Wiederholungs- und Zeitplanaktionen; neue Abfragen starten mit leeren Text- und Handschriftfeldern"
+    "InDaS: Lernstatistik nach Abfrage mit Kreisdiagramm, Ergebnis-Kategorien, Wiederholungs- und Zeitplanaktionen; neue Abfragen starten mit leeren Text- und Handschriftfeldern",
+    "InDaS feste Lernstapel: Startgröße wählbar, Gesamtstatistik über Originalumfang, wiederholte Bewertungen aktualisieren denselben Stammstapel, grüne Karten bleiben aus Wiederholungen ausgeschlossen",
+    "InDaS: getippte und handschriftliche Antworten bei Wiederholungen leeren, Zwischenstand ohne Verlust fortsetzen, Stapel ausdrücklich abschließen und Endstand sichern"
   ]
 }
