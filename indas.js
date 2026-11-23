@@ -104,6 +104,7 @@
     render();
   }
   function askForNewStack() {
+    if (!available().length) {notify('Keine Karten für diese Auswahl. Bitte Vorlesungen oder Filter ändern.');return false;}
     const active = state.round && !state.round.completedAt &&
       (R.stats(state.round)?.asked > 0 || state.activeRecording?.attempts?.length);
     if(active && !confirm('Den bisherigen Lernstapel wirklich verlassen und eine neue Abfrage beginnen? Die Bewertungen des aktuellen Stapels werden dann zurückgesetzt. Bereits gespeicherte Aufnahmen bleiben erhalten.')) return false;
@@ -481,6 +482,10 @@
       if(!state.round?.ids?.length)state.setupVisible=true;
       render();
     }).catch(err=>{notify('Karteikarten konnten nicht geladen werden: '+err.message);$('questionText').textContent='Bitte die Seite neu laden.';});
+    document.addEventListener('click',event=>{
+      if ($('lecturePicker').open && !event.target?.closest?.('#lecturePicker'))
+        $('lecturePicker').open = false;
+    });
     $('typingBtn').onclick=()=>{state.mode='type';persist();applyMode();};
     $('handwritingBtn').onclick=()=>{state.mode='hand';persist();applyMode();};
     $('typedAnswer').addEventListener('input',event=>{const card=current();if(card){state.typed[card.id]=event.target.value;persist();}});
