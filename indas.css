@@ -79,3 +79,10 @@ body.indas-ink-locked .ink-sheet{touch-action:none!important}
 [hidden]{display:none!important}
 
 body.indas-ink-scroll .ink-sheet,body.indas-ink-scroll .ink-sheet #drawingCanvas{touch-action:pan-y!important;overscroll-behavior:auto!important}
+
+/* Persistent learning pool — count picker and total-stack result distinctions. */
+.count-wrap input{height:39px;width:95px;border:1px solid #d8deea;border-radius:9px;background:#fbfcfe;padding:0 10px;color:#25334a;font-size:.87rem}
+.summary-open{color:#2376ac!important;font-weight:650}
+.summary-action.secondary:disabled{background:#d4e2da;color:#5b746d;opacity:1}
+.preview-question{font-weight:700;font-size:1.03rem;line-height:1.5;padding:13px 14px;border-left:4px solid #3c9adc;background:#f2f6fb;border-radius:6px}
+.preview-answer{white-space:pre-wrap;font-size:.91rem;line-height:1.6;padding:13px 14px;border:1px solid #e1e6ed;border-radius:7px}
