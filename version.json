@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-23.24",
+  "version": "2026-11-23.25",
   "released": "2026-11-23",
   "features": [
     "Glatte Stiftkurven",
@@ -26,6 +26,7 @@
     "InDaS: eigene zweite Lernseite mit HM3-abgeleiteter Apple-Pencil-, Handballen- und Finger-Navigationslogik; karierte Fläche, Ganzstrich-Radierer und Undo/Redo",
     "InDaS: Lernstatistik nach Abfrage mit Kreisdiagramm, Ergebnis-Kategorien, Wiederholungs- und Zeitplanaktionen; neue Abfragen starten mit leeren Text- und Handschriftfeldern",
     "InDaS feste Lernstapel: Startgröße wählbar, Gesamtstatistik über Originalumfang, wiederholte Bewertungen aktualisieren denselben Stammstapel, grüne Karten bleiben aus Wiederholungen ausgeschlossen",
-    "InDaS: getippte und handschriftliche Antworten bei Wiederholungen leeren, Zwischenstand ohne Verlust fortsetzen, Stapel ausdrücklich abschließen und Endstand sichern"
+    "InDaS: getippte und handschriftliche Antworten bei Wiederholungen leeren, Zwischenstand ohne Verlust fortsetzen, Stapel ausdrücklich abschließen und Endstand sichern",
+    "InDaS: vereinfachte Lernansicht ohne Erklärtexte und Kopfzähler, auswählbare Vorlesungskombination, Startpanel nur bis Abfragebeginn, Rückkehr zur Auswahl ohne Bewertungsverlust"
   ]
 }
