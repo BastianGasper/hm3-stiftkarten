@@ -106,7 +106,8 @@
   function startRepeat(ids) {
     if(!state.round || state.round.completedAt)return;
     ink?.finish();
-    const selected = R.startPass(state.round, ids, now());
+    // Every repeat pass is independently randomized, regardless of the initial shuffle option.
+    const selected = R.startPass(state.round, shuffle([...ids]), now());
     if(!selected.length) {notify('Keine Karten mehr in dieser Auswahl.'); return;}
     // Each repeat attempt gets an empty input sheet, but the root ratings stay.
     for(const id of selected) {delete state.typed[id]; delete state.strokes[id];}
