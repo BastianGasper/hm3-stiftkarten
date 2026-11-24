@@ -1,6 +1,6 @@
 {
-  "version": "2026-11-23.25",
-  "released": "2026-11-23",
+  "version": "2026-11-24.1",
+  "released": "2026-11-24",
   "features": [
     "Glatte Stiftkurven",
     "Höhere Stiftauflösung",
@@ -27,6 +27,7 @@
     "InDaS: Lernstatistik nach Abfrage mit Kreisdiagramm, Ergebnis-Kategorien, Wiederholungs- und Zeitplanaktionen; neue Abfragen starten mit leeren Text- und Handschriftfeldern",
     "InDaS feste Lernstapel: Startgröße wählbar, Gesamtstatistik über Originalumfang, wiederholte Bewertungen aktualisieren denselben Stammstapel, grüne Karten bleiben aus Wiederholungen ausgeschlossen",
     "InDaS: getippte und handschriftliche Antworten bei Wiederholungen leeren, Zwischenstand ohne Verlust fortsetzen, Stapel ausdrücklich abschließen und Endstand sichern",
-    "InDaS: vereinfachte Lernansicht ohne Erklärtexte und Kopfzähler, auswählbare Vorlesungskombination, Startpanel nur bis Abfragebeginn, Rückkehr zur Auswahl ohne Bewertungsverlust"
+    "InDaS: vereinfachte Lernansicht ohne Erklärtexte und Kopfzähler, auswählbare Vorlesungskombination, Startpanel nur bis Abfragebeginn, Rückkehr zur Auswahl ohne Bewertungsverlust",
+    "InDaS VL03: neun reine Formel-Karteikarten zur Confusion-Matrix-Auswertung ausgegliedert; Karten-IDs aller verbleibenden Karten bleiben stabil."
   ]
 }
