@@ -472,6 +472,78 @@
     "id": "lecture-58"
   },
   {
+    "id": "lecture-59",
+    "question": "<div>What is the formula for Accuracy?</div>",
+    "answer": "<div>(TP + TN) / (TP + FP + TN + FN). [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
+    "id": "lecture-60",
+    "question": "<div>What is the formula for Sensitivity?</div>",
+    "answer": "<div>TP / (TP + FN). Proportion of actual positives detected. [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
+    "id": "lecture-61",
+    "question": "<div>What is the formula for Specificity?</div>",
+    "answer": "<div>TN / (TN + FP). Proportion of actual negatives detected. [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
+    "id": "lecture-62",
+    "question": "<div>What is the formula for Precision?</div>",
+    "answer": "<div>TP / (TP + FP). Proportion of predicted positives that are correct. [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
+    "id": "lecture-63",
+    "question": "<div>What is the formula for Slack Rate?</div>",
+    "answer": "<div>FN / (TP + FN). Proportion of actual defective products missed. [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
+    "id": "lecture-64",
+    "question": "<div>What is the formula for Pseudo Defect Rate?</div>",
+    "answer": "<div>FP / (TP + FP). Proportion of predicted defective products that are actually good. [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
+    "id": "lecture-65",
+    "question": "<div>What is the formula for False Positive Rate?</div>",
+    "answer": "<div>FP / (FP + TN). Proportion of actual good products incorrectly rejected. [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
+    "id": "lecture-66",
+    "question": "<div>What is the formula for Negative Predictive Value?</div>",
+    "answer": "<div>TN / (TN + FN). Proportion of predicted negatives that are truly negative. [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
+    "id": "lecture-67",
+    "question": "<div>What is the formula for False Omission Rate?</div>",
+    "answer": "<div>FN / (FN + TN). Proportion of predicted negatives that are actually positive. [VL03, slide 25]</div>",
+    "categories": [
+      "VL03 – Data Analysis in Industrial Contexts"
+    ]
+  },
+  {
     "question": "<div>What is a Virtual Test Gate in injector production?</div>",
     "answer": "<div>A model predicts quality after P1-P3; predicted NOk injectors undergo full P1-P6 testing. [VL03, slide 31-32]</div>",
     "categories": [
