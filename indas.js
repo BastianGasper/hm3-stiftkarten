@@ -427,7 +427,7 @@
       const fav=document.createElement('button');fav.className='btn';fav.textContent=state.prefs[card.id]?.favorite?'★':'☆';
       fav.onclick=()=>{pref(card.id).favorite=!pref(card.id).favorite;persist();displayLibrary();};
       const disable=document.createElement('button');disable.className='btn';disable.textContent=state.prefs[card.id]?.disabled?'Aktivieren':'Deaktivieren';
-      disable.onclick=()=>{pref(card.id).disabled=!pref(card.id).disabled;persist();displayLibrary();};
+      disable.onclick=()=>{pref(card.id).disabled=!pref(card.id).disabled;persist();updateStartCount();displayLibrary();};
       controls.append(open,fav,disable);row.append(desc,controls);root.append(row);
     }
   }
