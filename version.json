@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-24.1",
+  "version": "2026-11-24.2",
   "released": "2026-11-24",
   "features": [
     "Glatte Stiftkurven",
@@ -28,6 +28,6 @@
     "InDaS feste Lernstapel: Startgröße wählbar, Gesamtstatistik über Originalumfang, wiederholte Bewertungen aktualisieren denselben Stammstapel, grüne Karten bleiben aus Wiederholungen ausgeschlossen",
     "InDaS: getippte und handschriftliche Antworten bei Wiederholungen leeren, Zwischenstand ohne Verlust fortsetzen, Stapel ausdrücklich abschließen und Endstand sichern",
     "InDaS: vereinfachte Lernansicht ohne Erklärtexte und Kopfzähler, auswählbare Vorlesungskombination, Startpanel nur bis Abfragebeginn, Rückkehr zur Auswahl ohne Bewertungsverlust",
-    "InDaS VL03: neun reine Formel-Karteikarten zur Confusion-Matrix-Auswertung ausgegliedert; Karten-IDs aller verbleibenden Karten bleiben stabil."
+    "InDaS VL03: Alle neun Formel-Karteikarten wiederhergestellt; 26 Karten in VL03, 128 insgesamt, 106 bis 13.11."
   ]
 }
