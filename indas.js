@@ -81,6 +81,12 @@
     }
     return pool;
   }
+  function updateStartCount() {
+    const matches = available().length;
+    const count = state.roundSize > 0 ? Math.min(matches, state.roundSize) : matches;
+    $('newRoundBtn').textContent = 'Abfrage starten (' + count + ')';
+    $('newRoundBtn').disabled = count === 0;
+  }
   function shuffle(values) {
     for (let i = values.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -166,6 +172,7 @@
     $('lecturePickerSummary').textContent = count === 0 ? 'Alle Vorlesungen (' + categories.length + ')' :
       count === 1 ? state.lectures[0] : count + ' Vorlesungen ausgewählt';
     $('excludeNov20Check').checked = state.hideAfter13;
+    updateStartCount();
   }
   function showSetup() {
     ink?.finish();
@@ -532,8 +539,8 @@
     $('favoriteBtn').onclick=()=>{const card=current();if(!card)return;pref(card.id).favorite=!pref(card.id).favorite;persist();render();};
     $('excludeBtn').onclick=()=>{const card=current();if(!card)return;pref(card.id).disabled=!pref(card.id).disabled;persist();render();};
     // Lecture checkbox dropdown is built by updateCategories().
-    $('studyFilter').onchange=e=>{state.filter=e.target.value;persist();notify('Filter für den nächsten Lernstapel vorgemerkt.');};
-    $('searchBox').oninput=e=>{state.query=e.target.value;persist();};
+    $('studyFilter').onchange=e=>{state.filter=e.target.value;updateStartCount();persist();notify('Filter für den nächsten Lernstapel vorgemerkt.');};
+    $('searchBox').oninput=e=>{state.query=e.target.value;updateStartCount();persist();};
     $('shuffleCheck').checked=state.shuffle;
     $('shuffleCheck').onchange=e=>{state.shuffle=e.target.checked;persist();};
     $('excludeNov20Check').checked=state.hideAfter13;
@@ -548,10 +555,10 @@
     $('studyFilter').value=state.filter;
     $('searchBox').value=state.query;
     $('roundSize').value=state.roundSize ? String(state.roundSize) : '';
-    $('roundSize').onchange=e=>{
+    $('roundSize').oninput=e=>{
       state.roundSize=Math.max(0,Math.floor(Number(e.target.value)||0));
+      updateStartCount();
       persist();
-      notify('Kartenanzahl für den nächsten Lernstapel vorgemerkt.');
     };
     $('newRoundBtn').onclick=askForNewStack;
     $('resumeRoundBtn').onclick=()=>{if(!state.round?.ids?.length)return;state.setupVisible=false;persist();render();};
