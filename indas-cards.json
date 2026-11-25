@@ -777,7 +777,7 @@
   },
   {
     "question": "<div>What is MapReduce?</div>",
-    "answer": "<div>A framework for distributed processing using user-defined Mapper and Reducer functions with a Shuffle stage. [VL05, slide 75]</div>",
+    "answer": "<div>MapReduce is a method for processing large amounts of data across multiple computers using Map, Shuffle and Reduce. [VL05, slide 75]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
