@@ -568,8 +568,8 @@
     "id": "lecture-70"
   },
   {
-    "question": "<div>What four core abstractions does a DBMS provide?</div>",
-    "answer": "<div>The four core abstractions provided by a DBMS are: A data model; a query language; integrity/access control; protection for concurrent access. [VL04, slide 9]</div>",
+    "question": "<div>What four basic things does a DBMS provide?</div>",
+    "answer": "<div>A DBMS provides a data model, a query language, data rules/access control, and safe access for multiple users. [VL04, slide 9]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -584,8 +584,8 @@
     "id": "lecture-72"
   },
   {
-    "question": "<div>What makes SQL a declarative query language?</div>",
-    "answer": "<div>SQL is a declarative query language because it specifies which data to retrieve, not how the database must retrieve them. [VL04, slide 12-13]</div>",
+    "question": "<div>What does 'declarative' mean in SQL?</div>",
+    "answer": "<div>Declarative SQL specifies what data to retrieve, not how the database should retrieve it. [VL04, slide 12-13]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -600,8 +600,8 @@
     "id": "lecture-74"
   },
   {
-    "question": "<div>What happens when multiple tables appear in FROM without a join condition?</div>",
-    "answer": "<div>When multiple tables appear in FROM without a join condition, the result is their Cartesian product: all combinations of rows. [VL04, slide 18-20]</div>",
+    "question": "<div>What happens if tables in FROM have no join condition?</div>",
+    "answer": "<div>Every row of one table is combined with every row of the other (Cartesian product). [VL04, slide 18-20]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -632,16 +632,16 @@
     "id": "lecture-78"
   },
   {
-    "question": "<div>What does GROUP BY do?</div>",
-    "answer": "<div>GROUP BY partitions rows into groups so aggregation can be calculated separately for each group. [VL04, slide 27-28]</div>",
+    "question": "<div>What is GROUP BY used for?</div>",
+    "answer": "<div>GROUP BY groups rows with matching values so aggregates can be calculated for each group. [VL04, slide 27-28]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
     "id": "lecture-79"
   },
   {
-    "question": "<div>What is the basic SELECT rule when GROUP BY is used?</div>",
-    "answer": "<div>The basic SELECT rule with GROUP BY is that selected non-aggregated columns must also appear in GROUP BY (as required by this lecture). [VL04, slide 29]</div>",
+    "question": "<div>Which columns can SELECT show with GROUP BY?</div>",
+    "answer": "<div>SELECT can show grouped columns or results of aggregate functions such as COUNT or AVG. [VL04, slide 29]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -664,32 +664,32 @@
     "id": "lecture-82"
   },
   {
-    "question": "<div>Why is sequential disk I/O preferred to random disk I/O?</div>",
-    "answer": "<div>Sequential disk I/O is preferred because it avoids repeated high access latency and is generally much faster. [VL04, slide 35-36]</div>",
+    "question": "<div>Why is sequential disk I/O faster than random disk I/O?</div>",
+    "answer": "<div>Sequential disk I/O avoids repeated slow disk access delays. [VL04, slide 35-36]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
     "id": "lecture-83"
   },
   {
-    "question": "<div>What are the key properties of B+-tree indexes?</div>",
-    "answer": "<div>B+-tree indexes are balanced, dynamic under inserts/deletes, preserve key order and support efficient lookup. [VL04, slide 41-42]</div>",
+    "question": "<div>Why are B+-tree indexes useful?</div>",
+    "answer": "<div>B+-tree indexes keep keys sorted in a balanced structure for fast lookups and inserts/deletes. [VL04, slide 41-42]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
     "id": "lecture-84"
   },
   {
-    "question": "<div>For which two main tasks are database indexes used?</div>",
-    "answer": "<div>Database indexes are used for point/range searches and join processing. [VL04, slide 43]</div>",
+    "question": "<div>What can database indexes speed up?</div>",
+    "answer": "<div>Indexes speed up exact/range searches and table joins. [VL04, slide 43]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
     "id": "lecture-85"
   },
   {
-    "question": "<div>What are the two phases of a hash join?</div>",
-    "answer": "<div>The two phases of a hash join are: Build: hash the tuples of one relation. Probe: scan the other relation and find matching tuples. [VL04, slide 44-45]</div>",
+    "question": "<div>What happens in the Build and Probe phases of a hash join?</div>",
+    "answer": "<div>Build hashes rows from one table; Probe searches for matching rows from the other. [VL04, slide 44-45]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -712,16 +712,16 @@
     "id": "lecture-88"
   },
   {
-    "question": "<div>How does an operational database differ from a Data Warehouse?</div>",
-    "answer": "<div>An operational database focuses on subjects and relationships; a Data Warehouse focuses on processes and dimensions. [VL05, slide 50]</div>",
+    "question": "<div>How do operational databases and Data Warehouses organize data?</div>",
+    "answer": "<div>Operational databases focus on subjects and relationships; Data Warehouses on processes and dimensions. [VL05, slide 50]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
     "id": "lecture-89"
   },
   {
-    "question": "<div>What is grain in dimensional modeling?</div>",
-    "answer": "<div>Grain in dimensional modeling is the level of detail of a recorded business-process measurement event. [VL05, slide 52]</div>",
+    "question": "<div>What does 'grain' mean in a Data Warehouse?</div>",
+    "answer": "<div>Grain is the level of detail of each stored business event or measurement. [VL05, slide 52]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -744,16 +744,16 @@
     "id": "lecture-92"
   },
   {
-    "question": "<div>What is an OLAP cube?</div>",
-    "answer": "<div>An OLAP cube is a multidimensional view of facts and aggregates along dimensions. [VL05, slide 55]</div>",
+    "question": "<div>What does an OLAP cube show?</div>",
+    "answer": "<div>An OLAP cube shows facts and aggregated values across multiple dimensions. [VL05, slide 55]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
     "id": "lecture-93"
   },
   {
-    "question": "<div>What does slice and dice mean in OLAP?</div>",
-    "answer": "<div>Slice and dice in OLAP means selecting ranges along dimensions and aggregating the facts within those ranges. [VL05, slide 56]</div>",
+    "question": "<div>What do 'slice and dice' do in OLAP?</div>",
+    "answer": "<div>Slice and dice select parts of a data cube by dimensions and aggregate their values. [VL05, slide 56]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -768,8 +768,8 @@
     "id": "lecture-95"
   },
   {
-    "question": "<div>What are the three conceptual steps of a star query?</div>",
-    "answer": "<div>The three conceptual steps of a star query are: Join the fact table with dimension tables; filter records; group and aggregate results. [VL05, slide 62]</div>",
+    "question": "<div>What are the three steps of a star query?</div>",
+    "answer": "<div>A star query joins fact and dimension tables, filters rows, then groups and aggregates the results. [VL05, slide 62]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -792,8 +792,8 @@
     "id": "lecture-98"
   },
   {
-    "question": "<div>What happens during Shuffle in MapReduce?</div>",
-    "answer": "<div>During Shuffle in MapReduce, values with the same key are grouped together and moved to the appropriate Reducer. [VL05, slide 73–75]</div>",
+    "question": "<div>What does Shuffle do between Map and Reduce?</div>",
+    "answer": "<div>Shuffle groups values with the same key and sends them to the appropriate Reducer. [VL05, slide 73–75]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -808,8 +808,8 @@
     "id": "lecture-100"
   },
   {
-    "question": "<div>What responsibilities does the MapReduce framework handle?</div>",
-    "answer": "<div>The MapReduce framework handles data and task partitioning, Mapper/Reducer allocation, data movement and shuffling. [VL05, slide 78]</div>",
+    "question": "<div>What work does the MapReduce framework handle automatically?</div>",
+    "answer": "<div>MapReduce splits data and tasks, assigns Mappers/Reducers, and moves and groups data. [VL05, slide 78]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -817,15 +817,15 @@
   },
   {
     "question": "<div>Why must Mapper and Reducer functions be pure?</div>",
-    "answer": "<div>Mapper and Reducer functions must be pure because their outputs depend only on inputs, with no side effects, allowing safe re-execution. [VL05, slide 81]</div>",
+    "answer": "<div>Mapper and Reducer functions must give the same output for the same input, without side effects, so tasks can be safely retried. [VL05, slide 81]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
     "id": "lecture-102"
   },
   {
-    "question": "<div>How does MapReduce tolerate failed or slow tasks?</div>",
-    "answer": "<div>MapReduce tolerates failed or slow tasks because the runtime can restart tasks on other nodes and retain one valid result. [VL05, slide 81]</div>",
+    "question": "<div>What happens if a MapReduce task fails or is too slow?</div>",
+    "answer": "<div>MapReduce restarts the task on another computer and keeps one valid result. [VL05, slide 81]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -840,8 +840,8 @@
     "id": "lecture-104"
   },
   {
-    "question": "<div>Name important limitations of basic MapReduce.</div>",
-    "answer": "<div>Important limitations of basic MapReduce include file-based rather than a database, batch-oriented, low-level programming and limited support for iterative algorithms. [VL05, slide 83, 85]</div>",
+    "question": "<div>What are the main drawbacks of basic MapReduce?</div>",
+    "answer": "<div>Basic MapReduce is file-based, batch-oriented, needs low-level code, and handles repeated calculations poorly. [VL05, slide 83, 85]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
