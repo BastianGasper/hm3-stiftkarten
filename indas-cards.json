@@ -201,7 +201,7 @@
   },
   {
     "question": "<div>Why is domain knowledge important throughout CRISP-DM?</div>",
-    "answer": "<div>Domain knowledge  supports goals, feature selection, data checks, overfitting prevention, validation and integration. [VL01, slide 38]</div>",
+    "answer": "<div>Domain knowledge supports goals, feature selection, data checks, overfitting prevention, validation and integration. [VL01, slide 38]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -585,7 +585,7 @@
   },
   {
     "question": "<div>What makes SQL a declarative query language?</div>",
-    "answer": "<div>SQL is a declarative query language because  specifies which data to retrieve, not how the database must retrieve them. [VL04, slide 12-13]</div>",
+    "answer": "<div>SQL is a declarative query language because it specifies which data to retrieve, not how the database must retrieve them. [VL04, slide 12-13]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -625,7 +625,7 @@
   },
   {
     "question": "<div>How do SQL aggregation functions handle NULL values?</div>",
-    "answer": "<div>SQL aggregation functions  generally ignore NULL; COUNT(*) counts rows including those with NULLs. COUNT on empty input returns 0. [VL04, slide 25]</div>",
+    "answer": "<div>SQL aggregation functions generally ignore NULL; COUNT(*) counts rows including those with NULLs. COUNT on empty input returns 0. [VL04, slide 25]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -673,7 +673,7 @@
   },
   {
     "question": "<div>What are the key properties of B+-tree indexes?</div>",
-    "answer": "<div>B+-tree indexes  are balanced, dynamic under inserts/deletes, preserve key order and support efficient lookup. [VL04, slide 41-42]</div>",
+    "answer": "<div>B+-tree indexes are balanced, dynamic under inserts/deletes, preserve key order and support efficient lookup. [VL04, slide 41-42]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
