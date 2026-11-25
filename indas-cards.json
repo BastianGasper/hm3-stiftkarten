@@ -841,7 +841,7 @@
   },
   {
     "question": "<div>What are the main drawbacks of basic MapReduce?</div>",
-    "answer": "<div>Basic MapReduce is file-based, batch-oriented, needs low-level code, and handles repeated calculations poorly. [VL05, slide 83, 85]</div>",
+    "answer": "<div>Basic MapReduce uses files, runs in batches, needs detailed code, and struggles with repeated tasks. [VL05, slide 83, 85]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
