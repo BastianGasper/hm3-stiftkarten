@@ -1,7 +1,7 @@
 [
   {
     "question": "<div>What is Data Science?</div>",
-    "answer": "<div>The extraction of information and knowledge from data. [VL01, slide 13]</div>",
+    "answer": "<div>Data Science is the extraction of information and knowledge from data. [VL01, slide 13]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -9,7 +9,7 @@
   },
   {
     "question": "<div>What is Data Mining?</div>",
-    "answer": "<div>The application of specific algorithms to extract patterns from data. [VL01, slide 14]</div>",
+    "answer": "<div>Data Mining is the application of specific algorithms to extract patterns from data. [VL01, slide 14]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -17,7 +17,7 @@
   },
   {
     "question": "<div>What is Industrial Data Science?</div>",
-    "answer": "<div>Extracting process- and product-specific knowledge from data in an industrial context. [VL01, slide 15]</div>",
+    "answer": "<div>Industrial Data Science means extracting process- and product-specific knowledge from data in an industrial context. [VL01, slide 15]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -25,7 +25,7 @@
   },
   {
     "question": "<div>What is Machine Learning?</div>",
-    "answer": "<div>Learning algorithms develop models from experience or examples. [VL01, slide 15]</div>",
+    "answer": "<div>In Machine Learning, learning algorithms develop models from experience or examples. [VL01, slide 15]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -41,7 +41,7 @@
   },
   {
     "question": "<div>What is Artificial Intelligence (AI)?</div>",
-    "answer": "<div>Mathematical and computational methods for tasks that emulate or support aspects of human intelligence. [VL01, slide 20]</div>",
+    "answer": "<div>Artificial Intelligence (AI) uses mathematical and computational methods for tasks that emulate or support aspects of human intelligence. [VL01, slide 20]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -49,7 +49,7 @@
   },
   {
     "question": "<div>Which three disciplines characterize Industrial Data Science?</div>",
-    "answer": "<div>Computer Science, Statistics, Engineering Science. [VL01, slide 16-19]</div>",
+    "answer": "<div>The three disciplines of Industrial Data Science are: Computer Science, Statistics, Engineering Science. [VL01, slide 16-19]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -57,7 +57,7 @@
   },
   {
     "question": "<div>Name the four levels of Industrial Data Science (basic to advanced).</div>",
-    "answer": "<div>Descriptive; Diagnostic; Predictive; Prescriptive. [VL01, slide 24]</div>",
+    "answer": "<div>The four levels of Industrial Data Science are: Descriptive; Diagnostic; Predictive; Prescriptive. [VL01, slide 24]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -81,7 +81,7 @@
   },
   {
     "question": "<div>What characterizes the four Industrial Revolutions?</div>",
-    "answer": "<div>1: water/steam mechanization; 2: electricity/mass production; 3: electronics/IT automation; 4: IoT and smart networking. [VL01, slide 25]</div>",
+    "answer": "<div>The four Industrial Revolutions are characterized as follows: 1: water/steam mechanization; 2: electricity/mass production; 3: electronics/IT automation; 4: IoT and smart networking. [VL01, slide 25]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -89,7 +89,7 @@
   },
   {
     "question": "<div>What are the five V&#x27;s of Big Data?</div>",
-    "answer": "<div>Volume, Velocity, Variety, Veracity, Value. [VL01, slide 27]</div>",
+    "answer": "<div>The five V's of Big Data are: Volume, Velocity, Variety, Veracity, Value. [VL01, slide 27]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -113,7 +113,7 @@
   },
   {
     "question": "<div>What are the three key success factors in IDS projects?</div>",
-    "answer": "<div>Structure; Interdisciplinary Teams; Data Maturity. [VL01, slide 31]</div>",
+    "answer": "<div>The three key success factors in IDS projects are: Structure; Interdisciplinary Teams; Data Maturity. [VL01, slide 31]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -121,7 +121,7 @@
   },
   {
     "question": "<div>Which knowledge discovery process models are named?</div>",
-    "answer": "<div>SEMMA, KDD, KDID and CRISP-DM. [VL01, slide 33]</div>",
+    "answer": "<div>The knowledge discovery process models named are: SEMMA, KDD, KDID and CRISP-DM. [VL01, slide 33]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -129,7 +129,7 @@
   },
   {
     "question": "<div>What does CRISP-DM stand for?</div>",
-    "answer": "<div>Cross-Industry Standard Process for Data Mining. [VL01, slide 33-35]</div>",
+    "answer": "<div>CRISP-DM stands for Cross-Industry Standard Process for Data Mining. [VL01, slide 33-35]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -137,7 +137,7 @@
   },
   {
     "question": "<div>Give four advantages of CRISP-DM presented in the lecture.</div>",
-    "answer": "<div>Intuitive to domain experts; clear structure; usable across sectors; similar to PDCA and DMAIC. [VL01, slide 35]</div>",
+    "answer": "<div>Four advantages of CRISP-DM are: Intuitive to domain experts; clear structure; usable across sectors; similar to PDCA and DMAIC. [VL01, slide 35]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -145,7 +145,7 @@
   },
   {
     "question": "<div>Name all six CRISP-DM phases in order.</div>",
-    "answer": "<div>Business Understanding; Data Understanding; Data Preparation; Modeling; Evaluation; Deployment. [VL01, slide 36-37]</div>",
+    "answer": "<div>The six CRISP-DM phases in order are: Business Understanding; Data Understanding; Data Preparation; Modeling; Evaluation; Deployment. [VL01, slide 36-37]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -153,7 +153,7 @@
   },
   {
     "question": "<div>What happens in Business Understanding?</div>",
-    "answer": "<div>Define goals, analyze the situation, design the approach and turn the business problem into a learning problem. [VL01, slide 36]</div>",
+    "answer": "<div>In Business Understanding, you define goals, analyze the situation, design the approach and turn the business problem into a learning problem. [VL01, slide 36]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -161,7 +161,7 @@
   },
   {
     "question": "<div>What happens in Data Understanding?</div>",
-    "answer": "<div>Collect data, evaluate quality/consistency and conduct descriptive or exploratory analysis. [VL01, slide 36]</div>",
+    "answer": "<div>In Data Understanding, you collect data, evaluate quality/consistency and conduct descriptive or exploratory analysis. [VL01, slide 36]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -169,7 +169,7 @@
   },
   {
     "question": "<div>What happens in Data Preparation?</div>",
-    "answer": "<div>Construct the final dataset to be used for modeling. [VL01, slide 36]</div>",
+    "answer": "<div>In Data Preparation, you construct the final dataset to be used for modeling. [VL01, slide 36]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -177,7 +177,7 @@
   },
   {
     "question": "<div>What happens in Modeling?</div>",
-    "answer": "<div>Compare methods; choose algorithms; train models; optimize parameters. [VL01, slide 37]</div>",
+    "answer": "<div>In Modeling, you compare methods; choose algorithms; train models; optimize parameters. [VL01, slide 37]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -185,7 +185,7 @@
   },
   {
     "question": "<div>What happens in Evaluation?</div>",
-    "answer": "<div>Assess the final analysis/forecast and compare it with the original task. [VL01, slide 37]</div>",
+    "answer": "<div>In Evaluation, you assess the final analysis/forecast and compare it with the original task. [VL01, slide 37]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -193,7 +193,7 @@
   },
   {
     "question": "<div>What happens in Deployment?</div>",
-    "answer": "<div>Integrate the model into decision-making and implement it in the IT environment. [VL01, slide 37]</div>",
+    "answer": "<div>In Deployment, you integrate the model into decision-making and implement it in the IT environment. [VL01, slide 37]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -201,7 +201,7 @@
   },
   {
     "question": "<div>Why is domain knowledge important throughout CRISP-DM?</div>",
-    "answer": "<div>It supports goals, feature selection, data checks, overfitting prevention, validation and integration. [VL01, slide 38]</div>",
+    "answer": "<div>Domain knowledge  supports goals, feature selection, data checks, overfitting prevention, validation and integration. [VL01, slide 38]</div>",
     "categories": [
       "VL01 – Introduction to Industrial Data Science"
     ],
@@ -209,7 +209,7 @@
   },
   {
     "question": "<div>What is Data?</div>",
-    "answer": "<div>Context-free characters, signals or measured values without assigned meaning. [VL02, slide 21]</div>",
+    "answer": "<div>Data is context-free characters, signals or measured values without assigned meaning. [VL02, slide 21]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -217,7 +217,7 @@
   },
   {
     "question": "<div>What is Information?</div>",
-    "answer": "<div>Data that has been interpreted in a meaningful context. [VL02, slide 21]</div>",
+    "answer": "<div>Information is data that has been interpreted in a meaningful context. [VL02, slide 21]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -225,7 +225,7 @@
   },
   {
     "question": "<div>What is Knowledge?</div>",
-    "answer": "<div>Information combined with experience and skills that individuals use to solve problems. [VL02, slide 21]</div>",
+    "answer": "<div>Knowledge is information combined with experience and skills that individuals use to solve problems. [VL02, slide 21]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -233,7 +233,7 @@
   },
   {
     "question": "<div>How does data become information and then knowledge?</div>",
-    "answer": "<div>Assign meaning to data; then link information with context and experience. [VL02, slide 22]</div>",
+    "answer": "<div>Data becomes information and then knowledge when you assign meaning to data; then link information with context and experience. [VL02, slide 22]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -241,7 +241,7 @@
   },
   {
     "question": "<div>What is the Digital Factory?</div>",
-    "answer": "<div>A network of digital models, methods and tools (e.g., simulation/3D) integrated by end-to-end data management. [VL02, slide 23]</div>",
+    "answer": "<div>The Digital Factory is a network of digital models, methods and tools (e.g., simulation/3D) integrated by end-to-end data management. [VL02, slide 23]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -249,7 +249,7 @@
   },
   {
     "question": "<div>Name the six Automation Pyramid levels, top to bottom.</div>",
-    "answer": "<div>Company; Operating; Process Control; Control; Field; Process. [VL02, slide 26]</div>",
+    "answer": "<div>The Automation Pyramid levels from top to bottom are: Company; Operating; Process Control; Control; Field; Process. [VL02, slide 26]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -281,7 +281,7 @@
   },
   {
     "question": "<div>What is vertical integration in Industry 4.0?</div>",
-    "answer": "<div>Data exchange and connectivity between different production and company levels. [VL02, slide 26]</div>",
+    "answer": "<div>Vertical integration in Industry 4.0 means data exchange and connectivity between different production and company levels. [VL02, slide 26]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -289,7 +289,7 @@
   },
   {
     "question": "<div>Name the five industrial data types.</div>",
-    "answer": "<div>Alphanumeric, text, image, audio signal and video data. [VL02, slide 27]</div>",
+    "answer": "<div>The five industrial data types are: Alphanumeric, text, image, audio signal and video data. [VL02, slide 27]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -297,7 +297,7 @@
   },
   {
     "question": "<div>Which five data maturity criteria concern acquisition and availability?</div>",
-    "answer": "<div>Data collection; completeness; sample size; data sources; data format. [VL02, slide 30]</div>",
+    "answer": "<div>The five data maturity criteria for acquisition and availability are: Data collection; completeness; sample size; data sources; data format. [VL02, slide 30]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -305,7 +305,7 @@
   },
   {
     "question": "<div>Which five data maturity criteria concern structure and usability?</div>",
-    "answer": "<div>Data structure; feature type; reference level; consistency; traceability. [VL02, slide 30]</div>",
+    "answer": "<div>The five data maturity criteria for structure and usability are: Data structure; feature type; reference level; consistency; traceability. [VL02, slide 30]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -313,7 +313,7 @@
   },
   {
     "question": "<div>How does data collection mature from level 1 to level 4?</div>",
-    "answer": "<div>1: manual; 2: semi-automatic; 3: mostly automatic; 4: online-based. [VL02, slide 30]</div>",
+    "answer": "<div>Data collection matures from level 1 to level 4 as follows: 1: manual; 2: semi-automatic; 3: mostly automatic; 4: online-based. [VL02, slide 30]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -321,7 +321,7 @@
   },
   {
     "question": "<div>Name four common Data Preparation challenges.</div>",
-    "answer": "<div>Data gaps; different scale levels; different formatting; data inconsistencies. [VL02, slide 34]</div>",
+    "answer": "<div>Four common Data Preparation challenges are: Data gaps; different scale levels; different formatting; data inconsistencies. [VL02, slide 34]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -329,7 +329,7 @@
   },
   {
     "question": "<div>What are the three ETL steps and their functions?</div>",
-    "answer": "<div>Extract: obtain data; Transform: preprocess/derive features; Load: integrate into a target system. [VL02, slide 35]</div>",
+    "answer": "<div>The three ETL steps and their functions are: Extract: obtain data; Transform: preprocess/derive features; Load: integrate into a target system. [VL02, slide 35]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -337,7 +337,7 @@
   },
   {
     "question": "<div>Which preprocessing steps are shown for the injector dataset?</div>",
-    "answer": "<div>Data aggregation, sampling, handling missing values, feature cleansing and train/test splitting. [VL02, slide 37]</div>",
+    "answer": "<div>The injector dataset preprocessing steps shown are: Data aggregation, sampling, handling missing values, feature cleansing and train/test splitting. [VL02, slide 37]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -345,7 +345,7 @@
   },
   {
     "question": "<div>What is Undersampling?</div>",
-    "answer": "<div>Reducing the number of majority-class observations to counter an imbalanced dataset. [VL02, slide 38]</div>",
+    "answer": "<div>Undersampling means reducing the number of majority-class observations to counter an imbalanced dataset. [VL02, slide 38]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
@@ -361,7 +361,7 @@
   },
   {
     "question": "<div>What is Overfitting?</div>",
-    "answer": "<div>A model learns details of training data too closely and performs poorly on unseen data. [VL03, slide 11]</div>",
+    "answer": "<div>Overfitting occurs when a model learns details of training data too closely and performs poorly on unseen data. [VL03, slide 11]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -369,7 +369,7 @@
   },
   {
     "question": "<div>What is Generalization?</div>",
-    "answer": "<div>The ability of a trained model to perform on previously unseen data. [VL03, slide 11-12]</div>",
+    "answer": "<div>Generalization is the ability of a trained model to perform on previously unseen data. [VL03, slide 11-12]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -385,7 +385,7 @@
   },
   {
     "question": "<div>How does five-fold Cross-Validation work?</div>",
-    "answer": "<div>Train on four folds, validate on the fifth; rotate five times and average the errors. [VL03, slide 13]</div>",
+    "answer": "<div>In five-fold Cross-Validation, you train on four folds, validate on the fifth; rotate five times and average the errors. [VL03, slide 13]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -401,7 +401,7 @@
   },
   {
     "question": "<div>What are the three main types of Machine Learning?</div>",
-    "answer": "<div>Supervised Learning; Unsupervised Learning; Reinforcement Learning. [VL03, slide 15]</div>",
+    "answer": "<div>The three main types of Machine Learning are: Supervised Learning; Unsupervised Learning; Reinforcement Learning. [VL03, slide 15]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -425,7 +425,7 @@
   },
   {
     "question": "<div>Name three Classification algorithms from the lecture.</div>",
-    "answer": "<div>Examples: Naive Bayes, Decision Tree, Random Forest. [VL03, slide 18]</div>",
+    "answer": "<div>Examples of Classification algorithms: Naive Bayes, Decision Tree, Random Forest. [VL03, slide 18]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -433,7 +433,7 @@
   },
   {
     "question": "<div>What is a hyperparameter?</div>",
-    "answer": "<div>A setting selected for training, such as tree depth or number of trees. [VL03, slide 22]</div>",
+    "answer": "<div>A hyperparameter is a setting selected for training, such as tree depth or number of trees. [VL03, slide 22]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -441,7 +441,7 @@
   },
   {
     "question": "<div>What is a Confusion Matrix?</div>",
-    "answer": "<div>A table comparing predicted and actual classes using TP, FP, FN and TN counts. [VL03, slide 24-25]</div>",
+    "answer": "<div>A Confusion Matrix is a table comparing predicted and actual classes using TP, FP, FN and TN counts. [VL03, slide 24-25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -465,7 +465,7 @@
   },
   {
     "question": "<div>What is the positive class in the injector use case?</div>",
-    "answer": "<div>NOk (defective). Missed defect = FN/Slack; wrongly rejected good product = FP/Pseudo Defect. [VL03, slide 25-27]</div>",
+    "answer": "<div>The positive class in the injector use case is NOk (defective). Missed defect = FN/Slack; wrongly rejected good product = FP/Pseudo Defect. [VL03, slide 25-27]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -474,7 +474,7 @@
   {
     "id": "lecture-59",
     "question": "<div>What is the formula for Accuracy?</div>",
-    "answer": "<div>(TP + TN) / (TP + FP + TN + FN). [VL03, slide 25]</div>",
+    "answer": "<div>The formula for Accuracy is (TP + TN) / (TP + FP + TN + FN). [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
@@ -482,7 +482,7 @@
   {
     "id": "lecture-60",
     "question": "<div>What is the formula for Sensitivity?</div>",
-    "answer": "<div>TP / (TP + FN). Proportion of actual positives detected. [VL03, slide 25]</div>",
+    "answer": "<div>The formula for Sensitivity is TP / (TP + FN). Proportion of actual positives detected. [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
@@ -490,7 +490,7 @@
   {
     "id": "lecture-61",
     "question": "<div>What is the formula for Specificity?</div>",
-    "answer": "<div>TN / (TN + FP). Proportion of actual negatives detected. [VL03, slide 25]</div>",
+    "answer": "<div>The formula for Specificity is TN / (TN + FP). Proportion of actual negatives detected. [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
@@ -498,7 +498,7 @@
   {
     "id": "lecture-62",
     "question": "<div>What is the formula for Precision?</div>",
-    "answer": "<div>TP / (TP + FP). Proportion of predicted positives that are correct. [VL03, slide 25]</div>",
+    "answer": "<div>The formula for Precision is TP / (TP + FP). Proportion of predicted positives that are correct. [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
@@ -506,7 +506,7 @@
   {
     "id": "lecture-63",
     "question": "<div>What is the formula for Slack Rate?</div>",
-    "answer": "<div>FN / (TP + FN). Proportion of actual defective products missed. [VL03, slide 25]</div>",
+    "answer": "<div>The formula for Slack Rate is FN / (TP + FN). Proportion of actual defective products missed. [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
@@ -514,7 +514,7 @@
   {
     "id": "lecture-64",
     "question": "<div>What is the formula for Pseudo Defect Rate?</div>",
-    "answer": "<div>FP / (TP + FP). Proportion of predicted defective products that are actually good. [VL03, slide 25]</div>",
+    "answer": "<div>The formula for Pseudo Defect Rate is FP / (TP + FP). Proportion of predicted defective products that are actually good. [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
@@ -522,7 +522,7 @@
   {
     "id": "lecture-65",
     "question": "<div>What is the formula for False Positive Rate?</div>",
-    "answer": "<div>FP / (FP + TN). Proportion of actual good products incorrectly rejected. [VL03, slide 25]</div>",
+    "answer": "<div>The formula for False Positive Rate is FP / (FP + TN). Proportion of actual good products incorrectly rejected. [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
@@ -530,7 +530,7 @@
   {
     "id": "lecture-66",
     "question": "<div>What is the formula for Negative Predictive Value?</div>",
-    "answer": "<div>TN / (TN + FN). Proportion of predicted negatives that are truly negative. [VL03, slide 25]</div>",
+    "answer": "<div>The formula for Negative Predictive Value is TN / (TN + FN). Proportion of predicted negatives that are truly negative. [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
@@ -538,14 +538,14 @@
   {
     "id": "lecture-67",
     "question": "<div>What is the formula for False Omission Rate?</div>",
-    "answer": "<div>FN / (FN + TN). Proportion of predicted negatives that are actually positive. [VL03, slide 25]</div>",
+    "answer": "<div>The formula for False Omission Rate is FN / (FN + TN). Proportion of predicted negatives that are actually positive. [VL03, slide 25]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ]
   },
   {
     "question": "<div>What is a Virtual Test Gate in injector production?</div>",
-    "answer": "<div>A model predicts quality after P1-P3; predicted NOk injectors undergo full P1-P6 testing. [VL03, slide 31-32]</div>",
+    "answer": "<div>At a Virtual Test Gate in injector production, a model predicts quality after P1-P3; predicted NOk injectors undergo full P1-P6 testing. [VL03, slide 31-32]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -553,7 +553,7 @@
   },
   {
     "question": "<div>Which five roles are involved in IDS teams?</div>",
-    "answer": "<div>Management; IT Expert; Domain Expert; Data Scientist; Citizen Data Scientist. [VL03, slide 40-41]</div>",
+    "answer": "<div>The five roles in IDS teams are: Management; IT Expert; Domain Expert; Data Scientist; Citizen Data Scientist. [VL03, slide 40-41]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -561,7 +561,7 @@
   },
   {
     "question": "<div>What is the role of a Citizen Data Scientist?</div>",
-    "answer": "<div>Coordinate the project and link experts, with foundational knowledge across the disciplines. [VL03, slide 41]</div>",
+    "answer": "<div>The role of a Citizen Data Scientist is to coordinate the project and link experts, with foundational knowledge across the disciplines. [VL03, slide 41]</div>",
     "categories": [
       "VL03 – Data Analysis in Industrial Contexts"
     ],
@@ -569,7 +569,7 @@
   },
   {
     "question": "<div>What four core abstractions does a DBMS provide?</div>",
-    "answer": "<div>A data model; a query language; integrity/access control; protection for concurrent access. [VL04, slide 9]</div>",
+    "answer": "<div>The four core abstractions provided by a DBMS are: A data model; a query language; integrity/access control; protection for concurrent access. [VL04, slide 9]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -585,7 +585,7 @@
   },
   {
     "question": "<div>What makes SQL a declarative query language?</div>",
-    "answer": "<div>It specifies which data to retrieve, not how the database must retrieve them. [VL04, slide 12-13]</div>",
+    "answer": "<div>SQL is a declarative query language because  specifies which data to retrieve, not how the database must retrieve them. [VL04, slide 12-13]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -601,7 +601,7 @@
   },
   {
     "question": "<div>What happens when multiple tables appear in FROM without a join condition?</div>",
-    "answer": "<div>The result is their Cartesian product: all combinations of rows. [VL04, slide 18-20]</div>",
+    "answer": "<div>When multiple tables appear in FROM without a join condition, the result is their Cartesian product: all combinations of rows. [VL04, slide 18-20]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -609,7 +609,7 @@
   },
   {
     "question": "<div>What is a SQL JOIN?</div>",
-    "answer": "<div>A combination of rows from different tables according to a matching condition (ON or WHERE). [VL04, slide 19-21]</div>",
+    "answer": "<div>A SQL JOIN is a combination of rows from different tables according to a matching condition (ON or WHERE). [VL04, slide 19-21]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -617,7 +617,7 @@
   },
   {
     "question": "<div>Name the five main SQL aggregation functions.</div>",
-    "answer": "<div>COUNT, SUM, AVG, MAX and MIN. [VL04, slide 23]</div>",
+    "answer": "<div>The five main SQL aggregation functions are: COUNT, SUM, AVG, MAX and MIN. [VL04, slide 23]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -625,7 +625,7 @@
   },
   {
     "question": "<div>How do SQL aggregation functions handle NULL values?</div>",
-    "answer": "<div>They generally ignore NULL; COUNT(*) counts rows including those with NULLs. COUNT on empty input returns 0. [VL04, slide 25]</div>",
+    "answer": "<div>SQL aggregation functions  generally ignore NULL; COUNT(*) counts rows including those with NULLs. COUNT on empty input returns 0. [VL04, slide 25]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -633,7 +633,7 @@
   },
   {
     "question": "<div>What does GROUP BY do?</div>",
-    "answer": "<div>Partitions rows into groups so aggregation can be calculated separately for each group. [VL04, slide 27-28]</div>",
+    "answer": "<div>GROUP BY partitions rows into groups so aggregation can be calculated separately for each group. [VL04, slide 27-28]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -641,7 +641,7 @@
   },
   {
     "question": "<div>What is the basic SELECT rule when GROUP BY is used?</div>",
-    "answer": "<div>Selected non-aggregated columns must also appear in GROUP BY (as required by this lecture). [VL04, slide 29]</div>",
+    "answer": "<div>The basic SELECT rule with GROUP BY is that selected non-aggregated columns must also appear in GROUP BY (as required by this lecture). [VL04, slide 29]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -657,7 +657,7 @@
   },
   {
     "question": "<div>What does ORDER BY guarantee in SQL?</div>",
-    "answer": "<div>The requested result ordering; without ORDER BY, row order is not guaranteed. [VL04, slide 33]</div>",
+    "answer": "<div>ORDER BY guarantees the requested result ordering; without ORDER BY, row order is not guaranteed. [VL04, slide 33]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -665,7 +665,7 @@
   },
   {
     "question": "<div>Why is sequential disk I/O preferred to random disk I/O?</div>",
-    "answer": "<div>It avoids repeated high access latency and is generally much faster. [VL04, slide 35-36]</div>",
+    "answer": "<div>Sequential disk I/O is preferred because it avoids repeated high access latency and is generally much faster. [VL04, slide 35-36]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -673,7 +673,7 @@
   },
   {
     "question": "<div>What are the key properties of B+-tree indexes?</div>",
-    "answer": "<div>They are balanced, dynamic under inserts/deletes, preserve key order and support efficient lookup. [VL04, slide 41-42]</div>",
+    "answer": "<div>B+-tree indexes  are balanced, dynamic under inserts/deletes, preserve key order and support efficient lookup. [VL04, slide 41-42]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -681,7 +681,7 @@
   },
   {
     "question": "<div>For which two main tasks are database indexes used?</div>",
-    "answer": "<div>Point/range searches and join processing. [VL04, slide 43]</div>",
+    "answer": "<div>Database indexes are used for point/range searches and join processing. [VL04, slide 43]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -689,7 +689,7 @@
   },
   {
     "question": "<div>What are the two phases of a hash join?</div>",
-    "answer": "<div>Build: hash the tuples of one relation. Probe: scan the other relation and find matching tuples. [VL04, slide 44-45]</div>",
+    "answer": "<div>The two phases of a hash join are: Build: hash the tuples of one relation. Probe: scan the other relation and find matching tuples. [VL04, slide 44-45]</div>",
     "categories": [
       "VL04 – Database Basics"
     ],
@@ -697,7 +697,7 @@
   },
   {
     "question": "<div>What is the purpose of a Data Warehouse?</div>",
-    "answer": "<div>To integrate data into a single source of truth optimized for analysis and decision-making. [VL05, slide 48]</div>",
+    "answer": "<div>The purpose of a Data Warehouse is to integrate data into a single source of truth optimized for analysis and decision-making. [VL05, slide 48]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -705,7 +705,7 @@
   },
   {
     "question": "<div>What are the main stages of Data Warehouse architecture?</div>",
-    "answer": "<div>Data sources → staging area and ETL → Data Warehouse → Data Marts → users. [VL05, slide 48]</div>",
+    "answer": "<div>The main stages of Data Warehouse architecture are: Data sources → staging area and ETL → Data Warehouse → Data Marts → users. [VL05, slide 48]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -721,7 +721,7 @@
   },
   {
     "question": "<div>What is grain in dimensional modeling?</div>",
-    "answer": "<div>The level of detail of a recorded business-process measurement event. [VL05, slide 52]</div>",
+    "answer": "<div>Grain in dimensional modeling is the level of detail of a recorded business-process measurement event. [VL05, slide 52]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -729,7 +729,7 @@
   },
   {
     "question": "<div>What is a Data Warehouse bus matrix?</div>",
-    "answer": "<div>A matrix with business processes as rows and dimensions as columns. [VL05, slide 51]</div>",
+    "answer": "<div>A Data Warehouse bus matrix is a matrix with business processes as rows and dimensions as columns. [VL05, slide 51]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -745,7 +745,7 @@
   },
   {
     "question": "<div>What is an OLAP cube?</div>",
-    "answer": "<div>A multidimensional view of facts and aggregates along dimensions. [VL05, slide 55]</div>",
+    "answer": "<div>An OLAP cube is a multidimensional view of facts and aggregates along dimensions. [VL05, slide 55]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -753,7 +753,7 @@
   },
   {
     "question": "<div>What does slice and dice mean in OLAP?</div>",
-    "answer": "<div>Selecting ranges along dimensions and aggregating the facts within those ranges. [VL05, slide 56]</div>",
+    "answer": "<div>Slice and dice in OLAP means selecting ranges along dimensions and aggregating the facts within those ranges. [VL05, slide 56]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -761,7 +761,7 @@
   },
   {
     "question": "<div>What is a Star Schema?</div>",
-    "answer": "<div>A central fact table with foreign keys that reference surrounding dimension tables. [VL05, slide 58]</div>",
+    "answer": "<div>A Star Schema is a central fact table with foreign keys that reference surrounding dimension tables. [VL05, slide 58]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -769,7 +769,7 @@
   },
   {
     "question": "<div>What are the three conceptual steps of a star query?</div>",
-    "answer": "<div>Join the fact table with dimension tables; filter records; group and aggregate results. [VL05, slide 62]</div>",
+    "answer": "<div>The three conceptual steps of a star query are: Join the fact table with dimension tables; filter records; group and aggregate results. [VL05, slide 62]</div>",
     "categories": [
       "VL05 – Data Warehousing"
     ],
@@ -785,7 +785,7 @@
   },
   {
     "question": "<div>What does a Mapper do?</div>",
-    "answer": "<div>Processes input data and emits key-value pairs. [VL05, slide 75]</div>",
+    "answer": "<div>A Mapper processes input data and emits key-value pairs. [VL05, slide 75]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -793,7 +793,7 @@
   },
   {
     "question": "<div>What happens during Shuffle in MapReduce?</div>",
-    "answer": "<div>Values with the same key are grouped together and moved to the appropriate Reducer. [VL05, slide 73–75]</div>",
+    "answer": "<div>During Shuffle in MapReduce, values with the same key are grouped together and moved to the appropriate Reducer. [VL05, slide 73–75]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -801,7 +801,7 @@
   },
   {
     "question": "<div>What does a Reducer do?</div>",
-    "answer": "<div>Processes the list of values belonging to a key and produces an aggregated result. [VL05, slide 75–76]</div>",
+    "answer": "<div>A Reducer processes the list of values belonging to a key and produces an aggregated result. [VL05, slide 75–76]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -809,7 +809,7 @@
   },
   {
     "question": "<div>What responsibilities does the MapReduce framework handle?</div>",
-    "answer": "<div>Data and task partitioning, Mapper/Reducer allocation, data movement and shuffling. [VL05, slide 78]</div>",
+    "answer": "<div>The MapReduce framework handles data and task partitioning, Mapper/Reducer allocation, data movement and shuffling. [VL05, slide 78]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -817,7 +817,7 @@
   },
   {
     "question": "<div>Why must Mapper and Reducer functions be pure?</div>",
-    "answer": "<div>Their outputs depend only on inputs, with no side effects, allowing safe re-execution. [VL05, slide 81]</div>",
+    "answer": "<div>Mapper and Reducer functions must be pure because their outputs depend only on inputs, with no side effects, allowing safe re-execution. [VL05, slide 81]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -825,7 +825,7 @@
   },
   {
     "question": "<div>How does MapReduce tolerate failed or slow tasks?</div>",
-    "answer": "<div>The runtime can restart tasks on other nodes and retain one valid result. [VL05, slide 81]</div>",
+    "answer": "<div>MapReduce tolerates failed or slow tasks because the runtime can restart tasks on other nodes and retain one valid result. [VL05, slide 81]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -841,7 +841,7 @@
   },
   {
     "question": "<div>Name important limitations of basic MapReduce.</div>",
-    "answer": "<div>File-based rather than a database, batch-oriented, low-level programming and limited support for iterative algorithms. [VL05, slide 83, 85]</div>",
+    "answer": "<div>Important limitations of basic MapReduce include file-based rather than a database, batch-oriented, low-level programming and limited support for iterative algorithms. [VL05, slide 83, 85]</div>",
     "categories": [
       "VL05 – MapReduce"
     ],
@@ -897,7 +897,7 @@
   },
   {
     "question": "<div>What is absolute frequency?</div>",
-    "answer": "<div>H(Ak) is the number of observations in class Ak. [VL06, slide 19]</div>",
+    "answer": "<div>Absolute frequency is defined as follows: H(Ak) is the number of observations in class Ak. [VL06, slide 19]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -905,7 +905,7 @@
   },
   {
     "question": "<div>What is relative frequency?</div>",
-    "answer": "<div>h(Ak) = H(Ak)/n, the proportion of observations in class Ak. [VL06, slide 20]</div>",
+    "answer": "<div>Relative frequency is defined as follows: h(Ak) = H(Ak)/n, the proportion of observations in class Ak. [VL06, slide 20]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -913,7 +913,7 @@
   },
   {
     "question": "<div>What are the key properties of a density histogram?</div>",
-    "answer": "<div>Each rectangle's area is the relative frequency; height = relative frequency / class width; total area = 1. [VL06, slide 25–26]</div>",
+    "answer": "<div>In a density histogram, each rectangle's area is the relative frequency; height = relative frequency / class width; total area = 1. [VL06, slide 25–26]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -929,7 +929,7 @@
   },
   {
     "question": "<div>What is a Pareto chart?</div>",
-    "answer": "<div>A bar chart with categories ordered by decreasing frequency and a line showing cumulative frequencies. [VL06, slide 32]</div>",
+    "answer": "<div>A Pareto chart is a bar chart with categories ordered by decreasing frequency and a line showing cumulative frequencies. [VL06, slide 32]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -937,7 +937,7 @@
   },
   {
     "question": "<div>What is the empirical distribution function?</div>",
-    "answer": "<div>Fn(x) = (number of observations ≤ x) / n. [VL06, slide 36]</div>",
+    "answer": "<div>The empirical distribution function is Fn(x) = (number of observations ≤ x) / n. [VL06, slide 36]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -945,7 +945,7 @@
   },
   {
     "question": "<div>What is the formula for the arithmetic mean?</div>",
-    "answer": "<div>x̄ = (1/n) × Σ xi. [VL06, slide 40]</div>",
+    "answer": "<div>The arithmetic mean is calculated as x̄ = (1/n) × Σ xi. [VL06, slide 40]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -961,7 +961,7 @@
   },
   {
     "question": "<div>Which measure of location is particularly sensitive to outliers?</div>",
-    "answer": "<div>The arithmetic mean; the median is usually more robust. [VL06, slide 42]</div>",
+    "answer": "<div>The measure of location particularly sensitive to outliers is the arithmetic mean; the median is usually more robust. [VL06, slide 42]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -969,7 +969,7 @@
   },
   {
     "question": "<div>What is a p-quantile?</div>",
-    "answer": "<div>A value Qp with at least 100p% of observations ≤ Qp and at least 100(1−p)% ≥ Qp. [VL06, slide 45]</div>",
+    "answer": "<div>A p-quantile is a value Qp with at least 100p% of observations ≤ Qp and at least 100(1−p)% ≥ Qp. [VL06, slide 45]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -977,7 +977,7 @@
   },
   {
     "question": "<div>How are quantiles calculated using the lecture's type-2 convention?</div>",
-    "answer": "<div>For sorted data: Qp = x(ceil(np)) if np is noninteger; otherwise Qp = [x(np)+x(np+1)]/2. [VL06, slide 46]</div>",
+    "answer": "<div>Under the lecture's type-2 quantile convention: For sorted data: Qp = x(ceil(np)) if np is noninteger; otherwise Qp = [x(np)+x(np+1)]/2. [VL06, slide 46]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -985,7 +985,7 @@
   },
   {
     "question": "<div>What is the formula for sample variance?</div>",
-    "answer": "<div>s² = Σ(xi − x̄)² / (n − 1). [VL06, slide 49]</div>",
+    "answer": "<div>The formula for sample variance is s² = Σ(xi − x̄)² / (n − 1). [VL06, slide 49]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -993,7 +993,7 @@
   },
   {
     "question": "<div>What are the formulas for standard deviation, IQR and range?</div>",
-    "answer": "<div>s = √(s²); IQR = Q0.75 − Q0.25; range = max(x) − min(x). [VL06, slide 49]</div>",
+    "answer": "<div>The formulas for standard deviation, IQR and range are: s = √(s²); IQR = Q0.75 − Q0.25; range = max(x) − min(x). [VL06, slide 49]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -1009,7 +1009,7 @@
   },
   {
     "question": "<div>What is the five-number summary displayed by a box plot?</div>",
-    "answer": "<div>Minimum, Q0.25, median, Q0.75 and maximum. [VL06, slide 55]</div>",
+    "answer": "<div>The five-number summary displayed by a box plot is: Minimum, Q0.25, median, Q0.75 and maximum. [VL06, slide 55]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
@@ -1017,7 +1017,7 @@
   },
   {
     "question": "<div>How does a modified box plot identify potential outliers?</div>",
-    "answer": "<div>Values outside [Q0.25 − 1.5 × IQR, Q0.75 + 1.5 × IQR] are marked as potential outliers. [VL06, slide 55]</div>",
+    "answer": "<div>In a modified box plot, values outside [Q0.25 − 1.5 × IQR, Q0.75 + 1.5 × IQR] are marked as potential outliers. [VL06, slide 55]</div>",
     "categories": [
       "VL06 – EDA & Data Visualization"
     ],
