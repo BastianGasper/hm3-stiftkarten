@@ -386,19 +386,40 @@
     const weak = new Set([...stats.groups.partial, ...stats.groups.wrong]);
     const ids = state.round.ids.filter(id => weak.has(id) && byId(id));
     if (!ids.length) { notify('Keine unsicheren Karten in diesem Stapel.'); return; }
-    // Save references rather than duplicate cards, retaining the original lecture category and history.
-    state.savedWeakIds = ids;
+    // Merge with manual additions rather than overwriting the user's personal set.
+    state.savedWeakIds = [...new Set([...state.savedWeakIds, ...ids])];
     updateCategories();
     persist();
+    exportWeakCards();
+    notify(state.savedWeakIds.length + ' Karten in „Meine unsicheren Karten“ gespeichert.');
+  }
+  function exportWeakCards() {
+    const ids = state.savedWeakIds.filter(id => byId(id));
+    if (!ids.length) { notify('Noch keine unsicheren Karten gespeichert.'); return; }
     const quote = value => '"' + String(value ?? '').replace(/"/g,'""') + '"';
     const rows = [['Karten-ID','Bewertung','Vorlesung','Frage','Musterantwort']];
     for (const id of ids) {
       const card = byId(id);
-      rows.push([id, state.round.grades[id] === 'wrong' ? 'Nicht gewusst' : 'Teilweise gewusst',
-        card.category, card.question, card.answer]);
+      const grade = state.round?.grades?.[id] || state.prefs[id]?.lastGrade;
+      const rating = {good:'Gewusst',partial:'Teilweise gewusst',wrong:'Nicht gewusst',skipped:'Übersprungen'}[grade] || 'Manuell hinzugefügt';
+      rows.push([id, rating, card.category, card.question, card.answer]);
     }
-    download('InDaS_unsichere_Karten.csv', String.fromCharCode(65279) + rows.map(row => row.map(quote).join(';')).join(String.fromCharCode(13,10)) + String.fromCharCode(13,10), 'text/csv');
-    notify(ids.length + ' Karten unter Vorlesungen → Meine unsicheren Karten gespeichert; CSV heruntergeladen.');
+    download('InDaS_unsichere_Karten.csv', String.fromCharCode(65279) +
+      rows.map(row => row.map(quote).join(';')).join(String.fromCharCode(13,10)) + String.fromCharCode(13,10), 'text/csv');
+  }
+  function addWeakCardsFromLink() {
+    const url = new URL(window.location.href);
+    const requested = url.searchParams.get('addWeak');
+    if (!requested) return;
+    const validIds = [...new Set(requested.split(',').map(id => id.trim()))]
+      .filter(id => /^lecture-\d+$/.test(id) && byId(id)).slice(0,30);
+    if (validIds.length) {
+      state.savedWeakIds = [...new Set([...state.savedWeakIds, ...validIds])];
+      persist();
+      notify(validIds.length + ' Karten zu „Meine unsicheren Karten“ hinzugefügt.');
+    }
+    url.searchParams.delete('addWeak');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
   }
   function saveRecord(downloadIt) {
     const rec=state.activeRecording; if (!rec) return;
@@ -447,6 +468,8 @@
     const search=$('librarySearch').value.trim().toLowerCase();
     const matched=allCards().filter(c=>!search||(c.question+' '+c.answer+' '+c.category).toLowerCase().includes(search));
     $('libraryCount').textContent=matched.length+' von '+allCards().length+' Karten';
+    $('weakCardsExport').disabled=!state.savedWeakIds.length;
+    $('weakCardsExport').textContent='Unsichere Karten als CSV ('+state.savedWeakIds.length+')';
     const root=$('libraryList');root.replaceChildren();
     for(const card of matched) {
       const row=document.createElement('div');row.className='library-row';
@@ -458,9 +481,16 @@
       open.onclick=()=>{$('previewQuestion').textContent=card.question;$('previewAnswer').textContent=card.answer;$('previewSource').textContent=card.category+' · '+card.source;$('summaryPreviewDialog').showModal();};
       const fav=document.createElement('button');fav.className='btn';fav.textContent=state.prefs[card.id]?.favorite?'★':'☆';
       fav.onclick=()=>{pref(card.id).favorite=!pref(card.id).favorite;persist();displayLibrary();};
+      const weak=document.createElement('button');weak.className='btn';
+      weak.textContent=state.savedWeakIds.includes(card.id)?'✓ Unsicher':'Als unsicher';
+      weak.onclick=()=>{
+        if(state.savedWeakIds.includes(card.id))state.savedWeakIds=state.savedWeakIds.filter(id=>id!==card.id);
+        else state.savedWeakIds.push(card.id);
+        updateCategories();persist();displayLibrary();
+      };
       const disable=document.createElement('button');disable.className='btn';disable.textContent=state.prefs[card.id]?.disabled?'Aktivieren':'Deaktivieren';
       disable.onclick=()=>{pref(card.id).disabled=!pref(card.id).disabled;persist();updateStartCount();displayLibrary();};
-      controls.append(open,fav,disable);row.append(desc,controls);root.append(row);
+      controls.append(open,fav,weak,disable);row.append(desc,controls);root.append(row);
     }
   }
   function parseCSV(text) {
@@ -508,6 +538,7 @@
       return response.json();
     }).then(data=>{
       cards=data.map((card,i)=>normalize(card,i,'lecture')).filter(c=>c.question&&c.answer);
+      addWeakCardsFromLink();
       updateCategories();
       if(state.round && Array.isArray(state.round.ids)) {
         state.round.ids=state.round.ids.filter(id=>byId(id));
@@ -647,6 +678,7 @@
     $('recordingsBtn').onclick=()=>{displayRecordings();$('recordingsDialog').showModal();};
     $('libraryBtn').onclick=()=>{displayLibrary();$('libraryDialog').showModal();};
     $('librarySearch').oninput=displayLibrary;
+    $('weakCardsExport').onclick=exportWeakCards;
     $('backupBtn').onclick=()=>$('backupDialog').showModal();
     document.querySelectorAll('[data-close]').forEach(button=>button.onclick=() => $(button.dataset.close).close());
     $('backupExport').onclick=()=>download('InDaS_Gesamtbackup_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify({app:'indas-study',version:1,savedAt:now(),state},null,2));
