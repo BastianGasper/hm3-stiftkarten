@@ -352,6 +352,14 @@
     "id": "lecture-43"
   },
   {
+    "question": "<div>What is class imbalance, and why can high accuracy be misleading?</div>",
+    "answer": "<div>Class imbalance means one class has far more examples than another. A model can have high accuracy while missing the rare class. [VL02, slide 38]</div>",
+    "categories": [
+      "VL02 – Data in Industrial Contexts"
+    ],
+    "id": "lecture-128"
+  },
+  {
     "question": "<div>What is the difference between a feature and a label?</div>",
     "answer": "<div>Feature: model input attribute; label: known target outcome to predict (e.g., Ok/NOk). [VL02, slide 19]</div>",
     "categories": [
