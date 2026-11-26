@@ -6,8 +6,9 @@
   const state = {
     prefs: {}, typed: {}, strokes: {}, imported: [], recordings: [],
     activeRecording: null, round: null, mode: 'type', lecture: 'all', lectures: [], setupVisible: true,
-    filter: 'all', query: '', shuffle: false, roundSize: 0, hideAfter13: true, completedRounds: []
+    filter: 'all', query: '', shuffle: false, roundSize: 0, hideAfter13: true, completedRounds: [], savedWeakIds: []
   };
+  const SAVED_WEAK_CATEGORY = 'Meine unsicheren Karten';
   const R = window.InDaSRounds;
   if (!R) throw new Error("InDaS Lernstapel-Modul fehlt.");
   let cards = [];
@@ -46,6 +47,8 @@
       if (!Array.isArray(state.imported)) state.imported = [];
       if (!Array.isArray(state.recordings)) state.recordings = [];
       if (!Array.isArray(state.completedRounds)) state.completedRounds = [];
+      if (!Array.isArray(state.savedWeakIds)) state.savedWeakIds = [];
+      state.savedWeakIds = [...new Set(state.savedWeakIds.filter(id => typeof id === 'string'))];
       state.roundSize = Math.max(0,Math.floor(Number(state.roundSize)||0));
       state.round = R.migrate(state.round);
       summaryVisible = !!state.round?.summaryVisible;
@@ -71,7 +74,11 @@
   function current() { return state.round?.pass ? byId(state.round.pass.ids[state.round.pass.index]) : null; }
   function available() {
     let pool = activeCards().filter(c => !state.prefs[c.id]?.disabled);
-    if (state.lectures.length) pool = pool.filter(c => state.lectures.includes(c.category));
+    if (state.lectures.length) {
+      const saved = new Set(state.savedWeakIds);
+      pool = pool.filter(c => state.lectures.includes(c.category) ||
+        (state.lectures.includes(SAVED_WEAK_CATEGORY) && saved.has(c.id)));
+    }
     if (state.filter === 'favorites') pool = pool.filter(c => !!state.prefs[c.id]?.favorite);
     if (state.filter === 'wrong') pool = pool.filter(c => state.prefs[c.id]?.lastGrade === 'wrong');
     if (state.filter === 'due') pool = pool.filter(c => !state.prefs[c.id]?.nextDue || state.prefs[c.id].nextDue <= Date.now());
@@ -133,7 +140,8 @@
     $('studyPanel').scrollIntoView({block:'start',behavior:'auto'});
   }
   function updateCategories() {
-    const categories = [...new Set(activeCards().map(c => c.category))];
+    const lectureCategories = [...new Set(activeCards().map(c => c.category))];
+    const categories = state.savedWeakIds.length ? [...lectureCategories, SAVED_WEAK_CATEGORY] : lectureCategories;
     // [] represents all lecture categories. Keep only currently available selections.
     const selected = [...new Set(state.lectures)].filter(c => categories.includes(c));
     state.lectures = selected.length === categories.length ? [] : selected;
@@ -158,7 +166,9 @@
       persist();
     });
     for (const category of categories) {
-      addChoice(category, category, state.lectures.includes(category), () => {
+      const label = category === SAVED_WEAK_CATEGORY
+        ? category + ' (' + state.savedWeakIds.length + ')' : category;
+      addChoice(category, label, state.lectures.includes(category), () => {
         const set = new Set(state.lectures);
         if (!set.size) set.add(category); // First selection replaces the "all" state.
         else if (set.has(category)) set.delete(category);
@@ -169,7 +179,7 @@
       });
     }
     const count = state.lectures.length;
-    $('lecturePickerSummary').textContent = count === 0 ? 'Alle Vorlesungen (' + categories.length + ')' :
+    $('lecturePickerSummary').textContent = count === 0 ? 'Alle Vorlesungen (' + lectureCategories.length + ')' :
       count === 1 ? state.lectures[0] : count + ' Vorlesungen ausgewählt';
     $('excludeNov20Check').checked = state.hideAfter13;
     updateStartCount();
@@ -255,6 +265,8 @@
     const continueCount=tally.unreviewedPass.length||outstanding.length;
     set('actionRemaining',continueCount);set('actionWrong',wrong);
     set('actionPartial',partial);set('actionAsked',review.length);
+    set('actionSaveWeak',partial + wrong);
+    $('summarySaveWeak').disabled = partial + wrong === 0;
     const due=activeCards().filter(c=>!state.prefs[c.id]?.disabled&&(!state.prefs[c.id]?.nextDue||state.prefs[c.id].nextDue<=Date.now())).length;
     set('actionDue',due);
     $('summaryTitle').textContent=completed
@@ -368,6 +380,26 @@
     setTimeout(() => URL.revokeObjectURL(url),2000);
   }
   function filename(value) { return String(value || 'InDaS').replace(/[^\w\u00c0-\u024f-]+/g,'_').slice(0,65); }
+  function saveWeakCards() {
+    const stats = R.stats(state.round);
+    if (!stats) return;
+    const weak = new Set([...stats.groups.partial, ...stats.groups.wrong]);
+    const ids = state.round.ids.filter(id => weak.has(id) && byId(id));
+    if (!ids.length) { notify('Keine unsicheren Karten in diesem Stapel.'); return; }
+    // Save references rather than duplicate cards, retaining the original lecture category and history.
+    state.savedWeakIds = ids;
+    updateCategories();
+    persist();
+    const quote = value => '"' + String(value ?? '').replace(/"/g,'""') + '"';
+    const rows = [['Karten-ID','Bewertung','Vorlesung','Frage','Musterantwort']];
+    for (const id of ids) {
+      const card = byId(id);
+      rows.push([id, state.round.grades[id] === 'wrong' ? 'Nicht gewusst' : 'Teilweise gewusst',
+        card.category, card.question, card.answer]);
+    }
+    download('InDaS_unsichere_Karten.csv', '\\uFEFF' + rows.map(row => row.map(quote).join(';')).join('\\r\\n') + '\\r\\n', 'text/csv');
+    notify(ids.length + ' Karten unter Vorlesungen → Meine unsicheren Karten gespeichert; CSV heruntergeladen.');
+  }
   function saveRecord(downloadIt) {
     const rec=state.activeRecording; if (!rec) return;
     rec.title = $('recordName').value.trim() || 'InDaS – '+new Date().toLocaleDateString('de-DE');
@@ -588,6 +620,7 @@
     $('summaryRetryWrong').onclick=()=>repeat('wrong');
     $('summaryRetryPartial').onclick=()=>repeat('partial');
     $('summaryRetryAsked').onclick=()=>startRepeat(R.stats(state.round)?.review||[]);
+    $('summarySaveWeak').onclick=saveWeakCards;
     $('summaryRestart').onclick=()=>{
       if(!state.round?.ids?.length)return;
       if(!state.round.completedAt && !confirm('Den bisherigen Lernfortschritt dieses Stapels wirklich zurücksetzen und alle '+state.round.ids.length+' Karten erneut beginnen?'))return;
