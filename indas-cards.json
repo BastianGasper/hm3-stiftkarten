@@ -248,8 +248,8 @@
     "id": "lecture-30"
   },
   {
-    "question": "<div>Name the six Automation Pyramid levels, top to bottom.</div>",
-    "answer": "<div>The Automation Pyramid levels from top to bottom are: Company; Operating; Process Control; Control; Field; Process. [VL02, slide 26]</div>",
+    "question": "<div>Name the six Automation Pyramid levels (top to bottom) and give one lecture example for each.</div>",
+    "answer": "<div>Company — ERP; Operating — MES; Process Control — SCADA / HMI; Control — PLC; Field — Sensors / actuators; Process — Wafer transport / pick &amp; place. [VL02, slide 26]</div>",
     "categories": [
       "VL02 – Data in Industrial Contexts"
     ],
