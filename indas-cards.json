@@ -368,6 +368,24 @@
     "id": "lecture-44"
   },
   {
+    "id": "lecture-129",
+    "question": "<div>Practice 2A · Data maturity: A car-paint factory records inspection images only during the night shift, stores them in inconsistent image formats, and labels defects per car rather than per panel. Identify three problematic data-maturity criteria and one improvement for each.</div>",
+    "answer": "<div>Completeness: collect images from every shift. Data format: standardize image formats. Reference level: label defects for individual panels, not just whole cars.</div>",
+    "categories": [
+      "VL02 – Data in Industrial Contexts"
+    ],
+    "source": "Original practice · Week 02"
+  },
+  {
+    "id": "lecture-130",
+    "question": "<div>Practice 2B · ETL: A wind farm wants to analyze gearbox failures using turbine vibration logs, turbine IDs and maintenance records. Design an Extract–Transform–Load pipeline: handle duplicate readings, inconsistent time zones and units, link failures to turbines, and choose a storage target.</div>",
+    "answer": "<div>Extract: obtain vibration logs, turbine IDs and maintenance records. Transform: remove duplicates, convert units and time zones, match events by turbine and time, and assign failure labels. Load: store the prepared dataset in an analysis database.</div>",
+    "categories": [
+      "VL02 – Data in Industrial Contexts"
+    ],
+    "source": "Original practice · Week 02"
+  },
+  {
     "question": "<div>What is Overfitting?</div>",
     "answer": "<div>Overfitting occurs when a model learns details of training data too closely and performs poorly on unseen data. [VL03, slide 11]</div>",
     "categories": [
