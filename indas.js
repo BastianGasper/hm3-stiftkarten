@@ -9,6 +9,10 @@
     filter: 'all', query: '', shuffle: false, roundSize: 0, hideAfter13: true, completedRounds: [], savedWeakIds: []
   };
   const SAVED_WEAK_CATEGORY = 'Meine unsicheren Karten';
+  // A fixed cross-device study category, sourced from the user's 26-card CSV.
+  // These are references to the original cards, so no cards or progress are duplicated.
+  const REVIEW_CATEGORY = 'Wiederholung · 26 schwierige Karten';
+  const REVIEW_CARD_IDS = new Set(["lecture-35","lecture-51","lecture-22","lecture-98","lecture-90","lecture-95","lecture-85","lecture-100","lecture-87","lecture-36","lecture-48","lecture-96","lecture-37","lecture-105","lecture-92","lecture-103","lecture-29","lecture-27","lecture-52","lecture-43","lecture-88","lecture-93","lecture-31","lecture-128","lecture-129","lecture-130"]);
   const R = window.InDaSRounds;
   if (!R) throw new Error("InDaS Lernstapel-Modul fehlt.");
   let cards = [];
@@ -77,6 +81,7 @@
     if (state.lectures.length) {
       const saved = new Set(state.savedWeakIds);
       pool = pool.filter(c => state.lectures.includes(c.category) ||
+        (state.lectures.includes(REVIEW_CATEGORY) && REVIEW_CARD_IDS.has(c.id)) ||
         (state.lectures.includes(SAVED_WEAK_CATEGORY) && saved.has(c.id)));
     }
     if (state.filter === 'favorites') pool = pool.filter(c => !!state.prefs[c.id]?.favorite);
@@ -141,7 +146,7 @@
   }
   function updateCategories() {
     const lectureCategories = [...new Set(activeCards().map(c => c.category))];
-    const categories = state.savedWeakIds.length ? [...lectureCategories, SAVED_WEAK_CATEGORY] : lectureCategories;
+    const categories = [...lectureCategories, REVIEW_CATEGORY, ...(state.savedWeakIds.length ? [SAVED_WEAK_CATEGORY] : [])];
     // [] represents all lecture categories. Keep only currently available selections.
     const selected = [...new Set(state.lectures)].filter(c => categories.includes(c));
     state.lectures = selected.length === categories.length ? [] : selected;
