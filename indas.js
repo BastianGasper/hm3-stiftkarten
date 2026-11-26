@@ -397,7 +397,7 @@
       rows.push([id, state.round.grades[id] === 'wrong' ? 'Nicht gewusst' : 'Teilweise gewusst',
         card.category, card.question, card.answer]);
     }
-    download('InDaS_unsichere_Karten.csv', '\\uFEFF' + rows.map(row => row.map(quote).join(';')).join('\\r\\n') + '\\r\\n', 'text/csv');
+    download('InDaS_unsichere_Karten.csv', String.fromCharCode(65279) + rows.map(row => row.map(quote).join(';')).join(String.fromCharCode(13,10)) + String.fromCharCode(13,10), 'text/csv');
     notify(ids.length + ' Karten unter Vorlesungen → Meine unsicheren Karten gespeichert; CSV heruntergeladen.');
   }
   function saveRecord(downloadIt) {
